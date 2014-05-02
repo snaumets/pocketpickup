@@ -23,5 +23,10 @@ local.properties
 proguard/
 
 PocketPickup/assets/credentials.txt
+PocketPickup/.settings*
+PocketPickup/.classpath
+
+appcompat_v7/.settings*
+appcompat_v7/.classpath
 .metadata
 .DS_Store
