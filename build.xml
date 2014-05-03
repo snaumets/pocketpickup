@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build-all" name="all-projects">
   <target description="Build all projects" name="build-all">
-    <ant antfile="build.xml" target="build-project" dir="./appcompat_v7" inheritAll="false"/>
-    <ant antfile="build.xml" target="build-project" dir="./google-play-services_lib" inheritAll="false"/>
     <ant antfile="build.xml" target="build-project" dir="./PocketPickup" inheritAll="false"/>
   </target>
 </project>
