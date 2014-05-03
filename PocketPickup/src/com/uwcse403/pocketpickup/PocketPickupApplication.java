@@ -17,15 +17,15 @@ public class PocketPickupApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		// Add your initialization code here
+		// read the credentials.txt file to establish connection with Parse
 		AssetManager am = this.getAssets();
 		InputStream is = null;
 		try {
 			is = am.open("credentials.txt");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			Log.e("PocketPickupApplication", "Parse.com credentials not found");
 			e.printStackTrace();
+			// quit the application because we will not be able to send or receive data
 			System.exit(1);
 		}
 		Scanner s = null;
@@ -36,7 +36,6 @@ public class PocketPickupApplication extends Application {
 		clientKey = s.next();
 		s.close();
 		Parse.initialize(this, applicationID, clientKey);
-		
 	}
 	
 
