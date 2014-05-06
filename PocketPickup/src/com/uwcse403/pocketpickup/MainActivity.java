@@ -291,7 +291,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (!locationClient.isConnected()) { // sanity check
+		if (locationClient != null && !locationClient.isConnected()) { // sanity check
 			locationClient.connect();
 		}
 	}
@@ -299,7 +299,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (locationClient.isConnected()) { // sanity check
+		if (locationClient != null && locationClient.isConnected()) { // sanity check
 			locationClient.disconnect();
 		}
 	}
