@@ -47,7 +47,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDxMhNiP22FJ2_S9cOQtHAPbRS-aKb9tBY" />
 
-
         <activity
             android:name="com.uwcse403.pocketpickup.MainActivity"
             android:label="@string/app_name" >
@@ -84,6 +83,22 @@
         <activity
             android:name="com.uwcse403.pocketpickup.SettingsActivity"
             android:label="@string/title_activity_settings"
+            android:parentActivityName="com.uwcse403.pocketpickup.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.uwcse403.pocketpickup.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.uwcse403.pocketpickup.CreateGameActivity"
+            android:label="@string/title_activity_create_game"
+            android:parentActivityName="com.uwcse403.pocketpickup.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.uwcse403.pocketpickup.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.uwcse403.pocketpickup.FindGameActivity"
+            android:label="@string/title_activity_find_game"
             android:parentActivityName="com.uwcse403.pocketpickup.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

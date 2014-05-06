@@ -329,5 +329,17 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 		Intent intent = new Intent(this, SettingsActivity.class);
 		startActivity(intent);
 	}
+	
+	// Simply starts a sign up activity
+	public void createGame(View view) {
+		Intent intent = new Intent(this, CreateGameActivity.class);
+		startActivity(intent);
+	}
+	
+	// Simply starts a log in activity
+	public void findGame(View view) {
+		Intent intent = new Intent(this, FindGameActivity.class);
+		startActivity(intent);
+	}
 
 }

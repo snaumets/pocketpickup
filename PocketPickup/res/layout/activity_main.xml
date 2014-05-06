@@ -36,8 +36,8 @@
 				        android:layout_height="wrap_content"
 				        android:layout_gravity="bottom"
 				        android:layout_weight="1"
-				        android:onClick="signUp"
-				        android:text="@string/sign_up" />
+				        android:onClick="createGame"
+				        android:text="@string/create_game" />
 				
 				    <Button
 				        android:id="@+id/login_button"
@@ -45,8 +45,8 @@
 				        android:layout_height="wrap_content"
 				        android:layout_gravity="bottom"
 				        android:layout_weight="1"
-				        android:onClick="logIn"
-				        android:text="@string/log_in" />
+				        android:onClick="findGame"
+				        android:text="@string/find_game" />
 			</LinearLayout>
     	</LinearLayout>
     </FrameLayout>
