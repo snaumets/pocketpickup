@@ -30,14 +30,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="showTimePickerDialog"
-        android:text="@string/select_time_start" />
+        android:text="@string/select_time" />
 
     <Button
         android:id="@+id/start_date_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="showDatePickerDialog"
-        android:text="@string/select_date_start" />
+        android:text="@string/select_date" />
 
     <TextView
         android:id="@+id/textView2"
@@ -51,13 +51,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="showTimePickerDialog"
-        android:text="@string/select_time_end" />
+        android:text="@string/select_time" />
 
     <Button
         android:id="@+id/end_date_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="showDatePickerDialog"
-        android:text="@string/select_date_end" />
+        android:text="@string/select_date" />
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="126dp"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/search_pref_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="showSportsPreferencesDialog"
+        android:text="@string/change_pref" />
+
+    <Button
+        android:id="@+id/find_game_submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="submitSearch"
+        android:text="@string/find_game" />
 
 </LinearLayout>

@@ -33,12 +33,11 @@
     <string name="title_activity_create_game">Create Game</string>
     <string name="title_activity_find_game">Find Game</string>
     
-    <string name="select_time_start">Select Start Time</string>
-    <string name="select_time_end">Select End Time</string>
-    <string name="select_date_start">Select Start Date</string>
-    <string name="select_date_end">Select End Date</string>
+    <string name="select_time">Any Time</string>
+    <string name="select_date">Any Date</string>
     <string name="select_range_from">From:</string>
     <string name="select_range_to">To:</string>
+    <string name="change_pref">Change Sports Preferences</string>
     
 
 </resources>

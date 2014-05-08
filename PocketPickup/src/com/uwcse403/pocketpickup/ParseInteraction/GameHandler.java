@@ -4,7 +4,7 @@ import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
-import com.uwcse403.pocketpickup.Game;
+import com.uwcse403.pocketpickup.game.Game;
 
 public class GameHandler {
 	

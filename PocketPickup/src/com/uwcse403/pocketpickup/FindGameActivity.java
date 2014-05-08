@@ -1,5 +1,6 @@
 package com.uwcse403.pocketpickup;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import android.app.Activity;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
@@ -22,19 +24,22 @@ public class FindGameActivity extends Activity
 							  implements DatePickerDialog.OnDateSetListener, 
 							   		     TimePickerDialog.OnTimeSetListener {
 	
+	// Bundle IDs for persistent button names
 	private static final String STATE_START_TIME = "fg_start_time";
 	private static final String STATE_END_TIME   = "fg_end_time";
 	private static final String STATE_START_DATE = "fg_start_date";
 	private static final String STATE_END_DATE   = "fg_end_date";
+	
+	// ID for identifying the last pressed button
 	private int mLastButtonId;
 	
 	/* TODO: These fields will be collected into a SearchCriteria object
 	 *       when the Parse team builds it
 	 */
-	private String mStartTimeLabel; 
-	private String mEndTimeLabel;
-	private String mStartDateLabel;
-	private String mEndDateLabel;
+	private Date mStartTime; 
+	private Date mEndTime;
+	private Date mStartDate;
+	private Date mEndDate;
 	
 	/*
 	 * (non-Javadoc)
@@ -47,15 +52,10 @@ public class FindGameActivity extends Activity
 		
 		// Restore button labels if necessary, otherwise init
 		if (savedInstanceState != null) {
-			mStartTimeLabel = savedInstanceState.getString(STATE_START_TIME); 
-			mEndTimeLabel   = savedInstanceState.getString(STATE_END_TIME);
-			mStartDateLabel = savedInstanceState.getString(STATE_START_DATE);
-			mEndDateLabel   = savedInstanceState.getString(STATE_END_DATE);
-		} else {
-			mStartTimeLabel = getResources().getString(R.string.select_time_start);
-			mEndTimeLabel   = getResources().getString(R.string.select_time_end);
-			mStartDateLabel = getResources().getString(R.string.select_date_start);
-			mEndDateLabel   = getResources().getString(R.string.select_date_end);
+			mStartTime = new Date(savedInstanceState.getLong(STATE_START_TIME)); 
+			mEndTime   = new Date(savedInstanceState.getLong(STATE_END_TIME));
+			mStartDate = new Date(savedInstanceState.getLong(STATE_START_DATE));
+			mEndDate   = new Date(savedInstanceState.getLong(STATE_END_DATE));
 		}
 		setButtonLabels();
 	}
@@ -66,19 +66,17 @@ public class FindGameActivity extends Activity
 	 */
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-		savedInstanceState.putString(STATE_START_TIME, mStartTimeLabel);
-		savedInstanceState.putString(STATE_END_TIME,   mEndTimeLabel);
-		savedInstanceState.putString(STATE_START_DATE, mStartDateLabel);
-		savedInstanceState.putString(STATE_END_DATE,   mEndDateLabel);
+		savedInstanceState.putLong(STATE_START_TIME, mStartTime.getTime());
+		savedInstanceState.putLong(STATE_END_TIME,   mEndTime.getTime());
+		savedInstanceState.putLong(STATE_START_DATE, mStartDate.getTime());
+		savedInstanceState.putLong(STATE_END_DATE,   mEndDate.getTime());
 	}
 	
 	private void setButtonLabels() {
-		if (mStartTimeLabel != null) {
-			((Button)findViewById(R.id.start_time_button)).setText(mStartTimeLabel);
-			((Button)findViewById(R.id.end_time_button)).setText(mEndTimeLabel);
-			((Button)findViewById(R.id.start_date_button)).setText(mStartDateLabel);
-			((Button)findViewById(R.id.end_date_button)).setText(mEndDateLabel);
-		}
+		((Button)findViewById(R.id.start_time_button)).setText(getTimeButtonString(mStartTime));
+		((Button)findViewById(R.id.end_time_button)).setText(getTimeButtonString(mEndTime));
+		((Button)findViewById(R.id.start_date_button)).setText(getDateButtonString(mStartDate));
+		((Button)findViewById(R.id.end_date_button)).setText(getDateButtonString(mEndDate));
 	}
 	
 	/*
@@ -137,54 +135,75 @@ public class FindGameActivity extends Activity
 	public void showDatePickerDialog(View v) {
 		mLastButtonId = v.getId();
 	    DialogFragment newFragment = new DatePickerFragment();
+	    Bundle args = new Bundle();
+	    
+	    Date initDate = (v.getId() == R.id.start_date_button) ? mStartDate : mEndDate;
+	    if (initDate != null) {
+	    	args.putLong(DatePickerFragment.STATE_DATE_INIT, initDate.getTime());
+	    }
+	    
+	    if (v.getId() == R.id.start_date_button && mEndDate != null) {
+	    	args.putLong(DatePickerFragment.STATE_DATE_MAX, mEndDate.getTime());
+	    } else if (v.getId() == R.id.end_date_button && mStartDate != null) {
+	    	args.putLong(DatePickerFragment.STATE_DATE_MIN, mStartDate.getTime());
+	    }
+	    
+	    newFragment.setArguments(args);
 	    newFragment.show(getFragmentManager(), "datePicker");
+	}
+	
+	public void submitSearch(View v) {
+		/* validate */
+		
+		/* Create FindGameCriteria object and send */
+		Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
+	}
+	
+	public void showSportsPreferencesDialog(View v) {
+		Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		final Button dateButton = (Button)findViewById(mLastButtonId);
-		String dateString = getFormattedDate(year, monthOfYear, dayOfMonth);
+		Date date = new GregorianCalendar(year, monthOfYear, dayOfMonth).getTime();
 		
 		if (dateButton.getId() == R.id.start_date_button) {
-			mStartDateLabel = dateString;
+			mStartDate = date;
 		} else { // R.id.end_date_button
-			mEndDateLabel = dateString;
+			mEndDate = date;
 		}
-		dateButton.setText(dateString);
+		// default ID doesn't matter
+		dateButton.setText(getDateButtonString(date));
 	}
+	
 	@Override
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 		final Button timeButton = (Button)findViewById(mLastButtonId);
-		String timeString = getFormattedTime(hourOfDay, minute);
+		Date time = new GregorianCalendar(0, 0, 0, hourOfDay, minute).getTime();
 		
 		if (timeButton.getId() == R.id.start_time_button) {
-			mStartTimeLabel = timeString;
+			mStartTime = time;
 		} else { // R.id.end_time_button
-			mEndTimeLabel = timeString;
+			mEndTime = time;
 		}
-		timeButton.setText(timeString);
+		// default ID doesn't matter
+		timeButton.setText(getTimeButtonString(time));
 	}
 	
-	/**
-	 * Formats hours and minute into date string
-	 * @param hourOfDay		Hour for date string in range (1-24)
-	 * @param minute        Minute for date string
-	 * @return	Returns time string in default format of this phone.
-	 */
-	private String getFormattedTime(final int hourOfDay, final int minute) {
-		final GregorianCalendar cal = new GregorianCalendar(0, 0, 0, hourOfDay, minute);
-		return DateFormat.getTimeFormat(this).format(cal.getTime());
+	private String getDateButtonString(final Date date) {
+		if (date == null) {
+			return getResources().getString(R.string.select_date);
+		} else {
+			return DateFormat.getDateFormat(this).format(date);
+		}
 	}
 	
-	/**
-	 * Formats year, month, and day into date string
-	 * @param year			Year for date string
-	 * @param monthOfYear   Month for date string in range (1-12)
-	 * @param dayOfMonth    Day for date string in range (1-31)
-	 * @return  Returns date string in default format of this phone.
-	 */
-	private String getFormattedDate(final int year, final int monthOfYear, final int dayOfMonth) {
-	    final GregorianCalendar cal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-	    return DateFormat.getDateFormat(this).format(cal.getTime());
+	private String getTimeButtonString(final Date date) {
+		if (date == null) {
+			return getResources().getString(R.string.select_time);
+		} else {
+			return DateFormat.getTimeFormat(this).format(date);
+		}
 	}
 }
