@@ -24,7 +24,7 @@ public final class Game {
 	/**
 	 * Default constructor
 	 * 
-	 * @requires no argument is null
+	 * @requires no arguments are null
 	 */
 	public Game(String creatorName, LatLng gameLocation, Date gameDate, String gameType) {
 		this.creatorName = creatorName;
