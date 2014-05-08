@@ -45,7 +45,7 @@
         <!-- The value (API key) must be set per testing device -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDxMhNiP22FJ2_S9cOQtHAPbRS-aKb9tBY" />
+            android:value="YOUR_API_KEY_GOES_HERE" />
 
         <activity
             android:name="com.uwcse403.pocketpickup.MainActivity"
