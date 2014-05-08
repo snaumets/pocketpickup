@@ -12,9 +12,9 @@ public class GameHandler {
 		ParseObject game = new ParseObject("Game");
 		// fill in all the setters
 		game.put("sport", "some sport");
-		game.put("creator", "someone");
-		game.put("location", new ParseGeoPoint(30, 70));
-		
+		game.put("creator", g.creatorName);
+		game.put("location", new ParseGeoPoint(g.gameLocation.latitude, g.gameLocation.longitude));
+		game.put("date", g.gameDate);
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
 				if (e == null) {
@@ -26,3 +26,6 @@ public class GameHandler {
 		});
 	} 
 }
+
+
+
