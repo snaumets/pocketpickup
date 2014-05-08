@@ -5,13 +5,59 @@
     android:layout_height="match_parent"
     android:layout_gravity="top"
     android:orientation="vertical"
-    tools:context="com.uwcse403.pocketpickup.FindGameActivity"
+    tools:context=".FindGameActivity"
     tools:ignore="MergeRootFrame" >
-    
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPostalAddress" >
+
+        <requestFocus />
+    </EditText>
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/find_game" />
-    
+        android:text="@string/select_range_from"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/start_time_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="showTimePickerDialog"
+        android:text="@string/select_time_start" />
+
+    <Button
+        android:id="@+id/start_date_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="showDatePickerDialog"
+        android:text="@string/select_date_start" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_range_to"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/end_time_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="showTimePickerDialog"
+        android:text="@string/select_time_end" />
+
+    <Button
+        android:id="@+id/end_date_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="showDatePickerDialog"
+        android:text="@string/select_date_end" />
+
 </LinearLayout>
