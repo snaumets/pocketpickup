@@ -41,7 +41,8 @@
 		            android:focusableInTouchMode="false"
 		            android:ems="12"
 		            android:onClick="setLocation"
-		            android:gravity="center_horizontal" >
+ 		            android:gravity="center_horizontal" 
+        			android:inputType="textPostalAddress" > 
 		        </EditText>
 		          
 		        <LinearLayout

@@ -397,6 +397,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 	// Simply starts a log in activity
 	public void findGame(View view) {
 		Intent intent = new Intent(this, FindGameActivity.class);
+		Bundle args = new Bundle();
+		args.putCharSequence(FindGameActivity.FINDGAME_LOCATION, ((EditText)findViewById(R.id.locationText)).getText());
+		intent.putExtras(args);
 		startActivity(intent);
 	}
 	

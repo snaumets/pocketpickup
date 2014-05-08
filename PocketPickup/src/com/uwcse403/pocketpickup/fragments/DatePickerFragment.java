@@ -31,19 +31,19 @@ public class DatePickerFragment extends DialogFragment  {
         maxDate = 0L;
         
         Bundle args = this.getArguments();
-        if (args != null) {
-        	// Update calendar if given initial date
-        	long initDate = args.getLong(STATE_DATE_INIT);
-        	if (initDate != 0L) {
-            	c.setTimeInMillis(initDate);
-        	}
-            year = c.get(Calendar.YEAR);
-            month = c.get(Calendar.MONTH);
-            day = c.get(Calendar.DAY_OF_MONTH);
-        	        	
-	        minDate = args.getLong(STATE_DATE_MIN);
-	        maxDate = args.getLong(STATE_DATE_MAX);
-        }
+
+    	// Update calendar if given initial date
+    	long initDate = args.getLong(STATE_DATE_INIT);
+    	if (initDate != 0L) {
+        	c.setTimeInMillis(initDate);
+    	}
+        year = c.get(Calendar.YEAR);
+        month = c.get(Calendar.MONTH);
+        day = c.get(Calendar.DAY_OF_MONTH);
+    	        	
+        minDate = args.getLong(STATE_DATE_MIN);
+        maxDate = args.getLong(STATE_DATE_MAX);
+ 
 
         // Create a new instance of DatePickerDialog and set date constraints
         dpd = new DatePickerDialog(getActivity(), (FindGameActivity)getActivity(), year, month, day);

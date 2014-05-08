@@ -33,11 +33,20 @@
     <string name="title_activity_create_game">Create Game</string>
     <string name="title_activity_find_game">Find Game</string>
     
+    <!--  Find Game Activity Strings -->
     <string name="select_time">Any Time</string>
     <string name="select_date">Any Date</string>
     <string name="select_range_from">From:</string>
     <string name="select_range_to">To:</string>
     <string name="change_pref">Change Sports Preferences</string>
+    <string name="reset">Reset</string>
     
+    <string-array name="radius_choices">
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>25</item>
+    </string-array>
 
 </resources>
