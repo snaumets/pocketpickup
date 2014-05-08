@@ -18,16 +18,19 @@ public final class Game {
 	public final LatLng gameLocation;
 	/**Date and time for the beginning of the game**/
 	public final Date gameDate;
+	/**Type of game**/
+	public final String gameType;
 	
 	/**
 	 * Default constructor
 	 * 
-	 * @requires no argument is null
+	 * @requires no arguments are null
 	 */
-	public Game(String creatorName, LatLng gameLocation, Date gameDate) {
+	public Game(String creatorName, LatLng gameLocation, Date gameDate, String gameType) {
 		this.creatorName = creatorName;
 		this.gameLocation = gameLocation;
 		this.gameDate = gameDate;
+		this.gameType = gameType;
 	}
 	
 }
