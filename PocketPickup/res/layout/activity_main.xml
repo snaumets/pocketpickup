@@ -46,7 +46,7 @@
 		        </EditText>
 		          
 		        <LinearLayout
-			        android:id="@+id/signup_login_container"
+			        android:id="@+id/create_find_container"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
 			        android:layout_gravity="bottom"

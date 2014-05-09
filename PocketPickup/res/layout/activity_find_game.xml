@@ -7,7 +7,14 @@
     android:orientation="vertical"
     tools:context=".FindGameActivity"
     tools:ignore="MergeRootFrame" >
-
+    
+    <TextView
+        android:id="@+id/textViewLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_location"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
     <EditText
         android:id="@+id/fg_location_text"
         android:layout_width="match_parent"
@@ -28,19 +35,29 @@
         android:text="@string/select_range_from"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/start_time_button"
+    <LinearLayout
+        android:id="@+id/from_time_date_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="showTimePickerDialog"
-        android:text="@string/select_time" />
-
-    <Button
-        android:id="@+id/start_date_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="showDatePickerDialog"
-        android:text="@string/select_date" />
+        android:layout_gravity="top"
+        android:orientation="horizontal" >
+    
+	    <Button
+	        android:id="@+id/start_time_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:onClick="showTimePickerDialog"
+	        android:text="@string/select_time" 
+	        android:layout_weight="1"/>
+	
+	    <Button
+	        android:id="@+id/start_date_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:onClick="showDatePickerDialog"
+	        android:text="@string/select_date" 
+	        android:layout_weight="1"/>
+	</LinearLayout>
 
     <TextView
         android:id="@+id/textView2"
@@ -49,44 +66,102 @@
         android:text="@string/select_range_to"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/end_time_button"
+    <LinearLayout
+        android:id="@+id/to_time_date_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="showTimePickerDialog"
-        android:text="@string/select_time" />
+        android:layout_gravity="top"
+        android:orientation="horizontal" >
+	    <Button
+	        android:id="@+id/end_time_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:onClick="showTimePickerDialog"
+	        android:text="@string/select_time" 
+	        android:layout_weight="1"/>
+	
+	    <Button
+	        android:id="@+id/end_date_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:onClick="showDatePickerDialog"
+	        android:text="@string/select_date"
+	        android:layout_weight="1"/>
+	</LinearLayout>
 
-    <Button
-        android:id="@+id/end_date_button"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textViewRadius"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="showDatePickerDialog"
-        android:text="@string/select_date" />
-
-    <Spinner
-        android:id="@+id/radius_spinner"
-        android:layout_width="126dp"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/search_pref_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="showSportsPreferencesDialog"
-        android:text="@string/change_pref" />
+        android:text="@string/select_radius"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
     
-    <Button
-        android:id="@+id/search_reset_button"
+    <LinearLayout
+        android:id="@+id/radius_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="resetSearchForms"
-        android:text="@string/reset" />
+        android:layout_gravity="top"
+        android:orientation="horizontal">
+    
+	    <Spinner
+	        android:id="@+id/radius_spinner"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"/>
+	    
+	    <TextView
+	        android:id="@+id/textViewRadiusMiles"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/select_radius_miles"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:layout_weight="1"/>
+	</LinearLayout>
 
-    <Button
-        android:id="@+id/find_game_submit_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="submitSearch"
-        android:text="@string/find_game" />
+    <LinearLayout
+        android:id="@+id/pref_reset_container"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:layout_gravity="top">
+   	
+	    <Button
+	        android:id="@+id/search_pref_button"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:onClick="showSportsPreferencesDialog"
+	        android:text="@string/change_pref"
+	        android:layout_weight=".75"/>
+	    <Button
+	        android:id="@+id/search_reset_button"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:onClick="resetSearchForms"
+	        android:text="@string/reset"
+	        android:layout_weight=".25"/>
+	    
+	</LinearLayout>
+	
+	<LinearLayout
+	    android:id="@+id/find_game_container"
+	    android:layout_width="match_parent" 
+	    android:layout_height="match_parent"
+	    android:orientation="horizontal"
+	    android:gravity="bottom">
+    
+	    <View android:layout_height="0dp"  
+		    android:layout_width="0dp"
+		    android:layout_weight=".25" />
+	    <Button
+	        android:id="@+id/find_game_submit_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:onClick="submitSearch"
+	        android:text="@string/find_game" 
+	        android:layout_weight=".5"/>
+	    <View android:layout_height="0dp"  
+		    android:layout_width="0dp"
+		    android:layout_weight=".25" />
+	</LinearLayout>
 
 </LinearLayout>
