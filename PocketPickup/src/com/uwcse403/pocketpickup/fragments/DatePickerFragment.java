@@ -3,12 +3,11 @@ package com.uwcse403.pocketpickup.fragments;
 import java.util.Calendar;
 
 import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.widget.DatePicker;
-
-import com.uwcse403.pocketpickup.FindGameActivity;
 
 public class DatePickerFragment extends DialogFragment  {
 	public static final String STATE_DATE_INIT = "dpf_date_init";
@@ -27,8 +26,6 @@ public class DatePickerFragment extends DialogFragment  {
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
-        minDate = c.getTimeInMillis();
-        maxDate = 0L;
         
         Bundle args = this.getArguments();
 
@@ -46,11 +43,15 @@ public class DatePickerFragment extends DialogFragment  {
  
 
         // Create a new instance of DatePickerDialog and set date constraints
-        dpd = new DatePickerDialog(getActivity(), (FindGameActivity)getActivity(), year, month, day);
+        dpd = new DatePickerDialog(getActivity(), (OnDateSetListener)getActivity(), year, month, day);
         final DatePicker picker = dpd.getDatePicker();
         
         // minimum date defaults to current date
-        picker.setMinDate(minDate);
+        if (minDate != 0L) {
+        	picker.setMinDate(minDate);
+        } else {
+        	picker.setMinDate(c.getTimeInMillis());
+        }
         
         // no default maximum date
         if (maxDate != 0L) {

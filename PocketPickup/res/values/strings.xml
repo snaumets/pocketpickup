@@ -51,5 +51,14 @@
         <item>10</item>
         <item>25</item>
     </string-array>
+    
+    <!--  Create Game Activity Strings -->
+    <string name="create_select_time">Select Time</string>
+    <string name="create_select_date">Select Date</string>
+    
+    <string-array name="sport_choices">
+        <item>Basketball</item>
+        <item>Add more here!</item>
+    </string-array>
 
 </resources>
