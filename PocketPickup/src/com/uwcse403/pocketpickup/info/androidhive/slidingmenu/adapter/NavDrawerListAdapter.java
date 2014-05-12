@@ -1,8 +1,5 @@
 package com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter;
 
-import com.uwcse403.pocketpickup.R;
-import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
-
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -13,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.uwcse403.pocketpickup.R;
+import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
 
 public class NavDrawerListAdapter extends BaseAdapter {
 	

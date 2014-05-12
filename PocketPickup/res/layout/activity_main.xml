@@ -41,11 +41,12 @@
 		            android:focusableInTouchMode="false"
 		            android:ems="12"
 		            android:onClick="setLocation"
-		            android:gravity="center_horizontal" >
+ 		            android:gravity="center_horizontal" 
+        			android:inputType="textPostalAddress" > 
 		        </EditText>
 		          
 		        <LinearLayout
-			        android:id="@+id/signup_login_container"
+			        android:id="@+id/create_find_container"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
 			        android:layout_gravity="bottom"
@@ -56,7 +57,7 @@
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
 				        android:layout_gravity="bottom"
-				        android:layout_weight=".75"
+				        android:layout_weight=".9"
 				        android:onClick="createGame"
 				        android:text="@string/create_game" />
 				
@@ -68,9 +69,18 @@
 				        android:layout_weight="1"
 				        android:onClick="findGame"
 				        android:text="@string/find_game" />
-			</LinearLayout>
+				</LinearLayout>
+    		</LinearLayout>
     	</LinearLayout>
-    	</LinearLayout>
+    	<ImageView
+	        android:id="@+id/pinImageView"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"	        
+	        android:src="@drawable/ic_green_pin"
+	        android:contentDescription="pin"
+	        android:layout_gravity="center"
+	        android:paddingBottom="130dp"/>
+    	<!-- this padding bottom value was chosen through testing, not calculated -->
     </FrameLayout>
 
     <!-- Listview to display slider menu -->

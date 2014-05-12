@@ -3,8 +3,46 @@ package com.uwcse403.pocketpickup;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
+import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
+
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.TypedArray;
+import android.graphics.Point;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -16,33 +54,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
-
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.widget.DrawerLayout;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.TypedArray;
-import android.graphics.Point;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.Display;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.Toast;
 
 // This activity is started when Pocket Pickup is launched. It contains a map, sign up and log in buttons,
 // and includes a sliding menu (the sliding menu was implemented by following a tutorial at 
@@ -76,29 +89,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 		setContentView(R.layout.activity_main);
 		Log.v("MainActivity", "in onCreate()");
 		
-		//////
 		// Toast.makeText(this, "test", Toast.LENGTH_LONG).show(); // use this to print messages on phone screen
 		setUpMapIfNeeded();
-		
-		// Make a new thread that will update the location text field periodically
-		new Thread(new Runnable() {
-	        @Override
-	        public void run() {
-	            while (true) {
-	                try {
-	                    Thread.sleep(1000);
-	                    mHandler.post(new Runnable() {
-	                        @Override
-	                        public void run() {
-	                        	updateLocationTextField();
-	                        }
-	                    });
-	                } catch (Exception e) {
-	                    // TODO: handle exception
-	                }
-	            }
-	        }
-	    }).start();
 		
 		mTitle = mDrawerTitle = getTitle();
 
@@ -244,7 +236,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		// Pass any configuration change to the drawer toggls
+		// Pass any configuration change to the drawer toggles
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 	
@@ -279,6 +271,14 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 
 	            locationClient = new LocationClient(this, this, this);
 	            locationClient.connect(); // upon success, onConnected() is called
+	            
+	            // This will update the location text field when the camera changes
+	            googleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+	            	@Override
+	            	public void onCameraChange(CameraPosition cameraPosition) {
+	            		updateLocationTextField();
+	            	}
+	            });
 	        }
 	    }
 	}
@@ -288,8 +288,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 	public void updateLocationTextField() {
 		Geocoder geoCoder = new Geocoder(getApplicationContext());
 		if (googleMap != null) {
-			LinearLayout ll = (LinearLayout) findViewById(R.id.container);
-			Point point = new Point(ll.getWidth()/2, ll.getHeight()/2);
+			// Find the point of the center of the map fragment
+			View map = findViewById(R.id.map);
+			Point point = new Point(map.getWidth()/2, map.getHeight()/2);
 			
 			Projection proj = googleMap.getProjection();
 			LatLng latLngLocation = proj.fromScreenLocation(point);
@@ -402,6 +403,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 	// Simply starts a log in activity
 	public void findGame(View view) {
 		Intent intent = new Intent(this, FindGameActivity.class);
+		Bundle args = new Bundle();
+		args.putCharSequence(FindGameActivity.FINDGAME_LOCATION, ((EditText)findViewById(R.id.locationText)).getText());
+		intent.putExtras(args);
 		startActivity(intent);
 	}
 	
