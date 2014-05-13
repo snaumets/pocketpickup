@@ -5,10 +5,9 @@ import java.util.Calendar;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-
-import com.uwcse403.pocketpickup.FindGameActivity;
 
 public class TimePickerFragment extends DialogFragment {
 	
@@ -20,7 +19,7 @@ public class TimePickerFragment extends DialogFragment {
         int minute = c.get(Calendar.MINUTE);
         
         // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), (FindGameActivity)getActivity(), hour, minute,
+        return new TimePickerDialog(getActivity(), (OnTimeSetListener)getActivity(), hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
     }
 }
