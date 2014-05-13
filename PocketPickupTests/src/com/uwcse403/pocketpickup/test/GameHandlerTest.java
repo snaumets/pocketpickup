@@ -1,15 +1,36 @@
 package com.uwcse403.pocketpickup.test;
 
-import junit.framework.TestCase;
+import java.util.Date;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import android.test.ApplicationTestCase;
 
-public class GameHandlerTest extends TestCase{
+import com.google.android.gms.maps.model.LatLng;
+import com.uwcse403.pocketpickup.PocketPickupApplication;
+import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
+import com.uwcse403.pocketpickup.game.Game;
+
+public class GameHandlerTest extends ApplicationTestCase{
 	
 	public GameHandlerTest() {
-		super();
+		super(PocketPickupApplication.class);
+	}
+	
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		createApplication();
+		doTests();
+	}
+	
+	protected void doTests() {
+		//alwaysPass();
+		//alwaysFail();
+		Game g = new Game("isaiah", new LatLng(0,0), new Date(), "bball");
+		GameHandler.createGame(g);
+	}
+	
+	@Override
+	protected void tearDown() {
+		terminateApplication();
 	}
 }
