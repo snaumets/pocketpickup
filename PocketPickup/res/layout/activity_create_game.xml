@@ -9,14 +9,20 @@
     tools:ignore="MergeRootFrame" >
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/cg_location_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPostalAddress" />
+        android:inputType="textPostalAddress" 
+		android:cursorVisible="false"
+		android:focusable="false"
+        android:focusableInTouchMode="false"
+		android:ems="12"
+		android:onClick="setLocation"
+		android:gravity="center_horizontal" >
+	</EditText>
 
     <Spinner
-        android:id="@+id/spinner1"
+        android:id="@+id/cg_sports_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -33,17 +39,24 @@
         android:layout_height="wrap_content"
         android:text="@string/create_select_time"
         android:onClick="showTimePickerDialog" />
+    
+    <Spinner
+        android:id="@+id/cg_duration_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/cg_reset"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="resetCreate"
         android:text="@string/reset" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/cg_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="submitCreate"
         android:text="@string/create_game" />
     
 </LinearLayout>
