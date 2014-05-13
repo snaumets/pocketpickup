@@ -18,7 +18,8 @@ public class GameHandler {
 		game.put("sport", "some sport");
 		game.put("creator", g.creatorName);
 		game.put("location", new ParseGeoPoint(g.gameLocation.latitude, g.gameLocation.longitude));
-		game.put("date", g.gameDate);
+		game.put("startDate", g.gameStartDate);
+		game.put("endDate", g.gameEndDate);
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
 				if (e == null) {
