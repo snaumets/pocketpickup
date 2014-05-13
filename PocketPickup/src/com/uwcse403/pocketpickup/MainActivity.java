@@ -4,24 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
-import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.Projection;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
-import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
-
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.widget.DrawerLayout;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -40,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -51,8 +32,10 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
@@ -61,6 +44,9 @@ import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerIte
 // and includes a sliding menu (the sliding menu was implemented by following a tutorial at 
 // http://www.androidhive.info/2013/11/android-sliding-menu-using-navigation-drawer/ )
 public class MainActivity extends Activity implements ConnectionCallbacks, OnConnectionFailedListener {
+	private static final int CREATE_GAME_CODE = 1111;
+	private static final int FIND_GAME_CODE   = 2222;
+	
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
@@ -403,7 +389,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 		args.putDouble(CreateGameActivity.CREATEGAME_LATITUDE, mLatLngLocation.latitude);
 		args.putDouble(CreateGameActivity.CREATEGAME_LONGITUDE, mLatLngLocation.longitude);
 		intent.putExtras(args);
-		startActivity(intent);
+		startActivityForResult(intent, CREATE_GAME_CODE);
 	}
 	
 	// Simply starts a log in activity
@@ -414,7 +400,22 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 		args.putDouble(FindGameActivity.FINDGAME_LATITUDE, mLatLngLocation.latitude);
 		args.putDouble(FindGameActivity.FINDGAME_LONGITUDE, mLatLngLocation.longitude);
 		intent.putExtras(args);
-		startActivity(intent);
+		startActivityForResult(intent, FIND_GAME_CODE);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case CREATE_GAME_CODE:
+			Toast.makeText(this, "Create game returned!", Toast.LENGTH_LONG).show();
+			break;
+		case FIND_GAME_CODE:
+			Toast.makeText(this, "Find game returned!", Toast.LENGTH_LONG).show();
+			break;
+		default:
+			// Do nothing
+			break;
+		}
 	}
 	
 	// Simply starts a log in activity

@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
+import com.uwcse403.pocketpickup.game.Game;
 
 public class CreateGameActivity extends Activity
 								implements DatePickerDialog.OnDateSetListener, 
@@ -34,6 +36,7 @@ public class CreateGameActivity extends Activity
 	public static final String CREATEGAME_LONGITUDE = "creategame_longitude";
 	
 	private static final long FIVE_MIN = (5 * 60 * 1000L);
+	private static final long HOUR = (60 * 60 * 1000L);
 
 	// Bundle IDs for persistent button names
 	private static final String STATE_GAME_TIME = "cg_time";
@@ -219,7 +222,14 @@ public class CreateGameActivity extends Activity
 	}
 	
 	public void submitCreate(View v) {
-		Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
+		final Calendar end = Calendar.getInstance();
+		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
+		final Game createGame = new Game("testUser", mLatLng, mDate.getTime(), end.getTime(), mSport, 2 /* TODO: default game size */);
+		setResult(Activity.RESULT_OK);
+		finish();
+		// TODO: uncomment for functionality
+		// GameHandler.createGame(createGame);
+		
 	}
 	
 	public void resetCreate(View v) {
