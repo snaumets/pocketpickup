@@ -36,7 +36,7 @@
     <!--  Find Game Activity Strings -->
     <string name="select_location">Location:</string>
     <string name="select_radius">Radius:</string>
-    <string name="select_radius_miles">Miles</string>
+    <string name="select_radius_miles">Mile(s)</string>
     <string name="select_time">Any Time</string>
     <string name="select_date">Any Date</string>
     <string name="select_range_from">From:</string>
@@ -70,6 +70,10 @@
     <!--  Create Game Activity Strings -->
     <string name="create_select_time">Select Time</string>
     <string name="create_select_date">Select Date</string>
+    <string name="cg_on">On:</string>
+    <string name="cg_game">Game:</string>
+    <string name="cg_duration">Duration:</string>
+    <string name="cg_duration_units">Hour(s)</string>
     
     <string-array name="sport_choices">
         <item>Basketball</item>

@@ -8,6 +8,13 @@
     tools:context="com.uwcse403.pocketpickup.CreateGameActivity"
     tools:ignore="MergeRootFrame" >
 
+    <TextView
+        android:id="@+id/textViewLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_location"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
     <EditText
         android:id="@+id/cg_location_text"
         android:layout_width="match_parent"
@@ -20,43 +27,95 @@
 		android:onClick="setLocation"
 		android:gravity="center_horizontal" >
 	</EditText>
+	
+    <TextView
+        android:id="@+id/cg_gametype_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cg_game"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Spinner
         android:id="@+id/cg_sports_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/create_date_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/create_select_date"
-        android:onClick="showDatePickerDialog" />
-
-    <Button
-        android:id="@+id/create_time_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/create_select_time"
-        android:onClick="showTimePickerDialog" />
     
-    <Spinner
-        android:id="@+id/cg_duration_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/cg_datetime_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cg_on"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/cg_reset"
+    <LinearLayout
+        android:id="@+id/cg_time_date_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="resetCreate"
-        android:text="@string/reset" />
+        android:layout_gravity="top"
+        android:orientation="horizontal" >
+    
+	    <Button
+	        android:id="@+id/create_date_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/create_select_date"
+	        android:onClick="showDatePickerDialog"
+	        android:layout_weight="1" />
+	
+	    <Button
+	        android:id="@+id/create_time_button"	
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/create_select_time"
+	        android:onClick="showTimePickerDialog"
+	        android:layout_weight="1" />	    
+	</LinearLayout>
 
-    <Button
-        android:id="@+id/cg_submit"
-        android:layout_width="match_parent"
+    
+   <TextView
+        android:id="@+id/cg_duration_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="submitCreate"
-        android:text="@string/create_game" />
+        android:text="@string/cg_duration"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+   
+    <LinearLayout
+        android:id="@+id/cg_duration_reset_container"
+	    android:layout_width="match_parent" 
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:layout_gravity="top">
+
+        <Spinner
+            android:id="@+id/cg_duration_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75" />
+
+        <Button
+            android:id="@+id/cg_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:onClick="resetCreate"
+            android:text="@string/reset" />
+    </LinearLayout>
+
+    <LinearLayout
+	    android:id="@+id/create_game_container"
+	    android:layout_width="match_parent" 
+	    android:layout_height="match_parent"
+	    android:orientation="horizontal"
+	    android:gravity="bottom">
+
+        <Button
+            android:id="@+id/cg_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal|bottom"
+            android:onClick="submitCreate"
+            android:text="@string/create_game" />
+
+    </LinearLayout>
     
 </LinearLayout>
