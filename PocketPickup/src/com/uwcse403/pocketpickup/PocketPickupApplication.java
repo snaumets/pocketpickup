@@ -10,9 +10,10 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 public class PocketPickupApplication extends Application {
-
+	public static final String LOG_TAG = "PocketPickupApplication";
 
 	@Override
 	public void onCreate() {
@@ -23,7 +24,7 @@ public class PocketPickupApplication extends Application {
 		try {
 			is = am.open("credentials.txt");
 		} catch (IOException e) {
-			Log.e("PocketPickupApplication", "Parse.com credentials not found");
+			Log.e(LOG_TAG, "Parse.com credentials not found");
 			e.printStackTrace();
 			// quit the application because we will not be able to send or receive data
 			System.exit(1);
@@ -36,7 +37,6 @@ public class PocketPickupApplication extends Application {
 		clientKey = s.next();
 		s.close();
 		Parse.initialize(this, applicationID, clientKey);
+		Log.v(LOG_TAG, "parse credentials success");
 	}
-	
-
 }
