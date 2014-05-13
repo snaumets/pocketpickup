@@ -127,7 +127,7 @@ public class CreateGameActivity extends Activity
 			mDate = Calendar.getInstance();
 		}
 		mDate.set(year, monthOfYear, dayOfMonth);
-		((Button)f	indViewById(R.id.create_date_button)).setText(getDateButtonString(mDate));
+		((Button)findViewById(R.id.create_date_button)).setText(getDateButtonString(mDate));
 	}
 	
 	private String getDateButtonString(final Calendar date) {
