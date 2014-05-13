@@ -64,6 +64,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
+	private LatLng mLatLngLocation;
 
 	// nav drawer title
 	private CharSequence mDrawerTitle;
@@ -293,11 +294,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 			Point point = new Point(map.getWidth()/2, map.getHeight()/2);
 			
 			Projection proj = googleMap.getProjection();
-			LatLng latLngLocation = proj.fromScreenLocation(point);
+			mLatLngLocation = proj.fromScreenLocation(point);
 			/*Marker mark = googleMap.addMarker(new MarkerOptions().position(latLngLocation));*/
 			
 			try {
-				List<Address> matches = geoCoder.getFromLocation(latLngLocation.latitude, latLngLocation.longitude, 1);
+				List<Address> matches = geoCoder.getFromLocation(mLatLngLocation.latitude, mLatLngLocation.longitude, 1);
 				Address bestMatch = (matches.isEmpty() ? null : matches.get(0));
 				EditText text = (EditText) findViewById(R.id.locationText);
 				if (bestMatch != null) {
@@ -397,6 +398,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 	// Simply starts a sign up activity
 	public void createGame(View view) {
 		Intent intent = new Intent(this, CreateGameActivity.class);
+		Bundle args = new Bundle();
+		args.putCharSequence(CreateGameActivity.CREATEGAME_LOCATION, ((EditText)findViewById(R.id.locationText)).getText());
+		args.putDouble(CreateGameActivity.CREATEGAME_LATITUDE, mLatLngLocation.latitude);
+		args.putDouble(CreateGameActivity.CREATEGAME_LONGITUDE, mLatLngLocation.longitude);
+		intent.putExtras(args);
 		startActivity(intent);
 	}
 	
@@ -405,6 +411,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks, OnCon
 		Intent intent = new Intent(this, FindGameActivity.class);
 		Bundle args = new Bundle();
 		args.putCharSequence(FindGameActivity.FINDGAME_LOCATION, ((EditText)findViewById(R.id.locationText)).getText());
+		args.putDouble(FindGameActivity.FINDGAME_LATITUDE, mLatLngLocation.latitude);
+		args.putDouble(FindGameActivity.FINDGAME_LONGITUDE, mLatLngLocation.longitude);
 		intent.putExtras(args);
 		startActivity(intent);
 	}

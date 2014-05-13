@@ -11,10 +11,17 @@ import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
 
@@ -22,11 +29,18 @@ public class CreateGameActivity extends Activity
 								implements DatePickerDialog.OnDateSetListener, 
 					   		     		   TimePickerDialog.OnTimeSetListener {
 	public static final String CREATE_GAME_TIME = "cg_game_time";
+	public static final String CREATEGAME_LOCATION  = "creategame_location";
+	public static final String CREATEGAME_LATITUDE  = "creategame_latitude";
+	public static final String CREATEGAME_LONGITUDE = "creategame_longitude";
+	
+	private static final long FIVE_MIN = (5 * 60 * 1000L);
 
 	// Bundle IDs for persistent button names
 	private static final String STATE_GAME_TIME = "cg_time";
 	
 	private Calendar mDate;
+	private LatLng   mLatLng;
+	private int      mDuration;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +50,45 @@ public class CreateGameActivity extends Activity
 		long gameTime = (savedInstanceState == null) ? 0L : savedInstanceState.getLong(CREATE_GAME_TIME);
 		mDate = initDate(gameTime);
 		
+		final Bundle args = getIntent().getExtras();
+		
+		EditText editText = (EditText)findViewById(R.id.cg_location_text);
+		editText.setText(args.getCharSequence(CREATEGAME_LOCATION));
+		final double lat = args.getDouble(CREATEGAME_LATITUDE);
+		final double lon = args.getDouble(CREATEGAME_LONGITUDE);
+		mLatLng = new LatLng(lat, lon);
+		
 		setButtonLabels();
+		
+		// Initialize duration choices
+		Spinner durationSpinner = (Spinner)findViewById(R.id.cg_duration_spinner);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.duration_choices, 
+				android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		durationSpinner.setAdapter(adapter);
+		durationSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int pos, long id) {
+				String durationStr = (String)parent.getItemAtPosition(pos);
+				mDuration = Integer.parseInt(durationStr);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// do nothing
+			}
+			
+		});
 	}
 	
 	private Calendar initDate(long time) {
 		Calendar c = Calendar.getInstance();
-		if (time != 0L) {
-			c.setTimeInMillis(time);
+		if (time == 0L) {
+			time = c.getTimeInMillis() + FIVE_MIN;
 		}
+		c.setTimeInMillis(time);
 		return c;
 	}
 	
@@ -104,7 +149,7 @@ public class CreateGameActivity extends Activity
 	    
 	    if (mDate != null) {
 	    	args.putLong(DatePickerFragment.STATE_DATE_INIT, mDate.getTimeInMillis());
-	    	args.putLong(DatePickerFragment.STATE_DATE_MIN, mDate.getTimeInMillis());
+	    	args.putLong(DatePickerFragment.STATE_DATE_MIN, Calendar.getInstance().getTimeInMillis());
 	    }
 
 	    newFragment.setArguments(args);
@@ -144,5 +189,22 @@ public class CreateGameActivity extends Activity
 		} else {
 			return DateFormat.getTimeFormat(this).format(date.getTime());
 		}
+	}
+	
+	public void setLocation(View v) {
+		Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
+	}
+	
+	public void submitCreate(View v) {
+		Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
+	}
+	
+	public void resetCreate(View v) {
+		mDate = initDate(0);
+		
+		Spinner spinner = (Spinner)findViewById(R.id.cg_duration_spinner);
+		spinner.setSelection(0);
+		
+		setButtonLabels();	
 	}
 }
