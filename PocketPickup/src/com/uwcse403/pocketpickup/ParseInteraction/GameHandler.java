@@ -2,9 +2,13 @@ package com.uwcse403.pocketpickup.ParseInteraction;
 
 import android.util.Log;
 
+import com.parse.DeleteCallback;
+import com.parse.GetCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 import com.uwcse403.pocketpickup.game.Game;
 
@@ -31,7 +35,33 @@ public class GameHandler {
 				}
 			}
 		});
-	} 
+	}
+	
+	public static void removeGame(String id) {
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
+		query.getInBackground(id, new GetCallback<ParseObject>() {
+			public void done(ParseObject object, ParseException e) {
+				if(e == null) {
+					Log.v(LOG_TAG, "Successfully got object to delete");
+					object.deleteInBackground(new DeleteCallback() {
+						public void done(ParseException pe) {
+							if(pe == null) {
+								Log.v(LOG_TAG, "Successfully deleted object");
+							}
+							else {
+								Log.v(LOG_TAG, "Failed to delete object");
+							}
+						}
+					});
+				}
+				else {
+					Log.v(LOG_TAG, "Failed to get object for deletion");
+					return;
+				}
+			}
+		});
+	}
+	
 }
 
 
