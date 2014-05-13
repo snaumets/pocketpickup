@@ -3,7 +3,11 @@ package com.uwcse403.pocketpickup.test;
 import java.util.List;
 import java.util.Random;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.test.ApplicationTestCase;
+import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -13,6 +17,7 @@ import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.game.Game;
 
 public class GameHandlerTest extends ApplicationTestCase{
+	public static final String LOG_TAG = "GameHandlerTest";
 	
 	private static Game game;
 	private static int randomIdealSize;
@@ -27,7 +32,21 @@ public class GameHandlerTest extends ApplicationTestCase{
 	protected void setUp() throws Exception {
 		super.setUp();
 		createApplication();
-		doTests();
+		assertTrue(isNetworkConnected());
+		if (isNetworkConnected()) {
+			doTests();
+		}
+	}
+	
+	private boolean isNetworkConnected() {
+		ConnectivityManager cm = (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo ni = cm.getActiveNetworkInfo();
+		if (ni == null) {
+			// There are no active networks.
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	protected void doTests() {
