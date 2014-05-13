@@ -1,6 +1,7 @@
 package com.uwcse403.pocketpickup;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
+import com.uwcse403.pocketpickup.game.FindGameCriteria;
 
 public class FindGameActivity extends Activity
 							  implements DatePickerDialog.OnDateSetListener, 
@@ -93,7 +95,7 @@ public class FindGameActivity extends Activity
 		Bundle args = getIntent().getExtras();
 		EditText editText = (EditText)findViewById(R.id.fg_location_text);
 		editText.setText(args.getCharSequence(FINDGAME_LOCATION));
-		
+
 		final double lat = args.getDouble(FINDGAME_LATITUDE);
 		final double lon = args.getDouble(FINDGAME_LONGITUDE);
 		mLatLng = new LatLng(lat, lon);
@@ -206,11 +208,28 @@ public class FindGameActivity extends Activity
 		setButtonLabels();
 	}
 	
+	/**
+	 * This method is called when the 'Find Game' button is clicked to submit the form and send the search
+	 * criteria to the backend.
+	 * @param v
+	 */
 	public void submitSearch(View v) {
 		/* validate */
 		
 		/* Create FindGameCriteria object and send */
-		Toast.makeText(this, "r: " + mRadius, Toast.LENGTH_LONG).show();
+		long msInDay = 1000 * 60 * 60 * 24; // 1000 ms/s * (60 s/min) * (60 min/hour) * (24 hr/day)
+		// create a long representing the date or time only by doing some simple arithmetic
+		long startDate = mStartDate != null ? mStartDate.getTimeInMillis() / msInDay * msInDay : 0;
+		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / msInDay * msInDay : 0;
+		long startTime = mStartTime != null ? mStartTime.getTimeInMillis() % msInDay : 0;
+		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % msInDay : 0;
+		
+		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, "");
+		// pass this criteria object to the game handler
+		
+		setResult(Activity.RESULT_OK);
+		finish();
+		//Toast.makeText(this, "r: " + mRadius, Toast.LENGTH_LONG).show();
 	}
 	
 	public void showSportsPreferencesDialog(View v) {
