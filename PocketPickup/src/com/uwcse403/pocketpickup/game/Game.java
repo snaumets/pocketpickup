@@ -22,7 +22,7 @@ public final class Game {
 	public final Date gameEndDate;
 	/**Type of game**/
 	public final String gameType;
-	
+
 	/**
 	 * Default constructor
 	 * 
@@ -36,5 +36,5 @@ public final class Game {
 		this.gameEndDate = gameEndDate;
 		this.gameType = gameType;
 	}
-	
+
 }
