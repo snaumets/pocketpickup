@@ -9,17 +9,19 @@ import android.app.Application;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.parse.DeleteCallback;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.uwcse403.pocketpickup.ParseInteraction.DeleteCallbackWithArgs;
+import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 
 public class PocketPickupApplication extends Application {
 	public static final String LOG_TAG = "PocketPickupApplication";
 	public List<ParseObject> allowedSports;
+	public BiMap<String,ParseObject> sportsAndObjs;
 	final String SPORTS_CACHE_LABEL = "sports";
 
 	@Override
@@ -50,6 +52,7 @@ public class PocketPickupApplication extends Application {
 	}
 
 	private void getSports() {
+		sportsAndObjs = HashBiMap.create();
 		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Sport");
 		// looks in the cache first
 		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
@@ -60,6 +63,7 @@ public class PocketPickupApplication extends Application {
 					allowedSports = sports;
 					Log.v(LOG_TAG, "successfully retreived sports from cache or network");
 					for (int i = 0; i < sports.size(); i++) {
+						sportsAndObjs.put(sports.get(i).getString(DbColumns.SPORT_NAME), sports.get(i));
 						Log.v(LOG_TAG, sports.get(i).getString("name"));
 					}
 				} else {

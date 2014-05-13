@@ -1,5 +1,7 @@
 package com.uwcse403.pocketpickup.ParseInteraction;
 
+import java.util.List;
+
 import android.util.Log;
 
 import com.parse.DeleteCallback;
@@ -9,6 +11,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
 
 public class GameHandler {
@@ -79,6 +82,15 @@ public class GameHandler {
 				}
 			}
 		});
+	}
+
+	/**
+	 * 
+	 * @param criteria: FindGameCriteria object containing search criteria
+	 */
+	public static List<Game> findGame(FindGameCriteria criteria) {
+		ParseQuery<ParseObject> query = new ParseQuery("Game");
+		return null;
 	}
 
 }

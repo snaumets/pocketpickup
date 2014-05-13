@@ -7,7 +7,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.test.ApplicationTestCase;
-import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -16,7 +15,7 @@ import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.game.Game;
 
-public class GameHandlerTest extends ApplicationTestCase{
+public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication>{
 	public static final String LOG_TAG = "GameHandlerTest";
 	
 	private static Game game;
@@ -37,7 +36,10 @@ public class GameHandlerTest extends ApplicationTestCase{
 			doTests();
 		}
 	}
-	
+	/**
+	 * Checks to see if there is a network connection 
+	 * @return true if there is wifi connection, false otherwise
+	 */
 	private boolean isNetworkConnected() {
 		ConnectivityManager cm = (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo ni = cm.getActiveNetworkInfo();
