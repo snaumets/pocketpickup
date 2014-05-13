@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
 
@@ -28,8 +29,9 @@ public class FindGameActivity extends Activity
 							  implements DatePickerDialog.OnDateSetListener, 
 							   		     TimePickerDialog.OnTimeSetListener {
 	// Argument IDs
-	public static final String FINDGAME_LOCATION = "findgame_location";
-	
+	public static final String FINDGAME_LOCATION  = "findgame_location";
+	public static final String FINDGAME_LATITUDE  = "findgame_latitude";
+	public static final String FINDGAME_LONGITUDE = "findgame_longitude";
 	
 	// Bundle IDs for persistent button names
 	private static final String STATE_START_TIME = "fg_start_time";
@@ -38,11 +40,9 @@ public class FindGameActivity extends Activity
 	private static final String STATE_END_DATE   = "fg_end_date";
 	
 	// ID for identifying the last pressed button
-	private int mLastButtonId;
+	private int    mLastButtonId;
+	private LatLng mLatLng;
 	
-	/* TODO: These fields will be collected into a SearchCriteria object
-	 *       when the Parse team builds it
-	 */
 	private Calendar mStartTime; 
 	private Calendar mEndTime;
 	private Calendar mStartDate;
@@ -67,6 +67,7 @@ public class FindGameActivity extends Activity
 		}
 		setButtonLabels();
 		
+		// Initialize radius choices
 		Spinner radiusSpinner = (Spinner)findViewById(R.id.radius_spinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.radius_choices, 
 				android.R.layout.simple_spinner_item);
@@ -88,10 +89,14 @@ public class FindGameActivity extends Activity
 			
 		});
 		
+		// Initialize location text field from passed in location
 		Bundle args = getIntent().getExtras();
 		EditText editText = (EditText)findViewById(R.id.fg_location_text);
 		editText.setText(args.getCharSequence(FINDGAME_LOCATION));
-		Toast.makeText(this, "editText: " + args.getString(FINDGAME_LOCATION), Toast.LENGTH_LONG).show();
+		
+		final double lat = args.getDouble(FINDGAME_LATITUDE);
+		final double lon = args.getDouble(FINDGAME_LONGITUDE);
+		mLatLng = new LatLng(lat, lon);
 	}
 	
 	private Calendar initDate(long time) {
@@ -123,15 +128,6 @@ public class FindGameActivity extends Activity
 		((Button)findViewById(R.id.end_time_button)).setText(getTimeButtonString(mEndTime));
 		((Button)findViewById(R.id.start_date_button)).setText(getDateButtonString(mStartDate));
 		((Button)findViewById(R.id.end_date_button)).setText(getDateButtonString(mEndDate));
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see android.app.Activity#onResume()
-	 */
-	@Override
-	protected void onResume() {
-		super.onResume();
 	}
 
 	/*

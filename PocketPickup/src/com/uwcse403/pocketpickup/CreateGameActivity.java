@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
 
@@ -22,11 +23,15 @@ public class CreateGameActivity extends Activity
 								implements DatePickerDialog.OnDateSetListener, 
 					   		     		   TimePickerDialog.OnTimeSetListener {
 	public static final String CREATE_GAME_TIME = "cg_game_time";
+	public static final String CREATEGAME_LOCATION  = "creategame_location";
+	public static final String CREATEGAME_LATITUDE  = "creategame_latitude";
+	public static final String CREATEGAME_LONGITUDE = "creategame_longitude";
 
 	// Bundle IDs for persistent button names
 	private static final String STATE_GAME_TIME = "cg_time";
 	
 	private Calendar mDate;
+	private LatLng   mLatLng;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,11 @@ public class CreateGameActivity extends Activity
 		
 		long gameTime = (savedInstanceState == null) ? 0L : savedInstanceState.getLong(CREATE_GAME_TIME);
 		mDate = initDate(gameTime);
+		
+		final Bundle args = getIntent().getExtras();
+		final double lat = args.getDouble(CREATEGAME_LATITUDE);
+		final double lon = args.getDouble(CREATEGAME_LONGITUDE);
+		mLatLng = new LatLng(lat, lon);
 		
 		setButtonLabels();
 	}
