@@ -10,17 +10,17 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
-import com.uwcse403.pocketpickup.game.Game2;
+import com.uwcse403.pocketpickup.game.Game;
 
 public class GameHandlerTest extends ApplicationTestCase{
 	
-	private static Game2 game;
+	private static Game game;
 	private static int randomIdealSize;
 	public GameHandlerTest() {
 		super(PocketPickupApplication.class);
 		Random r = new Random();
 		randomIdealSize =  r.nextInt();
-		game = new Game2(randomIdealSize);
+		game = new Game(randomIdealSize);
 	}
 	
 	@Override
@@ -56,7 +56,7 @@ public class GameHandlerTest extends ApplicationTestCase{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		int numResults = results.size();
+		int numResults = (results == null) ? 0 : results.size();
 		// now delete the object
 		for (int i = 0; i < numResults; i++) {
 			try {
