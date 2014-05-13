@@ -1,5 +1,6 @@
 package com.uwcse403.pocketpickup;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.Activity;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -19,7 +21,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
@@ -28,7 +29,6 @@ import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
 public class CreateGameActivity extends Activity
 								implements DatePickerDialog.OnDateSetListener, 
 					   		     		   TimePickerDialog.OnTimeSetListener {
-	public static final String CREATE_GAME_TIME = "cg_game_time";
 	public static final String CREATEGAME_LOCATION  = "creategame_location";
 	public static final String CREATEGAME_LATITUDE  = "creategame_latitude";
 	public static final String CREATEGAME_LONGITUDE = "creategame_longitude";
@@ -41,13 +41,14 @@ public class CreateGameActivity extends Activity
 	private Calendar mDate;
 	private LatLng   mLatLng;
 	private int      mDuration;
+	private String   mSport;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_game);
 		
-		long gameTime = (savedInstanceState == null) ? 0L : savedInstanceState.getLong(CREATE_GAME_TIME);
+		long gameTime = (savedInstanceState == null) ? 0L : savedInstanceState.getLong(STATE_GAME_TIME);
 		mDate = initDate(gameTime);
 		
 		final Bundle args = getIntent().getExtras();
@@ -59,6 +60,28 @@ public class CreateGameActivity extends Activity
 		mLatLng = new LatLng(lat, lon);
 		
 		setButtonLabels();
+		
+		// Initialize sports choices
+		Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
+		PocketPickupApplication app = (PocketPickupApplication)getApplication();
+		ArrayList<String> sports = new ArrayList<String>(app.sportsAndObjs.keySet());
+		ArrayAdapter<String> sportsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sports);
+		sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		sportsSpinner.setAdapter(sportsAdapter);
+		sportsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int pos, long id) {
+				mSport = (String)parent.getItemAtPosition(pos);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// do nothing
+			}
+			
+		});
 		
 		// Initialize duration choices
 		Spinner durationSpinner = (Spinner)findViewById(R.id.cg_duration_spinner);
