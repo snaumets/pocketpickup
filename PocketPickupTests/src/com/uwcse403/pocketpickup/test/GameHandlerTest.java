@@ -7,7 +7,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.test.ApplicationTestCase;
+import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -32,8 +34,8 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		super.setUp();
 		createApplication();
 		assertTrue(isNetworkConnected());
-		if (isNetworkConnected()) {
-			doTests();
+		if (!isNetworkConnected()) {
+			fail();
 		}
 	}
 	/**
@@ -51,16 +53,11 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		}
 	}
 	
-	protected void doTests() {
-		createGame();
-		
-	}
-	
 	/**
 	 * Creates a PocketPickup.Game object then saves it to Parse as a ParseObject
 	 * of type Game then queries the Parse database to see if the game was stored 
 	 */
-	protected void createGame() {
+	public void testCreateGame() {
 		GameHandler.createDummyGame(game);
 		try {
 			Thread.sleep(1000);
@@ -88,6 +85,27 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 			}
 		}
 		assertEquals(1, numResults);
+	}
+	
+	/**
+	 * Uploads a game
+	 */
+	public void testDate() {
+		ParseObject user = GameHandler.getAUser();
+		ParseObject sport = GameHandler.getASport();
+		if(user == null || sport == null) {
+			Log.e("GameHandlerTest", "Failed to get a sample user or sport");
+			fail();
+		}
+		Game gameDate = new Game(user, new LatLng(0, 0), 0L, 0L, sport, 0);
+		//GameHandler.createGame(gameDate);
+		GameHandler.createDummyGameWithPointers(gameDate, user, sport);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 	
 	@Override

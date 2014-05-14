@@ -22,10 +22,10 @@ public class GameHandler {
 		ParseObject game = new ParseObject("Game");
 		// fill in all the setters
 		game.put(DbColumns.GAME_SPORT, "some sport");
-		game.put(DbColumns.GAME_CREATOR, g.creatorName);
+		game.put(DbColumns.GAME_CREATOR, g.creator);
 		game.put(DbColumns.GAME_LOCATION, new ParseGeoPoint(g.gameLocation.latitude, g.gameLocation.longitude));
-		game.put(DbColumns.GAME_START_DATE, g.gameStartDate);
-		game.put(DbColumns.GAME_END_DATE, g.gameEndDate);
+		game.put(DbColumns.GAME_START_DATE, 0L);//g.gameStartDate);
+		game.put(DbColumns.GAME_END_DATE, 0L);//g.gameEndDate);
 		game.put(DbColumns.GAME_IDEAL_SIZE, g.idealGameSize);
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
@@ -45,6 +45,27 @@ public class GameHandler {
 		ParseObject game = new ParseObject("Game");
 		// fill in all the setter	
 		game.put(DbColumns.GAME_IDEAL_SIZE, g.idealGameSize);
+		
+		game.saveInBackground(new SaveCallback() {
+			public void done(ParseException e) {
+				if (e == null) {
+					Log.v(LOG_TAG, "Successfully saved game");
+					// successfully created game
+				} else {
+					// unable to create the game, alert user
+					Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
+				}
+			}
+		});
+	}
+	
+	public static void createDummyGameWithPointers(Game g, ParseObject user, ParseObject sport) {
+		Log.v(LOG_TAG, "entering createDummyGame()");
+		ParseObject game = new ParseObject("Game");
+		// fill in all the setter	
+		game.put(DbColumns.GAME_IDEAL_SIZE, g.idealGameSize);
+		game.put(DbColumns.GAME_CREATOR, user);
+		game.put(DbColumns.GAME_SPORT, sport);
 		
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
@@ -93,6 +114,36 @@ public class GameHandler {
 		return null;
 	}
 
+	/**
+	 * Gets the first User in the User table. For debugging purposes
+	 * @return ParseObject representing the first user in the User table
+	 */
+	public static ParseObject getAUser() {
+		ParseQuery<ParseObject> uQuery = new ParseQuery<>("_User");
+		try {
+			List<ParseObject> users = uQuery.find();
+			return users.get(0);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the first sport in the Sort table. For debugging purposes.
+	 * @return a PArseObject representing the first Sport in the Sport table
+	 */
+	public static ParseObject getASport() {
+		ParseQuery<ParseObject> uQuery = new ParseQuery<>("Sport");
+		try {
+			List<ParseObject> sports = uQuery.find();
+			return sports.get(0);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
 
 

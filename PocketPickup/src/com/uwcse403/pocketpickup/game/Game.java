@@ -3,6 +3,7 @@ package com.uwcse403.pocketpickup.game;
 import java.util.Date;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.ParseObject;
 
 /**
  * Stores information about an individual pickupgame.
@@ -13,15 +14,15 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public final class Game {
 	/**Name of the user who created the game**/
-	public final String creatorName;
+	public final ParseObject creator;
 	/**Location of the game**/
 	public final LatLng gameLocation;
 	/**Date and time for the beginning of the game**/
-	public final Date gameStartDate;
+	public final Long gameStartDate;
 	/**Date and time for the end of the game**/
-	public final Date gameEndDate;
+	public final Long gameEndDate;
 	/**Type of game**/
-	public final String gameType;
+	public final ParseObject gameType;
 	
 	public final int idealGameSize;
 
@@ -30,9 +31,9 @@ public final class Game {
 	 * 
 	 * @requires no arguments are null
 	 */
-	public Game(String creatorName, LatLng gameLocation, Date gameStartDate, Date gameEndDate, 
-			String gameType, int idealGameSize) {
-		this.creatorName = creatorName;
+	public Game(ParseObject creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
+			ParseObject gameType, int idealGameSize) {
+		this.creator = creator;
 		this.gameLocation = gameLocation;
 		this.gameStartDate = gameStartDate;
 		this.gameEndDate = gameEndDate;
@@ -46,7 +47,7 @@ public final class Game {
 	 */
 	public Game(int idealSize) {
 		this.idealGameSize = idealSize;
-		creatorName = null;
+		creator = null;
 		gameLocation = null;
 		gameStartDate = null;
 		gameEndDate = null;
