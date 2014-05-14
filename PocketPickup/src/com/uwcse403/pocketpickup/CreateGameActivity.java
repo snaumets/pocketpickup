@@ -224,7 +224,7 @@ public class CreateGameActivity extends Activity
 	public void submitCreate(View v) {
 		final Calendar end = Calendar.getInstance();
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
-		final Game createGame = new Game("testUser", mLatLng, mDate.getTime(), end.getTime(), mSport, 2 /* TODO: default game size */);
+		final Game createGame = new Game("testUser", mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), mSport, 2 /* TODO: default game size */);
 		setResult(Activity.RESULT_OK);
 		finish();
 		// TODO: uncomment for functionality

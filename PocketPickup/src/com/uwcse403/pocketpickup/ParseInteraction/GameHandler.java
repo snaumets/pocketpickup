@@ -24,8 +24,8 @@ public class GameHandler {
 		game.put(DbColumns.GAME_SPORT, "some sport");
 		game.put(DbColumns.GAME_CREATOR, g.creatorName);
 		game.put(DbColumns.GAME_LOCATION, new ParseGeoPoint(g.gameLocation.latitude, g.gameLocation.longitude));
-		game.put(DbColumns.GAME_START_DATE, g.gameStartDate);
-		game.put(DbColumns.GAME_END_DATE, g.gameEndDate);
+		game.put(DbColumns.GAME_START_DATE, 0L);//g.gameStartDate);
+		game.put(DbColumns.GAME_END_DATE, 0L);//g.gameEndDate);
 		game.put(DbColumns.GAME_IDEAL_SIZE, g.idealGameSize);
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {

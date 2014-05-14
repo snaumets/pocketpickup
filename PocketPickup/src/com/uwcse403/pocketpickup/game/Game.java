@@ -17,9 +17,9 @@ public final class Game {
 	/**Location of the game**/
 	public final LatLng gameLocation;
 	/**Date and time for the beginning of the game**/
-	public final Date gameStartDate;
+	public final Long gameStartDate;
 	/**Date and time for the end of the game**/
-	public final Date gameEndDate;
+	public final Long gameEndDate;
 	/**Type of game**/
 	public final String gameType;
 	
@@ -30,7 +30,7 @@ public final class Game {
 	 * 
 	 * @requires no arguments are null
 	 */
-	public Game(String creatorName, LatLng gameLocation, Date gameStartDate, Date gameEndDate, 
+	public Game(String creatorName, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
 			String gameType, int idealGameSize) {
 		this.creatorName = creatorName;
 		this.gameLocation = gameLocation;
