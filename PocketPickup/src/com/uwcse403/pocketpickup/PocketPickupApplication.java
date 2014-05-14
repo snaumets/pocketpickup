@@ -14,6 +14,7 @@ import com.google.common.collect.HashBiMap;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
@@ -27,7 +28,8 @@ public class PocketPickupApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		// read the credentials.txt file to establish connection with Parse
+		
+		// read the credentials.txt file to establish connection with Parse			
 		AssetManager am = this.getAssets();
 		InputStream is = null;
 		try {
@@ -47,6 +49,7 @@ public class PocketPickupApplication extends Application {
 		clientKey = s.next();
 		s.close();
 		Parse.initialize(this, applicationID, clientKey);
+		ParseFacebookUtils.initialize(getString(R.string.app_id)); // for facebook login
 		Log.v(LOG_TAG, "parse credentials success");
 		getSports();
 	}
