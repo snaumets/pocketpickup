@@ -37,7 +37,7 @@ public class AppInitTest extends ApplicationTestCase {
 	protected void doTests() {
 		//alwaysPass();
 		//alwaysFail();
-		Game g = new Game("isaiah", new LatLng(0,0), new Date(), "bball");
+		Game g = new Game("isaiah", new LatLng(0,0), new Date(), new Date(), "bball" );
 		GameHandler.createGame(g);
 	}
 	
