@@ -1,6 +1,12 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_login_container"
+    android:id="@+id/activity_find_scrollable_container"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+    
+<LinearLayout
+    android:id="@+id/activity_find_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="top"
@@ -29,7 +35,7 @@
     </EditText>
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/fg_from"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/select_range_from"
@@ -60,7 +66,7 @@
 	</LinearLayout>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/fg_to"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/select_range_to"
@@ -148,10 +154,10 @@
 	    android:layout_height="match_parent"
 	    android:orientation="horizontal"
 	    android:gravity="bottom">
-    
-	    <View android:layout_height="0dp"  
-		    android:layout_width="0dp"
-		    android:layout_weight=".25" />
+		
+	    <View android:layout_height="0dp" 
+	        android:layout_width="0dp"
+	        android:layout_weight=".25" />
 	    <Button
 	        android:id="@+id/find_game_submit_button"
 	        android:layout_width="wrap_content"
@@ -159,9 +165,10 @@
 	        android:onClick="submitSearch"
 	        android:text="@string/find_game" 
 	        android:layout_weight=".5"/>
-	    <View android:layout_height="0dp"  
-		    android:layout_width="0dp"
-		    android:layout_weight=".25" />
+	    <View android:layout_height="0dp" 
+	        android:layout_width="0dp"
+	        android:layout_weight=".25" />
 	</LinearLayout>
 
 </LinearLayout>
+</ScrollView>

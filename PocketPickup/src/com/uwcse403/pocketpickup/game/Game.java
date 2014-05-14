@@ -23,18 +23,34 @@ public final class Game {
 	/**Type of game**/
 	public final String gameType;
 	
+	public final int idealGameSize;
+
 	/**
 	 * Default constructor
 	 * 
 	 * @requires no arguments are null
 	 */
 	public Game(String creatorName, LatLng gameLocation, Date gameStartDate, Date gameEndDate, 
-			String gameType) {
+			String gameType, int idealGameSize) {
 		this.creatorName = creatorName;
 		this.gameLocation = gameLocation;
 		this.gameStartDate = gameStartDate;
 		this.gameEndDate = gameEndDate;
 		this.gameType = gameType;
+		this.idealGameSize = idealGameSize;
 	}
-	
+
+	/**
+	 * for testing only
+	 * @param idealSize
+	 */
+	public Game(int idealSize) {
+		this.idealGameSize = idealSize;
+		creatorName = null;
+		gameLocation = null;
+		gameStartDate = null;
+		gameEndDate = null;
+		gameType = null;
+	}
+
 }

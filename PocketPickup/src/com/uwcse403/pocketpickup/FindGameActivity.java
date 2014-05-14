@@ -1,6 +1,7 @@
 package com.uwcse403.pocketpickup;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -21,15 +22,18 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
+import com.uwcse403.pocketpickup.game.FindGameCriteria;
 
 public class FindGameActivity extends Activity
 							  implements DatePickerDialog.OnDateSetListener, 
 							   		     TimePickerDialog.OnTimeSetListener {
 	// Argument IDs
-	public static final String FINDGAME_LOCATION = "findgame_location";
-	
+	public static final String FINDGAME_LOCATION  = "findgame_location";
+	public static final String FINDGAME_LATITUDE  = "findgame_latitude";
+	public static final String FINDGAME_LONGITUDE = "findgame_longitude";
 	
 	// Bundle IDs for persistent button names
 	private static final String STATE_START_TIME = "fg_start_time";
@@ -38,11 +42,9 @@ public class FindGameActivity extends Activity
 	private static final String STATE_END_DATE   = "fg_end_date";
 	
 	// ID for identifying the last pressed button
-	private int mLastButtonId;
+	private int    mLastButtonId;
+	private LatLng mLatLng;
 	
-	/* TODO: These fields will be collected into a SearchCriteria object
-	 *       when the Parse team builds it
-	 */
 	private Calendar mStartTime; 
 	private Calendar mEndTime;
 	private Calendar mStartDate;
@@ -67,6 +69,7 @@ public class FindGameActivity extends Activity
 		}
 		setButtonLabels();
 		
+		// Initialize radius choices
 		Spinner radiusSpinner = (Spinner)findViewById(R.id.radius_spinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.radius_choices, 
 				android.R.layout.simple_spinner_item);
@@ -88,10 +91,14 @@ public class FindGameActivity extends Activity
 			
 		});
 		
+		// Initialize location text field from passed in location
 		Bundle args = getIntent().getExtras();
 		EditText editText = (EditText)findViewById(R.id.fg_location_text);
 		editText.setText(args.getCharSequence(FINDGAME_LOCATION));
-		Toast.makeText(this, "editText: " + args.getString(FINDGAME_LOCATION), Toast.LENGTH_LONG).show();
+
+		final double lat = args.getDouble(FINDGAME_LATITUDE);
+		final double lon = args.getDouble(FINDGAME_LONGITUDE);
+		mLatLng = new LatLng(lat, lon);
 	}
 	
 	private Calendar initDate(long time) {
@@ -123,15 +130,6 @@ public class FindGameActivity extends Activity
 		((Button)findViewById(R.id.end_time_button)).setText(getTimeButtonString(mEndTime));
 		((Button)findViewById(R.id.start_date_button)).setText(getDateButtonString(mStartDate));
 		((Button)findViewById(R.id.end_date_button)).setText(getDateButtonString(mEndDate));
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see android.app.Activity#onResume()
-	 */
-	@Override
-	protected void onResume() {
-		super.onResume();
 	}
 
 	/*
@@ -210,11 +208,28 @@ public class FindGameActivity extends Activity
 		setButtonLabels();
 	}
 	
+	/**
+	 * This method is called when the 'Find Game' button is clicked to submit the form and send the search
+	 * criteria to the backend.
+	 * @param v
+	 */
 	public void submitSearch(View v) {
 		/* validate */
 		
 		/* Create FindGameCriteria object and send */
-		Toast.makeText(this, "r: " + mRadius, Toast.LENGTH_LONG).show();
+		long msInDay = 1000 * 60 * 60 * 24; // 1000 ms/s * (60 s/min) * (60 min/hour) * (24 hr/day)
+		// create a long representing the date or time only by doing some simple arithmetic
+		long startDate = mStartDate != null ? mStartDate.getTimeInMillis() / msInDay * msInDay : 0;
+		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / msInDay * msInDay : 0;
+		long startTime = mStartTime != null ? mStartTime.getTimeInMillis() % msInDay : 0;
+		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % msInDay : 0;
+		
+		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, "");
+		// TODO: pass this criteria object to the game handler
+		
+		setResult(Activity.RESULT_OK);
+		finish();
+		//Toast.makeText(this, "r: " + mRadius, Toast.LENGTH_LONG).show();
 	}
 	
 	public void showSportsPreferencesDialog(View v) {

@@ -1,19 +1,28 @@
 package com.uwcse403.pocketpickup;
 
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Scanner;
 
 import android.app.Application;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 
 public class PocketPickupApplication extends Application {
 	public static final String LOG_TAG = "PocketPickupApplication";
+	public List<ParseObject> allowedSports;
+	public BiMap<String,ParseObject> sportsAndObjs;
+	final String SPORTS_CACHE_LABEL = "sports";
 
 	@Override
 	public void onCreate() {
@@ -26,7 +35,8 @@ public class PocketPickupApplication extends Application {
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "Parse.com credentials not found");
 			e.printStackTrace();
-			// quit the application because we will not be able to send or receive data
+			// quit the application because we will not be able to send or
+			// receive data
 			System.exit(1);
 		}
 		Scanner s = null;
@@ -38,5 +48,35 @@ public class PocketPickupApplication extends Application {
 		s.close();
 		Parse.initialize(this, applicationID, clientKey);
 		Log.v(LOG_TAG, "parse credentials success");
+		getSports();
+	}
+
+	private void getSports() {
+		sportsAndObjs = HashBiMap.create();
+		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Sport");
+		// looks in the cache first
+		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> sports, ParseException e) {
+				if (e == null) {
+					// found
+					allowedSports = sports;
+					Log.v(LOG_TAG, "successfully retreived sports from cache or network");
+					for (int i = 0; i < sports.size(); i++) {
+						sportsAndObjs.put(sports.get(i).getString(DbColumns.SPORT_NAME), sports.get(i));
+						Log.v(LOG_TAG, sports.get(i).getString("name"));
+					}
+				} else {
+					// error
+					Log.e(LOG_TAG, "unable to retreive sports: " + e.getCode() + ": " + e.getMessage());
+				}
+			}
+		});
+		try {
+			ParseObject.pinAll(SPORTS_CACHE_LABEL, allowedSports);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 }
