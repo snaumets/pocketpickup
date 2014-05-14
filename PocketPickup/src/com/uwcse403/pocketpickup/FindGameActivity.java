@@ -225,7 +225,7 @@ public class FindGameActivity extends Activity
 		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % msInDay : 0;
 		
 		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, "");
-		// pass this criteria object to the game handler
+		// TODO: pass this criteria object to the game handler
 		
 		setResult(Activity.RESULT_OK);
 		finish();

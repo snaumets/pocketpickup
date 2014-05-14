@@ -1,6 +1,12 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_login_container"
+    android:id="@+id/activity_create_scrollable_container"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:id="@+id/activity_create_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="top"
@@ -32,13 +38,25 @@
         android:id="@+id/cg_gametype_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cg_game"
+        android:text="@string/cg_sport"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Spinner
-        android:id="@+id/cg_sports_spinner"
+	
+    <LinearLayout
+        android:id="@+id/cg_sport_spinner_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="horizontal" >
+	    <Spinner
+	        android:id="@+id/cg_sports_spinner"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:gravity="left"
+	        android:layout_weight=".5"/>
+	    <View android:layout_height="0dp" 
+	        android:layout_width="0dp"
+	        android:layout_weight=".5" />
+	</LinearLayout>
     
     <TextView
         android:id="@+id/cg_datetime_text"
@@ -88,13 +106,19 @@
 
         <Spinner
             android:id="@+id/cg_duration_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.75" />
-
+            android:layout_weight="0.5" />
+        <TextView
+	        android:id="@+id/textViewDurationHours"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:text="@string/cg_duration_hours"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:layout_weight="0.25"/>
         <Button
             android:id="@+id/cg_reset"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.25"
             android:onClick="resetCreate"
@@ -113,11 +137,11 @@
 	        android:layout_weight=".25" />
         <Button
             android:id="@+id/cg_submit"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal|bottom"
             android:onClick="submitCreate"
-            android:text="@string/create_game" />
+            android:text="@string/create_game" 
+            android:layout_weight=".5"/>
         <View android:layout_height="0dp" 
 	        android:layout_width="0dp"
 	        android:layout_weight=".25" />
@@ -125,3 +149,4 @@
     </LinearLayout>
     
 </LinearLayout>
+</ScrollView>
