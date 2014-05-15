@@ -1,5 +1,6 @@
 package com.uwcse403.pocketpickup.ParseInteraction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.util.Log;
@@ -23,11 +24,11 @@ public class GameHandler {
 		ParseObject game = new ParseObject("Game");
 		// fill in all the setters
 		game.put(DbColumns.GAME_SPORT, "some sport");
-		game.put(DbColumns.GAME_CREATOR, g.creator);
-		game.put(DbColumns.GAME_LOCATION, new ParseGeoPoint(g.gameLocation.latitude, g.gameLocation.longitude));
+		game.put(DbColumns.GAME_CREATOR, g.mCreator);
+		game.put(DbColumns.GAME_LOCATION, new ParseGeoPoint(g.mGameLocation.latitude, g.mGameLocation.longitude));
 		game.put(DbColumns.GAME_START_DATE, 0L);//g.gameStartDate);
 		game.put(DbColumns.GAME_END_DATE, 0L);//g.gameEndDate);
-		game.put(DbColumns.GAME_IDEAL_SIZE, g.idealGameSize);
+		game.put(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
 				if (e == null) {
@@ -45,7 +46,7 @@ public class GameHandler {
 		Log.v(LOG_TAG, "entering createDummyGame()");
 		ParseObject game = new ParseObject("Game");
 		// fill in all the setter	
-		game.put(DbColumns.GAME_IDEAL_SIZE, g.idealGameSize);
+		game.put(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
 		
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
@@ -64,7 +65,7 @@ public class GameHandler {
 		Log.v(LOG_TAG, "entering createDummyGame()");
 		ParseObject game = new ParseObject("Game");
 		// fill in all the setter	
-		game.put(DbColumns.GAME_IDEAL_SIZE, g.idealGameSize);
+		game.put(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
 		game.put(DbColumns.GAME_CREATOR, user);
 		game.put(DbColumns.GAME_SPORT, sport);
 		
@@ -110,7 +111,7 @@ public class GameHandler {
 	 * 
 	 * @param criteria: FindGameCriteria object containing search criteria
 	 */
-	public static List<Game> findGame(FindGameCriteria criteria) {
+	public static ArrayList<Game> findGame(FindGameCriteria criteria) {
 		ParseQuery<ParseObject> query = new ParseQuery("Game");
 		ParseObject gameType = PocketPickupApplication.sportsAndObjs.get(criteria.mGameType);
 		query.whereEqualTo("sport", gameType);

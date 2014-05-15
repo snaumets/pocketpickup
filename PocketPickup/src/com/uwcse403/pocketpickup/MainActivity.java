@@ -38,6 +38,7 @@ import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseUser;
+import com.uwcse403.pocketpickup.game.Game;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
 
@@ -72,6 +73,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	private int mapType;
 	private LocationClient locationClient;
 	private final Handler mHandler = new Handler();
+	
+	private ArrayList<Game> mDisplayedGames;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -469,6 +472,14 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					.show();
 			break;
 		case FIND_GAME_CODE:
+			mDisplayedGames = data.getParcelableArrayListExtra(FindGameActivity.FINDGAME_RESULTS);
+			final int radius = data.getIntExtra(FindGameActivity.FINDGAME_RADIUS, 1);
+			
+			// Defaults will never get used
+			final double lat = data.getDoubleExtra(FindGameActivity.FINDGAME_LATITUDE, 0.0);
+			final double lon = data.getDoubleExtra(FindGameActivity.FINDGAME_LONGITUDE, 0.0);
+			
+			onGameDisplayUpdate(radius, new LatLng(lat, lon));
 			Toast.makeText(this, "Find game returned!", Toast.LENGTH_LONG)
 					.show();
 			break;
@@ -476,6 +487,10 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			// Do nothing
 			break;
 		}
+	}
+	
+	private void onGameDisplayUpdate(int radius, LatLng loc) {
+		// TODO: paint pins inside mDisplayedGames
 	}
 
 	// Simply starts a log in activity
