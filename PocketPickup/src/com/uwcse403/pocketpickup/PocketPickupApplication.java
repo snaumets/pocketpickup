@@ -21,7 +21,7 @@ import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 public class PocketPickupApplication extends Application {
 	public static final String LOG_TAG = "PocketPickupApplication";
 	public List<ParseObject> allowedSports;
-	public BiMap<String,ParseObject> sportsAndObjs;
+	public static BiMap<String,ParseObject> sportsAndObjs;
 	final String SPORTS_CACHE_LABEL = "sports";
 
 	@Override
