@@ -39,7 +39,8 @@ public class AppInitTest extends ApplicationTestCase {
 	protected void doTests() throws ParseException {
 		//alwaysPass();
 		//alwaysFail();
-		Game g = new Game("isaiah", new LatLng(0,0), new Date(), new Date(), "bball", 9);
+		
+		Game g = new Game(new ParseObject("isaiah"), new LatLng(0,0), (long) 0, (long) 0, new ParseObject("bball"), 9);
 		GameHandler.createGame(g);
 		ParseObject p = new ParseObject("test");
 		p.save();
