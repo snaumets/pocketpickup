@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
@@ -35,8 +36,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.game.Game;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
@@ -82,7 +86,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		setContentView(R.layout.activity_main);
 		Log.v("MainActivity", "in onCreate()");
 
-		// Toast.makeText(this, "test", Toast.LENGTH_LONG).show(); // use this
+		// Restore button labels if necessary, otherwise init
+		if (savedInstanceState != null) {
+			restoreMap(savedInstanceState);
+		}
+		
 		// to print messages on phone screen
 		setUpMapIfNeeded();
 
@@ -283,6 +291,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				googleMap.setMyLocationEnabled(true); // enables the my-location
 														// layer, button will be
 														// visible
+				googleMap.getUiSettings().setZoomGesturesEnabled(true);
+				
 				googleMap.getUiSettings().setTiltGesturesEnabled(false);
 
 				locationClient = new LocationClient(this, this, this);
@@ -291,8 +301,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 				// This will update the location text field when the camera
 				// changes
-				googleMap
-						.setOnCameraChangeListener(new OnCameraChangeListener() {
+				googleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 							@Override
 							public void onCameraChange(
 									CameraPosition cameraPosition) {
@@ -340,16 +349,34 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-
-		// save the map type so when we change orientation, the mape type can be
-		// restored
-		LatLng cameraLatLng = googleMap.getCameraPosition().target;
-		float cameraZoom = googleMap.getCameraPosition().zoom;
-		outState.putInt("map_type", mapType);
-		outState.putDouble("lat", cameraLatLng.latitude);
-		outState.putDouble("lng", cameraLatLng.longitude);
-		outState.putFloat("zoom", cameraZoom);
+		if (outState != null) {
+			super.onSaveInstanceState(outState);
+	
+			// save the map type so when we change orientation, the mape type can be
+			// restored
+			float cameraZoom = googleMap.getCameraPosition().zoom;
+			outState.putInt("map_type", mapType);
+			outState.putDouble("map_lat", mLatLngLocation.latitude);
+			outState.putDouble("map_lng", mLatLngLocation.longitude);
+			outState.putFloat("map_zoom", cameraZoom);
+			//outState.putParcelableArrayList("map_marker_list", null);
+		}
+	}
+	
+	private void restoreMap(Bundle savedInstanceState) {
+		if (savedInstanceState != null) {
+			savedInstanceState.getInt("map_type", mapType);
+			int map_type = savedInstanceState.getInt("map_type");
+			double lat = savedInstanceState.getDouble("map_lat");
+			double lng = savedInstanceState.getDouble("map_lng");
+			float zoom = savedInstanceState.getFloat("map_zoom");
+			LatLng latLngLoc = new LatLng(lat, lng);
+			mLatLngLocation = latLngLoc;
+			Location location = new Location("loc");
+			location.setLatitude(lat);
+			location.setLongitude(lng);
+			zoomMapToLocation(location, (int) zoom);
+		}
 	}
 
 	@Override

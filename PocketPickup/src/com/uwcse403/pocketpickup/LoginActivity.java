@@ -78,9 +78,8 @@ public class LoginActivity extends Activity {
 			public void done(ParseUser user, ParseException err) {
 				LoginActivity.this.progressDialog.dismiss();
 				
-				// close activity, continue to main activity 
-				setResult(Activity.RESULT_OK);
-				finish();
+				// continue to main activity 
+				showMainActivity();
 			}
 		});
 	}
