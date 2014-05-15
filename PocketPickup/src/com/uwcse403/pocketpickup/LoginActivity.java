@@ -50,6 +50,11 @@ public class LoginActivity extends Activity {
 			showMainActivity();
 		}
 	}
+	
+	@Override
+	public void onBackPressed() {
+		// do nothing
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
