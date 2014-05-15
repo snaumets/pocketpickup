@@ -11,6 +11,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
 
@@ -111,6 +112,18 @@ public class GameHandler {
 	 */
 	public static List<Game> findGame(FindGameCriteria criteria) {
 		ParseQuery<ParseObject> query = new ParseQuery("Game");
+		ParseObject gameType = PocketPickupApplication.sportsAndObjs.get(criteria.mGameType);
+		query.whereEqualTo("sport", gameType);
+		List<ParseObject> results = null;
+		try {
+			results = query.find();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (results != null) {
+			
+		}
 		return null;
 	}
 
