@@ -132,7 +132,7 @@ public class GameHandler {
 	 * @return ParseObject representing the first user in the User table
 	 */
 	public static ParseObject getAUser() {
-		ParseQuery<ParseObject> uQuery = new ParseQuery<>("_User");
+		ParseQuery<ParseObject> uQuery = new ParseQuery<ParseObject>("_User");
 		try {
 			List<ParseObject> users = uQuery.find();
 			return users.get(0);
@@ -148,7 +148,7 @@ public class GameHandler {
 	 * @return a PArseObject representing the first Sport in the Sport table
 	 */
 	public static ParseObject getASport() {
-		ParseQuery<ParseObject> uQuery = new ParseQuery<>("Sport");
+		ParseQuery<ParseObject> uQuery = new ParseQuery<ParseObject>("Sport");
 		try {
 			List<ParseObject> sports = uQuery.find();
 			return sports.get(0);

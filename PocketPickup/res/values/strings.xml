@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <string name="app_name">Pocket Pickup</string>
     <string name="action_settings">Settings</string>
@@ -8,15 +8,21 @@
     <string name="sign_up">Sign Up</string>
     <string name="log_in">Log In</string>
     <string name="title_activity_sign_up">Sign Up</string>
-    <string name="title_activity_login">Login</string>
+    <string name="title_activity_login">Pocket Pickup</string>
     <string name="hello_world">Hello world!</string>
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
+    
+    <!-- facebook login strings -->
+    <string name="app_id">1475481862686496</string>
+	<string name="login">Log In</string>
+	<string name="login_intro">Log in using Facebook. We will never post to Facebook or use your info without permission.</string>
 
     <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
         <item>Settings</item>
         <item>Help</item>
+        <item>Logout</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
@@ -24,6 +30,7 @@
     <array name="nav_drawer_icons">
         <item>@drawable/ic_settings</item>
         <item>@drawable/ic_help</item>
+        <item>@drawable/ic_logout</item>
     </array>
 
     <!-- Content Description -->
