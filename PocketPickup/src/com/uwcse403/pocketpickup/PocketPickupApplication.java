@@ -105,7 +105,6 @@ public class PocketPickupApplication extends Application {
 			return;
 		}
 		allowedSports = sports;
-		Log.v(LOG_TAG, "successfully retreived sports from cache or network");
 		for (int i = 0; i < sports.size(); i++) {
 			sportsAndObjs.put(sports.get(i).getString(DbColumns.SPORT_NAME), sports.get(i));
 			Log.v(LOG_TAG, sports.get(i).getString("name"));
