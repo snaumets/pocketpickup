@@ -201,10 +201,6 @@ public class GameHandler {
 			// Failed to get search results
 			Log.e(LOG_TAG, "Failed to get search results in findGame()");
 		}
-		if (results == null) {
-			// no games match search criteria
-			return null;
-		}
 		ArrayList<Game> matchingGames = new ArrayList<Game>();
 		for (int i = 0; i < results.size(); i++) {
 			ParseObject result = results.get(i);
