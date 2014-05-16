@@ -23,6 +23,18 @@ import com.uwcse403.pocketpickup.game.Game;
 public class GameHandler {
 	/**Label for debugging tag label**/
 	public static final String LOG_TAG = "GameHandler";
+	/**Default callback for saving in background**/
+	private static final SaveCallback DEFAULT_SAVE_CALLBACK = new SaveCallback() {
+		public void done(ParseException e) {
+			if (e == null) {
+				// successfully created game
+				Log.v(LOG_TAG, "Successfully saved game");
+			} else {
+				// unable to create the game, alert user
+				Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
+			}
+		}
+	};
 	
 	/**
 	 * Adds a game to the database of available games
@@ -30,20 +42,24 @@ public class GameHandler {
 	 * @param g - contains user settings for the game
 	 */
 	public static void createGame(Game g) {
-		Log.v(LOG_TAG, "entering CreateGame()");
-		ParseObject game = Translator.appGameToParseGame(g); 
-		game.saveInBackground(new SaveCallback() {
-			public void done(ParseException e) {
-				if (e == null) {
-					// successfully created game
-					Log.v(LOG_TAG, "Successfully saved game");
-				} else {
-					// unable to create the game, alert user
-					Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
-				}
-			}
-		});
+		createGame(g, DEFAULT_SAVE_CALLBACK);
 	} 
+	
+	public static void createGame(Game g, SaveCallback cb) {
+		Log.v(LOG_TAG, "entering CreateGame(Game, SaveCallback)");
+		ParseObject game = Translator.appGameToParseGame(g);
+		if(cb != null) {
+			game.saveInBackground(cb);	
+		}
+		else {
+			try {
+				game.save();
+			} catch (ParseException e) {
+				// Failed to save game with waiting
+				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode() + ": " + e.getMessage());
+			}
+		}
+	}
 	
 	/**
 	 * Adds a game to the database of available games
@@ -106,14 +122,13 @@ public class GameHandler {
 		});
 	}
 
-	
-	/** 
-	 * Removes the App game object g from the Parse database.
+	/**
+	 * Gets a game that meets the provided criteria. Only works for games the user has created.
 	 * 
-	 * ONLY WORKS IF THE CURRENT USER CREATED THE GAME BEING DELETED
-	 * @param g - target game to be deleted
+	 * @param g - target game to get
+	 * @return
 	 */
-	public static void removeGame(Game g) {
+	public static List<ParseObject> getGame(Game g) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
 		query.whereEqualTo(DbColumns.GAME_CREATOR, ParseUser.getCurrentUser());
 		query.whereEqualTo(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
@@ -136,6 +151,17 @@ public class GameHandler {
 			//games that exist
 			Log.e(LOG_TAG, "no objects found to delete");
 		}
+		return objects;
+	}
+	
+	/** 
+	 * Removes the App game object g from the Parse database.
+	 * 
+	 * ONLY WORKS IF THE CURRENT USER CREATED THE GAME BEING DELETED
+	 * @param g - target game to be deleted
+	 */
+	public static void removeGame(Game g) {
+		List<ParseObject> objects = getGame(g);
 		for (int i = 0; i < objects.size(); i++) {
 			try {
 				objects.get(i).delete();
@@ -148,7 +174,9 @@ public class GameHandler {
 	}
 
 	/**
-	 * Finds a list of games based on user criteria
+	 * Finds a list of games based on user criteria.
+	 * 
+	 * The return type has to be an ArrayList because of how parcelling works.
 	 * 
 	 * @param criteria: FindGameCriteria object containing search criteria
 	 */

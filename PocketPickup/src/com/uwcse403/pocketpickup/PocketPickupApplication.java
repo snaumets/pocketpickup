@@ -90,4 +90,25 @@ public class PocketPickupApplication extends Application {
 			e1.printStackTrace();
 		}
 	}
+	
+	public void forceSportsLoading() {
+		sportsAndObjs = HashBiMap.create();
+		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Sport");
+		// Can't look in the cache first
+		//query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
+		List<ParseObject> sports = null;
+		try {
+			sports = query.find();
+		} catch (ParseException e) {
+			// error
+			Log.e(LOG_TAG, "unable to retreive sports when forced");
+			return;
+		}
+		allowedSports = sports;
+		Log.v(LOG_TAG, "successfully retreived sports from cache or network");
+		for (int i = 0; i < sports.size(); i++) {
+			sportsAndObjs.put(sports.get(i).getString(DbColumns.SPORT_NAME), sports.get(i));
+			Log.v(LOG_TAG, sports.get(i).getString("name"));
+		}
+	}
 }
