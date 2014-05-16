@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
@@ -224,11 +225,9 @@ public class CreateGameActivity extends Activity
 	}
 	
 	public void submitCreate(View v) {
-		ParseObject testUser = GameHandler.getAUser();
-		String testSport = "Basketball";
 		final Calendar end = Calendar.getInstance();
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
-		final Game createGame = new Game(PocketPickupApplication.userObjectId, mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), mSport, 2 /* TODO: default game size */);
+		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), mSport, 2 /* TODO: default game size */);
 		setResult(Activity.RESULT_OK);
 		finish();
 		// TODO: uncomment for functionality
