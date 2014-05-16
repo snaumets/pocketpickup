@@ -53,7 +53,9 @@ public class LoginActivity extends Activity {
 	
 	@Override
 	public void onBackPressed() {
-		// do nothing
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+	    intent.addCategory(Intent.CATEGORY_HOME);
+	    startActivity(intent);
 	}
 
 	@Override
