@@ -237,7 +237,7 @@ public class FindGameActivity extends Activity
 		returnIntent.putExtra(FINDGAME_RADIUS, mRadius);
 		returnIntent.putExtra(FINDGAME_LATITUDE, mLatLng.latitude);
 		returnIntent.putExtra(FINDGAME_LONGITUDE, mLatLng.longitude);
-		returnIntent.putParcelableArrayListExtra("searchResults", searchResults);
+		returnIntent.putParcelableArrayListExtra(FINDGAME_RESULTS/*"searchResults"*/, searchResults);
 		
 		setResult(Activity.RESULT_OK, returnIntent);
 		finish();

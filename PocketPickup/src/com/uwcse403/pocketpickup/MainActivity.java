@@ -49,7 +49,7 @@ import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerL
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
 
 // This activity is shown once the user logs in, or if the user has previously logged in,
-// without loggin out. It contains a map, sign up and log in buttons, and includes a 
+// without login out. It contains a map, sign up and log in buttons, and includes a 
 // sliding menu (the sliding menu was implemented by following a tutorial at 
 // http://www.androidhive.info/2013/11/android-sliding-menu-using-navigation-drawer/ )
 public class MainActivity extends Activity implements ConnectionCallbacks,
@@ -57,6 +57,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	private static final int CREATE_GAME_CODE = 1111;
 	private static final int FIND_GAME_CODE = 2222;
 
+	// This boolean will change to false after the app initializes state after it's launched
+	private boolean firstLaunch; 
+	
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
@@ -88,12 +91,18 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		setContentView(R.layout.activity_main);
 		Log.v("MainActivity", "in onCreate()");
 
+		if (savedInstanceState == null) { // first launch, being initialized
+			firstLaunch = true;
+		} else {
+			firstLaunch = false;
+		}
+		
 		// to print messages on phone screen
 		setUpMapIfNeeded();
 
 		// Restore map zoom level and location
-		if (savedInstanceState != null) {
-			restoreMap(savedInstanceState);
+		if (!firstLaunch) { // not the first launch, actually need to restore state
+			restoreMap();
 		}
 		
 		mTitle = mDrawerTitle = getTitle();
@@ -260,7 +269,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	// This method will try to set the map to the given location with the given
 	// zoom level (ex: 16)
 	private void zoomMapToLocation(Location location, int zoomLevel) {
-		if (location != null) {
+		if (location != null && googleMap != null) {
 			LatLng latLngLocation = new LatLng(location.getLatitude(),
 					location.getLongitude());
 			googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
@@ -355,77 +364,54 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	protected void onSaveInstanceState(Bundle outState) {
 		if (outState != null) {
 			super.onSaveInstanceState(outState);
-	
-			// save the map type so when we change orientation, the mape type can be
-			// restored
-			if (googleMap != null) {
-				float cameraZoom = googleMap.getCameraPosition().zoom;
-				LatLng loc = googleMap.getCameraPosition().target;
-				outState.putInt("map_type", mapType);
-				if (loc != null) {
-					outState.putDouble("map_lat", loc.latitude);
-					outState.putDouble("map_lng", loc.longitude);
-				}
-				outState.putFloat("map_zoom", cameraZoom);
-				//outState.putParcelableArrayList("map_marker_list", null);
-			}
+		}
+		if (googleMap != null) {
+			CameraPosition map = googleMap.getCameraPosition();
+			double latitude = map.target.latitude;
+			double longitude = map.target.longitude;
+			float zoom = map.zoom;
 			
+			SharedPreferences settings = getSharedPreferences("Map_State", 0);
+			Editor editor = settings.edit();
+			editor.putFloat("map_lng", (float) longitude);
+			editor.putFloat("map_lat", (float) latitude);
+			editor.putFloat("map_zoom", zoom);
+			editor.commit();
 		}
 	}
 	
 	/**
 	 * This method will be called to restore the state of the application once it is resumed.
 	 * It will make sure to return the map to the location and zoom level that it was left at.
-	 * @param savedInstanceState
 	 */
-	private void restoreMap(Bundle savedInstanceState) {
-		/*if (savedInstanceState != null) {
-			savedInstanceState.getInt("map_type", mapType);
-			int map_type = savedInstanceState.getInt("map_type");
-			double lat = savedInstanceState.getDouble("map_lat");
-			double lng = savedInstanceState.getDouble("map_lng");
-			float zoom = savedInstanceState.getFloat("map_zoom");
-			LatLng latLngLoc = new LatLng(lat, lng);
-			mLatLngLocation = latLngLoc;
-			Location location = new Location("loc");
-			location.setLatitude(lat);
-			location.setLongitude(lng);
-			zoomMapToLocation(location, (int) zoom);
-		}*/
-		//Toast.makeText(this, "restoring", Toast.LENGTH_LONG).show();
-		Log.v("MainActivity", "in restoreMap()");
+	private void restoreMap() {
+		//Log.v("MainActivity", "in restoreMap()");
 		SharedPreferences settings = getSharedPreferences("Map_State", 0);
 		float lng = settings.getFloat("map_lng", 0); // the second arg is returned if first is not found
 		float lat = settings.getFloat("map_lat", 0);
 		float zoom = settings.getFloat("map_zoom", 17); 
-		Toast.makeText(this, "" + lat + " " + lng + " " + zoom, Toast.LENGTH_LONG).show();
-		LatLng startPosition = new LatLng((double) lat, (double) lng); //with longitude and latitude
-
-		CameraPosition cameraPosition = new CameraPosition.Builder()
-		.target(startPosition)
-		.zoom(zoom)
-		.build();                   // Creates a CameraPosition from the builder
 		
 		Location location = new Location("loc");
 		location.setLatitude(lat);
 		location.setLongitude(lng);
 		
 		zoomMapToLocation(location, (int) zoom);
-		//googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 	}
 
 	@Override
 	public void onConnected(Bundle arg0) {
 		// Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
-		Location loc = locationClient.getLastLocation();
-		LatLng latLngLocation = null;
-		if (loc != null) {
-			latLngLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
-		}
-		if (googleMap != null && latLngLocation != null) {
-			googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-					latLngLocation, 16));
-			zoomMapToLocation(loc, 17);
+		if (firstLaunch) {
+			// When the app is launched, we want to zoom into the users location if possible
+			Location loc = locationClient.getLastLocation();
+			LatLng latLngLocation = null;
+			if (loc != null) {
+				latLngLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
+			}
+			if (googleMap != null && latLngLocation != null) {
+				zoomMapToLocation(loc, 17);
+			}
+			firstLaunch = false;
 		}
 	}
 
@@ -446,8 +432,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (locationClient != null && !locationClient.isConnected() && !locationClient.isConnecting()) { // sanity
-																		// check
+		if (locationClient != null && !locationClient.isConnected() && !locationClient.isConnecting()) { // sanity check
 			locationClient.connect();
 		}
 	}
@@ -455,14 +440,12 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (locationClient != null && (locationClient.isConnected() || locationClient.isConnecting())) { // sanity
-																		// check
+		if (locationClient != null && (locationClient.isConnected() || locationClient.isConnecting())) { // sanity check
 			locationClient.disconnect();
 		}
 	}
 
-	// ////////////////////// The methods below start new activities
-	// /////////////////////////////
+	// ////////////////////// The methods below start new activities /////////////////////////////
 
 	// Simply starts a sign up activity
 	public void signUp(View view) {
@@ -490,7 +473,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	
 	// Logs the user out of Parse, but not Facebook
 	public void logout(View view) {
-	
 		ParseUser.logOut();
 
 		// Go to the login view
@@ -530,8 +512,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case CREATE_GAME_CODE:
-			Toast.makeText(this, "Create game returned!", Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(this, "Create game returned!", Toast.LENGTH_LONG).show();
 			break;
 		case FIND_GAME_CODE:
 			if (data != null) {
@@ -543,8 +524,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				final double lon = data.getDoubleExtra(FindGameActivity.FINDGAME_LONGITUDE, 0.0);
 				
 				onGameDisplayUpdate(radius, new LatLng(lat, lon));
-				Toast.makeText(this, "Find game returned!", Toast.LENGTH_LONG)
-						.show();
+				Toast.makeText(this, "Find game returned!", Toast.LENGTH_LONG).show();
 			}
 			break;
 		default:
@@ -593,18 +573,17 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		Log.v("MainActivity", "in onDestroy()");
+		//Log.v("MainActivity", "in onDestroy()");
 		//Toast.makeText(this, "destroying", Toast.LENGTH_LONG).show();
 		if (googleMap != null) {
-			CameraPosition mMyCam = googleMap.getCameraPosition();
-			double latitude = mMyCam.target.latitude;
-			double longitude = mMyCam.target.longitude;
-			float zoom = mMyCam.zoom;
+			CameraPosition map = googleMap.getCameraPosition();
+			double latitude = map.target.latitude;
+			double longitude = map.target.longitude;
+			float zoom = map.zoom;
 			
 			SharedPreferences settings = getSharedPreferences("Map_State", 0);
 			Editor editor = settings.edit();
 			editor.putFloat("map_lng", (float) longitude);
-			Toast.makeText(this, "" + latitude + " " + longitude + " " + zoom, Toast.LENGTH_LONG).show();
 			editor.putFloat("map_lat", (float) latitude);
 			editor.putFloat("map_zoom", zoom);
 			editor.commit();
