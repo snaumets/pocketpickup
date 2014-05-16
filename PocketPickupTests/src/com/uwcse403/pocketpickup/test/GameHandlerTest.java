@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
@@ -106,9 +107,9 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	public void testFindGameLocation() {
 		Log.d(LOG_TAG, "sportsAndObjs is null: " + (PocketPickupApplication.sportsAndObjs == null));
 		//ParseGeoPoint currentLocation = ParseGeoPoint. ask serge
-		Game closeGame = new Game(PocketPickupApplication.userObjectId, new LatLng(1,1), 
+		Game closeGame = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(1,1), 
 				1L, 2L, "Basketball", 2);
-		Game farGame =  new Game(PocketPickupApplication.userObjectId, new LatLng(10,10), 
+		Game farGame =  new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(10,10), 
 				1L, 2L, "Basketball", 2);
 		GameHandler.createGame(closeGame);
 		GameHandler.createGame(farGame);
