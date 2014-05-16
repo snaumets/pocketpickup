@@ -427,7 +427,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (locationClient != null && (locationClient.isConnected() || locationClient.isConnecting())) { // sanity
+		if (locationClient != null && locationClient.isConnected()) { // sanity
 																		// check
 			locationClient.disconnect();
 		}
