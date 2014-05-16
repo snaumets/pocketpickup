@@ -106,9 +106,9 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	public void testFindGameLocation() {
 		Log.d(LOG_TAG, "sportsAndObjs is null: " + (PocketPickupApplication.sportsAndObjs == null));
 		//ParseGeoPoint currentLocation = ParseGeoPoint. ask serge
-		Game closeGame = new Game(getApplication().userObjectId, new LatLng(1,1), 
+		Game closeGame = new Game(PocketPickupApplication.userObjectId, new LatLng(1,1), 
 				1L, 2L, "Basketball", 2);
-		Game farGame =  new Game(getApplication().userObjectId, new LatLng(10,10), 
+		Game farGame =  new Game(PocketPickupApplication.userObjectId, new LatLng(10,10), 
 				1L, 2L, "Basketball", 2);
 		GameHandler.createGame(closeGame);
 		GameHandler.createGame(farGame);
@@ -120,7 +120,10 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		}
 		FindGameCriteria criteria = new FindGameCriteria(5L, new LatLng(1,1), 0L, Long.MAX_VALUE, 0L, 0L, "Basketball");
 		List<Game> results = GameHandler.findGame(criteria);
-		Log.d(LOG_TAG, "number of results: " + results.size());
+		GameHandler.removeGame(farGame);
+		GameHandler.removeGame(closeGame);
+		assertTrue(results.size() > 0);
+		assertEquals(closeGame.mGameLocation, results.get(0).mGameLocation);
 	}
 	
 	/**

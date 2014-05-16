@@ -55,7 +55,11 @@ public class PocketPickupApplication extends Application {
 		Log.v(LOG_TAG, "parse credentials success");
 		getSports();
 		ParseUser currentUser = ParseUser.getCurrentUser();
-		userObjectId = currentUser.getObjectId();
+		if (currentUser != null) {
+			userObjectId = currentUser.getObjectId();
+		} else {
+			userObjectId = null;
+		}
 	}
 
 	private void getSports() {

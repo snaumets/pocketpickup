@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.DeleteCallback;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -102,6 +103,50 @@ public class GameHandler {
 				}
 			}
 		});
+	}
+	
+	/** 
+	 * Removes the App game object g from the Parse database.
+	 * @param g
+	 */
+	public static void removeGame(Game g) {
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
+		ParseObject toDelete = Translator.appGameToParseGame(g);
+		try {
+			toDelete.delete();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		/*
+		if (toDelete == null) {
+			Log.e(LOG_TAG, "cant delete, couln't convert to parse object");
+		}
+		Log.d(LOG_TAG, "objectId to delete: " + toDelete.getObjectId());
+		query.whereEqualTo(DbColumns.GAME_CREATOR, toDelete.getObjectId());
+		query.findInBackground( new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> object, ParseException e) {
+				if(e == null) {
+					Log.v(LOG_TAG, "Successfully got object to delete");
+					object.deleteInBackground(new DeleteCallback() {
+						public void done(ParseException pe) {
+							if(pe == null) {
+								Log.v(LOG_TAG, "Successfully deleted object");
+							}
+							else {
+								Log.e(LOG_TAG, "Failed to delete object: " + pe.getCode() + " :"+ pe.getMessage());
+							}
+						}
+					});
+				}
+				else {
+					Log.e(LOG_TAG, "Failed to get object for deletion: " + e.getCode() + ": " + e.getMessage());
+					return;
+				}
+			}
+		});	
+		*/
 	}
 
 	/**
