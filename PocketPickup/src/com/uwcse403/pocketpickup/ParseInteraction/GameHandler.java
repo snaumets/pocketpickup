@@ -108,6 +108,8 @@ public class GameHandler {
 	
 	/** 
 	 * Removes the App game object g from the Parse database.
+	 * 
+	 * ONLY WORKS IF THE CURRENT USER CREATED THE GAME BEING DELETED
 	 * @param g
 	 */
 	public static void removeGame(Game g) {
@@ -117,7 +119,8 @@ public class GameHandler {
 		query.whereEqualTo(DbColumns.GAME_START_DATE, g.mGameStartDate);
 		query.whereEqualTo(DbColumns.GAME_END_DATE, g.mGameEndDate);
 		ParseGeoPoint location = new ParseGeoPoint(g.mGameLocation.latitude, g.mGameLocation.longitude);
-		//query.whereEqualTo(DbColumns.GAME_LOCATION, location);
+		// it seems as though ParseGeoPoints need to be compared like doubles, as in
+		// two ParseGeoPoints are equal if they are within a very small distance from each other
 		query.whereWithinMiles(DbColumns.GAME_LOCATION, location, .0001);
 		List<ParseObject> objects = null;
 		try {
