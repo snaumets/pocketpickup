@@ -14,20 +14,24 @@ import com.google.common.collect.HashBiMap;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 
 public class PocketPickupApplication extends Application {
 	public static final String LOG_TAG = "PocketPickupApplication";
 	public List<ParseObject> allowedSports;
-	public BiMap<String,ParseObject> sportsAndObjs;
-	final String SPORTS_CACHE_LABEL = "sports";
+	public static BiMap<String,ParseObject> sportsAndObjs;
+	public final String SPORTS_CACHE_LABEL = "sports";
+	public static String userObjectId;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		// read the credentials.txt file to establish connection with Parse
+		
+		// read the credentials.txt file to establish connection with Parse			
 		AssetManager am = this.getAssets();
 		InputStream is = null;
 		try {
@@ -47,8 +51,15 @@ public class PocketPickupApplication extends Application {
 		clientKey = s.next();
 		s.close();
 		Parse.initialize(this, applicationID, clientKey);
+		ParseFacebookUtils.initialize(getString(R.string.app_id)); // for facebook login
 		Log.v(LOG_TAG, "parse credentials success");
 		getSports();
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		if (currentUser != null) {
+			userObjectId = currentUser.getObjectId();
+		} else {
+			userObjectId = null;
+		}
 	}
 
 	private void getSports() {

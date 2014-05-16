@@ -1,12 +1,13 @@
 package com.uwcse403.pocketpickup;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -23,9 +24,11 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
+import com.uwcse403.pocketpickup.game.Game;
 
 public class FindGameActivity extends Activity
 							  implements DatePickerDialog.OnDateSetListener, 
@@ -34,6 +37,8 @@ public class FindGameActivity extends Activity
 	public static final String FINDGAME_LOCATION  = "findgame_location";
 	public static final String FINDGAME_LATITUDE  = "findgame_latitude";
 	public static final String FINDGAME_LONGITUDE = "findgame_longitude";
+	public static final String FINDGAME_RESULTS   = "findgame_results";
+	public static final String FINDGAME_RADIUS    = "findgame_radius";
 	
 	// Bundle IDs for persistent button names
 	private static final String STATE_START_TIME = "fg_start_time";
@@ -225,11 +230,16 @@ public class FindGameActivity extends Activity
 		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % msInDay : 0;
 		
 		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, "");
-		// TODO: pass this criteria object to the game handler
 		
-		setResult(Activity.RESULT_OK);
+		final ArrayList<Game> searchResults = new ArrayList<Game>(); // TODO: Finish GameHandler.findGame(criteria);
+		Intent returnIntent = new Intent();
+		returnIntent.putExtra(FINDGAME_RADIUS, mRadius);
+		returnIntent.putExtra(FINDGAME_LATITUDE, mLatLng.latitude);
+		returnIntent.putExtra(FINDGAME_LONGITUDE, mLatLng.longitude);
+		returnIntent.putParcelableArrayListExtra("searchResults", searchResults);
+		
+		setResult(Activity.RESULT_OK, returnIntent);
 		finish();
-		//Toast.makeText(this, "r: " + mRadius, Toast.LENGTH_LONG).show();
 	}
 	
 	public void showSportsPreferencesDialog(View v) {

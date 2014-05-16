@@ -13,7 +13,7 @@ import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.game.Game;
 
-public class AppInitTest extends ApplicationTestCase {
+public class AppInitTest extends ApplicationTestCase<PocketPickupApplication> {
 
 	public AppInitTest() {
 		super(PocketPickupApplication.class);
@@ -37,12 +37,7 @@ public class AppInitTest extends ApplicationTestCase {
 	
 	
 	protected void doTests() throws ParseException {
-		//alwaysPass();
-		//alwaysFail();
-		Game g = new Game("isaiah", new LatLng(0,0), new Date(), new Date(), "bball", 9);
-		GameHandler.createGame(g);
-		ParseObject p = new ParseObject("test");
-		p.save();
+		
 	}
 	
 	@Override

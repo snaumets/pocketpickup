@@ -225,15 +225,14 @@ public class CreateGameActivity extends Activity
 	
 	public void submitCreate(View v) {
 		ParseObject testUser = GameHandler.getAUser();
-		ParseObject testSport = GameHandler.getASport();
+		String testSport = "Basketball";
 		final Calendar end = Calendar.getInstance();
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
-		final Game createGame = new Game(testUser, mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), testSport, 2 /* TODO: default game size */);
+		final Game createGame = new Game(PocketPickupApplication.userObjectId, mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), mSport, 2 /* TODO: default game size */);
 		setResult(Activity.RESULT_OK);
 		finish();
 		// TODO: uncomment for functionality
-		// GameHandler.createGame(createGame);
-		
+		GameHandler.createGame(createGame);
 	}
 	
 	public void resetCreate(View v) {
