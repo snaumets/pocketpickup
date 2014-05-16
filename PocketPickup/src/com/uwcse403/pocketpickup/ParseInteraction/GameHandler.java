@@ -13,6 +13,7 @@ import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
@@ -111,42 +112,32 @@ public class GameHandler {
 	 */
 	public static void removeGame(Game g) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
-		ParseObject toDelete = Translator.appGameToParseGame(g);
+		query.whereEqualTo(DbColumns.GAME_CREATOR, ParseUser.getCurrentUser());
+		query.whereEqualTo(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
+		query.whereEqualTo(DbColumns.GAME_START_DATE, g.mGameStartDate);
+		query.whereEqualTo(DbColumns.GAME_END_DATE, g.mGameEndDate);
+		ParseGeoPoint location = new ParseGeoPoint(g.mGameLocation.latitude, g.mGameLocation.longitude);
+		//query.whereEqualTo(DbColumns.GAME_LOCATION, location);
+		query.whereWithinMiles(DbColumns.GAME_LOCATION, location, .0001);
+		List<ParseObject> objects = null;
 		try {
-			toDelete.delete();
+			objects = query.find();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		/*
-		if (toDelete == null) {
-			Log.e(LOG_TAG, "cant delete, couln't convert to parse object");
+		if (objects == null) {
+			Log.e(LOG_TAG, "no objects found to delete");
 		}
-		Log.d(LOG_TAG, "objectId to delete: " + toDelete.getObjectId());
-		query.whereEqualTo(DbColumns.GAME_CREATOR, toDelete.getObjectId());
-		query.findInBackground( new FindCallback<ParseObject>() {
-			public void done(List<ParseObject> object, ParseException e) {
-				if(e == null) {
-					Log.v(LOG_TAG, "Successfully got object to delete");
-					object.deleteInBackground(new DeleteCallback() {
-						public void done(ParseException pe) {
-							if(pe == null) {
-								Log.v(LOG_TAG, "Successfully deleted object");
-							}
-							else {
-								Log.e(LOG_TAG, "Failed to delete object: " + pe.getCode() + " :"+ pe.getMessage());
-							}
-						}
-					});
-				}
-				else {
-					Log.e(LOG_TAG, "Failed to get object for deletion: " + e.getCode() + ": " + e.getMessage());
-					return;
-				}
+		for (int i = 0; i < objects.size(); i++) {
+			try {
+				objects.get(i).delete();
+				Log.v(LOG_TAG, "deleting object: " + i);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		});	
-		*/
+		}
 	}
 
 	/**
