@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.parse.ParseObject;
 
 /**
  * Stores information about an individual pickupgame.
@@ -38,7 +37,7 @@ public final class Game implements Parcelable {
 	public final Long mGameEndDate;
 	/**Type of game**/
 	public final String mGameType;
-	
+	/**Ideal game size**/
 	public final int mIdealGameSize;
 
 	/**
@@ -69,6 +68,10 @@ public final class Game implements Parcelable {
 		mGameType = null;
 	}
 	
+	/**
+	 * Creates a game from a parcel
+	 * @param in - parcel to be converted to Game
+	 */
 	private Game(Parcel in) {
 		mIdealGameSize = in.readInt();
 		mCreator = null;
@@ -83,11 +86,13 @@ public final class Game implements Parcelable {
 	}
 
 	@Override
+	/**{@inheritDoc}**/
 	public int describeContents() {
 		return 0;
 	}
 
 	@Override
+	/**{@inheritDoc}**/
 	public void writeToParcel(Parcel out, int arg1) {
 		out.writeInt(mIdealGameSize);
 		out.writeDouble(mGameLocation.latitude);

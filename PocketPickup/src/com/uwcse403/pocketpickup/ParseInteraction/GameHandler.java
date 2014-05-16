@@ -6,9 +6,6 @@ import java.util.List;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.parse.DeleteCallback;
-import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -18,18 +15,28 @@ import com.parse.SaveCallback;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
-
+/**
+ * Interfaces between local application storage and cloud storage.
+ * 
+ * This implementation is dependent on the Parse library
+ */
 public class GameHandler {
+	/**Label for debugging tag label**/
 	public static final String LOG_TAG = "GameHandler";
 	
+	/**
+	 * Adds a game to the database of available games
+	 * 
+	 * @param g - contains user settings for the game
+	 */
 	public static void createGame(Game g) {
 		Log.v(LOG_TAG, "entering CreateGame()");
 		ParseObject game = Translator.appGameToParseGame(g); 
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
 				if (e == null) {
-					Log.v(LOG_TAG, "Successfully saved game");
 					// successfully created game
+					Log.v(LOG_TAG, "Successfully saved game");
 				} else {
 					// unable to create the game, alert user
 					Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
@@ -38,6 +45,15 @@ public class GameHandler {
 		});
 	} 
 	
+	/**
+	 * Adds a game to the database of available games
+	 * Unlike {@link createGame}, this creates a game with default preferences, except
+	 * for the ideal game size provided by the {@link Game} argument.
+	 * 
+	 * Used for debugging purposes
+	 * 
+	 * @param g - supplies the ideal game size
+	 */
 	public static void createDummyGame(Game g) {
 		Log.v(LOG_TAG, "entering createDummyGame()");
 		ParseObject game = new ParseObject("Game");
@@ -47,8 +63,8 @@ public class GameHandler {
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
 				if (e == null) {
-					Log.v(LOG_TAG, "Successfully saved game");
 					// successfully created game
+					Log.v(LOG_TAG, "Successfully saved game");
 				} else {
 					// unable to create the game, alert user
 					Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
@@ -57,6 +73,18 @@ public class GameHandler {
 		});
 	}
 	
+	/**
+	 * Adds a game to the database of available games
+	 * Unlike {@link createGame}, this creates a game with default preferences, except
+	 * for the ideal game size provided by the {@link Game} argument and the creator
+	 * and gameType provided by the ParseObject arguments.
+	 * 
+	 * Used for debugging purposes
+	 * 
+	 * @param g - supplies the ideal game size
+	 * @param user - specifies the creator
+	 * @param sport - specifies the gameType
+	 */
 	public static void createDummyGameWithPointers(Game g, ParseObject user, ParseObject sport) {
 		Log.v(LOG_TAG, "entering createDummyGame()");
 		ParseObject game = new ParseObject("Game");
@@ -68,8 +96,8 @@ public class GameHandler {
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
 				if (e == null) {
-					Log.v(LOG_TAG, "Successfully saved game");
 					// successfully created game
+					Log.v(LOG_TAG, "Successfully saved game");
 				} else {
 					// unable to create the game, alert user
 					Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
@@ -77,40 +105,13 @@ public class GameHandler {
 			}
 		});
 	}
-	/**
-	 * 
-	 * @param id the Parse objectId of the game to remove
-	 */
-	public static void removeGame(String id) {
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
-		query.getInBackground(id, new GetCallback<ParseObject>() {
-			public void done(ParseObject object, ParseException e) {
-				if(e == null) {
-					Log.v(LOG_TAG, "Successfully got object to delete");
-					object.deleteInBackground(new DeleteCallback() {
-						public void done(ParseException pe) {
-							if(pe == null) {
-								Log.v(LOG_TAG, "Successfully deleted object");
-							}
-							else {
-								Log.v(LOG_TAG, "Failed to delete object");
-							}
-						}
-					});
-				}
-				else {
-					Log.v(LOG_TAG, "Failed to get object for deletion");
-					return;
-				}
-			}
-		});
-	}
+
 	
 	/** 
 	 * Removes the App game object g from the Parse database.
 	 * 
 	 * ONLY WORKS IF THE CURRENT USER CREATED THE GAME BEING DELETED
-	 * @param g
+	 * @param g - target game to be deleted
 	 */
 	public static void removeGame(Game g) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
@@ -126,10 +127,13 @@ public class GameHandler {
 		try {
 			objects = query.find();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//Failed to see results of the query
+			Log.e(LOG_TAG, "failed to collect query results in removeGame()");
 		}
 		if (objects == null) {
+			//Failed to find the game to delete
+			//This is an error because the user should only be able to delete
+			//games that exist
 			Log.e(LOG_TAG, "no objects found to delete");
 		}
 		for (int i = 0; i < objects.size(); i++) {
@@ -137,13 +141,14 @@ public class GameHandler {
 				objects.get(i).delete();
 				Log.v(LOG_TAG, "deleting object: " + i);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//Failed to delete a game
+				Log.e(LOG_TAG, "failed to delete a target game in removeGame()");
 			}
 		}
 	}
 
 	/**
+	 * Finds a list of games based on user criteria
 	 * 
 	 * @param criteria: FindGameCriteria object containing search criteria
 	 */
@@ -165,8 +170,8 @@ public class GameHandler {
 		try {
 			results = query.find();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Failed to get search results
+			Log.e(LOG_TAG, "Failed to get search results in findGame()");
 		}
 		if (results == null) {
 			// no games match search criteria
@@ -192,8 +197,8 @@ public class GameHandler {
 			List<ParseObject> users = uQuery.find();
 			return users.get(0);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Failed to get any entry from the _User table
+			Log.e(LOG_TAG, "Failed to get any row from the _User table in getAUser()");
 		}
 		return null;
 	}
@@ -208,7 +213,23 @@ public class GameHandler {
 			List<ParseObject> sports = uQuery.find();
 			return sports.get(0);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			// Failed to get any entry in the Sport table
+			Log.e(LOG_TAG, "Failed to get any row from the Sport table in getASport()");
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the Game ParseObject with the specified id. Returns null if no game matches the id
+	 * @param id - id of desired game
+	 * @return ParseObject representing game with id or null
+	 */
+	public static ParseObject getGameById(String id) {
+		ParseQuery<ParseObject> idQuery = new ParseQuery<>("Game");
+		try {
+			return idQuery.get(id);
+		} catch (ParseException e) {
+			Log.e(LOG_TAG, "Failed to get game by ID: " + id);
 		}
 		return null;
 	}
