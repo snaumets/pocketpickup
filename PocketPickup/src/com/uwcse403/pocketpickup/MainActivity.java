@@ -94,7 +94,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			restoreMap(savedInstanceState);
 		}
 		
-
 		mTitle = mDrawerTitle = getTitle();
 
 		// load slide menu items
@@ -288,6 +287,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			if (googleMap != null) {
 				// The Map is verified. It is now safe to manipulate the map.
 				googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+				mapType = GoogleMap.MAP_TYPE_NORMAL;
 				googleMap.getUiSettings().setZoomControlsEnabled(true);
 				googleMap.setMyLocationEnabled(true); // enables the my-location
 														// layer, button will be
@@ -355,12 +355,17 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	
 			// save the map type so when we change orientation, the mape type can be
 			// restored
-			float cameraZoom = googleMap.getCameraPosition().zoom;
-			outState.putInt("map_type", mapType);
-			outState.putDouble("map_lat", mLatLngLocation.latitude);
-			outState.putDouble("map_lng", mLatLngLocation.longitude);
-			outState.putFloat("map_zoom", cameraZoom);
-			//outState.putParcelableArrayList("map_marker_list", null);
+			if (googleMap != null) {
+				float cameraZoom = googleMap.getCameraPosition().zoom;
+				outState.putInt("map_type", mapType);
+				if (mLatLngLocation != null) {
+					outState.putDouble("map_lat", mLatLngLocation.latitude);
+					outState.putDouble("map_lng", mLatLngLocation.longitude);
+				}
+				outState.putFloat("map_zoom", cameraZoom);
+				//outState.putParcelableArrayList("map_marker_list", null);
+			}
+			
 		}
 	}
 	
