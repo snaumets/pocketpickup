@@ -58,5 +58,4 @@ public final class FindGameCriteria {
 		mEndTime = 0;
 		mGameType = "";	
 	}	
-	
 }

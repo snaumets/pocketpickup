@@ -28,8 +28,8 @@ public final class Game implements Parcelable {
 	    }
 	};
 	
-	/**Name of the user who created the game**/
-	public final ParseObject mCreator;
+	/**ParseObject objectId of the user who created the game**/
+	public final String mCreator;
 	/**Location of the game**/
 	public final LatLng mGameLocation;
 	/**Date and time for the beginning of the game**/
@@ -46,7 +46,7 @@ public final class Game implements Parcelable {
 	 * 
 	 * @requires no arguments are null
 	 */
-	public Game(ParseObject creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
+	public Game(String creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
 			String gameType, int idealGameSize) {
 		this.mCreator = creator;
 		this.mGameLocation = gameLocation;

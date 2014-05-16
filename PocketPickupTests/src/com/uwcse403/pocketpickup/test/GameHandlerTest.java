@@ -15,6 +15,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
+import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
 
 public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication>{
@@ -37,6 +38,15 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		if (!isNetworkConnected()) {
 			fail();
 		}
+		// for some reason we need to wait a bit for the variables in PocketPickupApplication
+		// to become initialized otherwise some of the tests fail.
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.v(LOG_TAG, PocketPickupApplication.sportsAndObjs.keySet().toString());
 	}
 	/**
 	 * Checks to see if there is a network connection 
@@ -88,6 +98,32 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	}
 	
 	/**
+	 * This test case simulates a user looking for games within 5 miles of their current
+	 * location. Two games are created, one at the same location as the current user 
+	 * and one that is more than 5 miles away from the current user.
+	 * The query should return only the game that is right at the current user's location
+	 */
+	public void testFindGameLocation() {
+		Log.d(LOG_TAG, "sportsAndObjs is null: " + (PocketPickupApplication.sportsAndObjs == null));
+		//ParseGeoPoint currentLocation = ParseGeoPoint. ask serge
+		Game closeGame = new Game(getApplication().userObjectId, new LatLng(1,1), 
+				1L, 2L, "Basketball", 2);
+		Game farGame =  new Game(getApplication().userObjectId, new LatLng(10,10), 
+				1L, 2L, "Basketball", 2);
+		GameHandler.createGame(closeGame);
+		GameHandler.createGame(farGame);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		FindGameCriteria criteria = new FindGameCriteria(5L, new LatLng(1,1), 0L, Long.MAX_VALUE, 0L, 0L, "Basketball");
+		List<Game> results = GameHandler.findGame(criteria);
+		Log.d(LOG_TAG, "number of results: " + results.size());
+	}
+	
+	/**
 	 * Uploads a game
 	 */
 	public void testDate() {
@@ -97,9 +133,9 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 			Log.e("GameHandlerTest", "Failed to get a sample user or sport");
 			fail();
 		}
-		Game gameDate = new Game(user, new LatLng(0, 0), 0L, 0L, sport, 0);
+		//Game gameDate = new Game(user, new LatLng(0, 0), 0L, 0L, sport, 0);
 		//GameHandler.createGame(gameDate);
-		GameHandler.createDummyGameWithPointers(gameDate, user, sport);
+		//GameHandler.createDummyGameWithPointers(gameDate, user, sport);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {

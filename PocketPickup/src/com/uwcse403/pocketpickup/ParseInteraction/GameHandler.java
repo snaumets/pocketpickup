@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -21,14 +22,7 @@ public class GameHandler {
 	
 	public static void createGame(Game g) {
 		Log.v(LOG_TAG, "entering CreateGame()");
-		ParseObject game = new ParseObject("Game");
-		// fill in all the setters
-		game.put(DbColumns.GAME_SPORT, "some sport");
-		game.put(DbColumns.GAME_CREATOR, g.mCreator);
-		game.put(DbColumns.GAME_LOCATION, new ParseGeoPoint(g.mGameLocation.latitude, g.mGameLocation.longitude));
-		game.put(DbColumns.GAME_START_DATE, 0L);//g.gameStartDate);
-		game.put(DbColumns.GAME_END_DATE, 0L);//g.gameEndDate);
-		game.put(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
+		ParseObject game = Translator.appGameToParseGame(g); 
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
 				if (e == null) {
@@ -81,7 +75,10 @@ public class GameHandler {
 			}
 		});
 	}
-	
+	/**
+	 * 
+	 * @param id the Parse objectId of the game to remove
+	 */
 	public static void removeGame(String id) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
 		query.getInBackground(id, new GetCallback<ParseObject>() {
@@ -112,9 +109,19 @@ public class GameHandler {
 	 * @param criteria: FindGameCriteria object containing search criteria
 	 */
 	public static ArrayList<Game> findGame(FindGameCriteria criteria) {
-		ParseQuery<ParseObject> query = new ParseQuery("Game");
+		// get the location of the query, i.e., the center of the circle
+		LatLng loc = criteria.mSearchLocation;
+		ParseGeoPoint center = new ParseGeoPoint(loc.latitude, loc.longitude);
+		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Game");
 		ParseObject gameType = PocketPickupApplication.sportsAndObjs.get(criteria.mGameType);
-		query.whereEqualTo("sport", gameType);
+		// look for games of the desired sport
+		query.whereEqualTo(DbColumns.GAME_SPORT, gameType);
+		// limit to games within the specified radius
+		query.whereWithinMiles(DbColumns.GAME_LOCATION, center, criteria.mRadius);
+		// limit games to those that fall within the times entered
+		query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
+		query.whereLessThan(DbColumns.GAME_END_DATE, criteria.mEndDate + criteria.mEndTime);
+
 		List<ParseObject> results = null;
 		try {
 			results = query.find();
@@ -122,11 +129,19 @@ public class GameHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (results != null) {
-			
+		if (results == null) {
+			// no games match search criteria
+			return null;
 		}
-		return null;
+		ArrayList<Game> matchingGames = new ArrayList<Game>();
+		for (int i = 0; i < results.size(); i++) {
+			ParseObject result = results.get(i);
+			Log.v(LOG_TAG, "objectId of match: " + result.getObjectId());
+			matchingGames.add(Translator.parseGameToAppGame(result));
+		}
+		return matchingGames;
 	}
+	
 
 	/**
 	 * Gets the first User in the User table. For debugging purposes

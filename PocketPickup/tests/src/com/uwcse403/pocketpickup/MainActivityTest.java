@@ -20,7 +20,7 @@ public class MainActivityTest extends
 
 	    mActivity = getActivity();
 	} // end of setUp() method definition
-
+	@Test
 	public void testFail() {
 		assertTrue(false);
 	}

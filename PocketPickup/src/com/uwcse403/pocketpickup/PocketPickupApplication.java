@@ -17,13 +17,15 @@ import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 
 public class PocketPickupApplication extends Application {
 	public static final String LOG_TAG = "PocketPickupApplication";
 	public List<ParseObject> allowedSports;
 	public static BiMap<String,ParseObject> sportsAndObjs;
-	final String SPORTS_CACHE_LABEL = "sports";
+	public final String SPORTS_CACHE_LABEL = "sports";
+	public static String userObjectId;
 
 	@Override
 	public void onCreate() {
@@ -52,6 +54,8 @@ public class PocketPickupApplication extends Application {
 		ParseFacebookUtils.initialize(getString(R.string.app_id)); // for facebook login
 		Log.v(LOG_TAG, "parse credentials success");
 		getSports();
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		userObjectId = currentUser.getObjectId();
 	}
 
 	private void getSports() {
