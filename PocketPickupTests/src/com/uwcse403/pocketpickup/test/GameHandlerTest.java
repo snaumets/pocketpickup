@@ -1,5 +1,6 @@
 package com.uwcse403.pocketpickup.test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -123,7 +124,9 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		FindGameCriteria criteria = new FindGameCriteria(5L, new LatLng(1,1), 0L, Long.MAX_VALUE, 0L, 0L, "Basketball");
+		ArrayList<String> gameTypes = new ArrayList<String>();
+		gameTypes.add("Basketball");
+		FindGameCriteria criteria = new FindGameCriteria(5L, new LatLng(1,1), 0L, Long.MAX_VALUE, 0L, 0L, gameTypes);
 		List<Game> results = GameHandler.findGame(criteria);
 		GameHandler.removeGame(farGame);
 		GameHandler.removeGame(closeGame);

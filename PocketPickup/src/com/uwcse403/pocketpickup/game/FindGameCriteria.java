@@ -1,5 +1,7 @@
 package com.uwcse403.pocketpickup.game;
 
+import java.util.ArrayList;
+
 import com.google.android.gms.maps.model.LatLng;
 
 
@@ -20,7 +22,7 @@ public final class FindGameCriteria {
 	public final long mEndTime;
 	
 	/**Type of game**/
-	public final String mGameType;
+	public final ArrayList<String> mGameTypes;
 	
 	/**
 	 * Object holding criteria input by the user from the Find Game screen
@@ -32,14 +34,14 @@ public final class FindGameCriteria {
 	 * @param gameType  Name of sport to search TODO: change to sport preference object
 	 */
 	public FindGameCriteria(final double radius, final LatLng loc, final long startDate, 
-			final long endDate, final long startTime, final long endTime, final String gameType) {
+			final long endDate, final long startTime, final long endTime, final ArrayList<String> gameType) {
 		mRadius = radius;
 		mSearchLocation = loc;
 		mStartDate = startDate;
 		mEndDate = endDate;
 		mStartTime = startTime;
 		mEndTime = endTime;
-		mGameType = gameType;
+		mGameTypes = gameType;
 	}
 	
 	/**
@@ -54,6 +56,6 @@ public final class FindGameCriteria {
 		mEndDate = 0;
 		mStartTime = 0;
 		mEndTime = 0;
-		mGameType = "";	
+		mGameTypes = new ArrayList<String>();	
 	}	
 }

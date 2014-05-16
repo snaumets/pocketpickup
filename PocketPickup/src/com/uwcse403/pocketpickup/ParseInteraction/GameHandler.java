@@ -181,13 +181,23 @@ public class GameHandler {
 	 * @param criteria: FindGameCriteria object containing search criteria
 	 */
 	public static ArrayList<Game> findGame(FindGameCriteria criteria) {
+		ArrayList<String> sports = criteria.mGameTypes;
+		if (sports.size() == 0) {
+			throw new IllegalArgumentException("must include a non-empty list of sport types to findGame()");
+		}
+		ArrayList<ParseQuery<ParseObject>> sportTypes = new ArrayList<ParseQuery<ParseObject>>();
+		for (int i = 0; i < sports.size(); i++) {
+			ParseObject sport = PocketPickupApplication.sportsAndObjs.get(sports.get(i));
+			ParseQuery<ParseObject> q = new ParseQuery<ParseObject>("Game");
+			q.whereEqualTo(DbColumns.GAME_SPORT, sport);
+			sportTypes.add(q);
+		}
+		// first create a compound query that returns games of the desired sport
+		ParseQuery<ParseObject> query = ParseQuery.or(sportTypes);
 		// get the location of the query, i.e., the center of the circle
 		LatLng loc = criteria.mSearchLocation;
 		ParseGeoPoint center = new ParseGeoPoint(loc.latitude, loc.longitude);
-		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Game");
-		ParseObject gameType = PocketPickupApplication.sportsAndObjs.get(criteria.mGameType);
-		// look for games of the desired sport
-		query.whereEqualTo(DbColumns.GAME_SPORT, gameType);
+
 		// limit to games within the specified radius
 		query.whereWithinMiles(DbColumns.GAME_LOCATION, center, criteria.mRadius);
 		// limit games to those that fall within the times entered

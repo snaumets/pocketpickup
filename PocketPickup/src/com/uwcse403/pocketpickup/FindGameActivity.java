@@ -228,8 +228,10 @@ public class FindGameActivity extends Activity
 		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / msInDay * msInDay : 0;
 		long startTime = mStartTime != null ? mStartTime.getTimeInMillis() % msInDay : 0;
 		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % msInDay : 0;
-		
-		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, "Basketball");
+		// just basketball hard-coded for now
+		ArrayList<String> gameTypes = new ArrayList<String>();
+		gameTypes.add("Basketball");
+		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, gameTypes);
 		
 		final ArrayList<Game> searchResults = new ArrayList<Game>();
 		searchResults.addAll(GameHandler.findGame(criteria));
