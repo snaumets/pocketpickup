@@ -99,6 +99,10 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	}
 	
 	/**
+	 * This test case simulates a user looking for 
+	 */
+	
+	/**
 	 * This test case simulates a user looking for games within 5 miles of their current
 	 * location. Two games are created, one at the same location as the current user 
 	 * and one that is more than 5 miles away from the current user.
@@ -123,7 +127,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		List<Game> results = GameHandler.findGame(criteria);
 		GameHandler.removeGame(farGame);
 		GameHandler.removeGame(closeGame);
-		assertTrue(results.size() > 0);
+		assertTrue(results.size() == 1);
 		assertEquals(closeGame.mGameLocation, results.get(0).mGameLocation);
 	}
 	
