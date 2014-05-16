@@ -364,6 +364,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	protected void onSaveInstanceState(Bundle outState) {
 		if (outState != null) {
 			super.onSaveInstanceState(outState);
+			
 		}
 		if (googleMap != null) {
 			CameraPosition map = googleMap.getCameraPosition();
@@ -512,7 +513,16 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case CREATE_GAME_CODE:
-			Toast.makeText(this, "Create game returned!", Toast.LENGTH_LONG).show();
+			if (data != null) {
+				mDisplayedGames = data.getParcelableArrayListExtra(CreateGameActivity.CREATEGAME_GAMELIST);
+				
+				// Defaults will never get used
+				final double lat = data.getDoubleExtra(CreateGameActivity.CREATEGAME_LATITUDE, 0.0);
+				final double lon = data.getDoubleExtra(CreateGameActivity.CREATEGAME_LONGITUDE, 0.0);
+				
+				onGameDisplayUpdate(0, null);
+				Toast.makeText(this, "Your game was created!", Toast.LENGTH_LONG).show();
+			}
 			break;
 		case FIND_GAME_CODE:
 			if (data != null) {
@@ -524,7 +534,16 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				final double lon = data.getDoubleExtra(FindGameActivity.FINDGAME_LONGITUDE, 0.0);
 				
 				onGameDisplayUpdate(radius, new LatLng(lat, lon));
-				Toast.makeText(this, "Find game returned!", Toast.LENGTH_LONG).show();
+				
+				String displayMessage;
+				if (mDisplayedGames.size() == 0) {
+					displayMessage = "No games found";
+				} else if (mDisplayedGames.size() == 1) {
+					displayMessage = "Displaying one game!";
+				} else {
+					displayMessage = "Displaying " + mDisplayedGames.size() + " games!";
+				}
+				Toast.makeText(this, displayMessage, Toast.LENGTH_LONG).show();
 			}
 			break;
 		default:
@@ -551,7 +570,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				for (Game game : mDisplayedGames) {
 					// You can customize the marker image using images bundled with
 					// your app, or dynamically generated bitmaps. 
-					Toast.makeText(this, "game at " + game.mGameLocation.toString(), Toast.LENGTH_LONG).show();
 					googleMap.addMarker(new MarkerOptions()
 					.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_basketball_red_marker))
 					.anchor(0.5f, 1.0f) // Anchors the marker on the bottom left

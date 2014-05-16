@@ -37,6 +37,7 @@ public class CreateGameActivity extends Activity
 	public static final String CREATEGAME_LOCATION  = "creategame_location";
 	public static final String CREATEGAME_LATITUDE  = "creategame_latitude";
 	public static final String CREATEGAME_LONGITUDE = "creategame_longitude";
+	public static final String CREATEGAME_GAMELIST = "creategame_gamelist";
 	
 	private static final long FIVE_MIN = (5 * 60 * 1000L);
 	private static final long HOUR = (60 * 60 * 1000L);
@@ -228,8 +229,18 @@ public class CreateGameActivity extends Activity
 		final Calendar end = Calendar.getInstance();
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
 		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), mSport, 2 /* TODO: default game size */);
-		setResult(Activity.RESULT_OK);
+		final ArrayList<Game> games = new ArrayList<Game>(); // will store only created game
+		games.add(createGame);
+		
+		Intent returnIntent = new Intent();
+		returnIntent.putExtra(CREATEGAME_LATITUDE, mLatLng.latitude);
+		returnIntent.putExtra(CREATEGAME_LONGITUDE, mLatLng.longitude);
+		returnIntent.putParcelableArrayListExtra(CREATEGAME_GAMELIST, games);
+		
+		setResult(Activity.RESULT_OK, returnIntent);
 		finish();
+		//setResult(Activity.RESULT_OK);
+		//finish();
 		// TODO: uncomment for functionality
 		GameHandler.createGame(createGame);
 	}
