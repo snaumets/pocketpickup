@@ -86,13 +86,14 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		setContentView(R.layout.activity_main);
 		Log.v("MainActivity", "in onCreate()");
 
-		// Restore button labels if necessary, otherwise init
+		// to print messages on phone screen
+		setUpMapIfNeeded();
+
+		// Restore map zoom level and location
 		if (savedInstanceState != null) {
 			restoreMap(savedInstanceState);
 		}
 		
-		// to print messages on phone screen
-		setUpMapIfNeeded();
 
 		mTitle = mDrawerTitle = getTitle();
 
