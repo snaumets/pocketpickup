@@ -232,6 +232,7 @@ public class FindGameActivity extends Activity
 		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, "");
 		
 		final ArrayList<Game> searchResults = new ArrayList<Game>(); // TODO: Finish GameHandler.findGame(criteria);
+		GameHandler.findGame(criteria);
 		Intent returnIntent = new Intent();
 		returnIntent.putExtra(FINDGAME_RADIUS, mRadius);
 		returnIntent.putExtra(FINDGAME_LATITUDE, mLatLng.latitude);

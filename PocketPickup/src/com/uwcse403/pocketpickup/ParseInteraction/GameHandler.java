@@ -249,7 +249,7 @@ public class GameHandler {
 	 * @return ParseObject representing game with id or null
 	 */
 	public static ParseObject getGameById(String id) {
-		ParseQuery<ParseObject> idQuery = new ParseQuery<>("Game");
+		ParseQuery<ParseObject> idQuery = new ParseQuery<ParseObject>("Game");
 		try {
 			return idQuery.get(id);
 		} catch (ParseException e) {
