@@ -6,6 +6,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -358,10 +360,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			// restored
 			if (googleMap != null) {
 				float cameraZoom = googleMap.getCameraPosition().zoom;
+				LatLng loc = googleMap.getCameraPosition().target;
 				outState.putInt("map_type", mapType);
-				if (mLatLngLocation != null) {
-					outState.putDouble("map_lat", mLatLngLocation.latitude);
-					outState.putDouble("map_lng", mLatLngLocation.longitude);
+				if (loc != null) {
+					outState.putDouble("map_lat", loc.latitude);
+					outState.putDouble("map_lng", loc.longitude);
 				}
 				outState.putFloat("map_zoom", cameraZoom);
 				//outState.putParcelableArrayList("map_marker_list", null);
@@ -370,8 +373,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		}
 	}
 	
+	/**
+	 * This method will be called to restore the state of the application once it is resumed.
+	 * It will make sure to return the map to the location and zoom level that it was left at.
+	 * @param savedInstanceState
+	 */
 	private void restoreMap(Bundle savedInstanceState) {
-		if (savedInstanceState != null) {
+		/*if (savedInstanceState != null) {
 			savedInstanceState.getInt("map_type", mapType);
 			int map_type = savedInstanceState.getInt("map_type");
 			double lat = savedInstanceState.getDouble("map_lat");
@@ -383,7 +391,27 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			location.setLatitude(lat);
 			location.setLongitude(lng);
 			zoomMapToLocation(location, (int) zoom);
-		}
+		}*/
+		//Toast.makeText(this, "restoring", Toast.LENGTH_LONG).show();
+		Log.v("MainActivity", "in restoreMap()");
+		SharedPreferences settings = getSharedPreferences("Map_State", 0);
+		float lng = settings.getFloat("map_lng", 0); // the second arg is returned if first is not found
+		float lat = settings.getFloat("map_lat", 0);
+		float zoom = settings.getFloat("map_zoom", 17); 
+		Toast.makeText(this, "" + lat + " " + lng + " " + zoom, Toast.LENGTH_LONG).show();
+		LatLng startPosition = new LatLng((double) lat, (double) lng); //with longitude and latitude
+
+		CameraPosition cameraPosition = new CameraPosition.Builder()
+		.target(startPosition)
+		.zoom(zoom)
+		.build();                   // Creates a CameraPosition from the builder
+		
+		Location location = new Location("loc");
+		location.setLatitude(lat);
+		location.setLongitude(lng);
+		
+		zoomMapToLocation(location, (int) zoom);
+		//googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 	}
 
 	@Override
@@ -506,16 +534,18 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					.show();
 			break;
 		case FIND_GAME_CODE:
-			mDisplayedGames = data.getParcelableArrayListExtra(FindGameActivity.FINDGAME_RESULTS);
-			final int radius = data.getIntExtra(FindGameActivity.FINDGAME_RADIUS, 1);
-			
-			// Defaults will never get used
-			final double lat = data.getDoubleExtra(FindGameActivity.FINDGAME_LATITUDE, 0.0);
-			final double lon = data.getDoubleExtra(FindGameActivity.FINDGAME_LONGITUDE, 0.0);
-			
-			onGameDisplayUpdate(radius, new LatLng(lat, lon));
-			Toast.makeText(this, "Find game returned!", Toast.LENGTH_LONG)
-					.show();
+			if (data != null) {
+				mDisplayedGames = data.getParcelableArrayListExtra(FindGameActivity.FINDGAME_RESULTS);
+				final int radius = data.getIntExtra(FindGameActivity.FINDGAME_RADIUS, 1);
+				
+				// Defaults will never get used
+				final double lat = data.getDoubleExtra(FindGameActivity.FINDGAME_LATITUDE, 0.0);
+				final double lon = data.getDoubleExtra(FindGameActivity.FINDGAME_LONGITUDE, 0.0);
+				
+				onGameDisplayUpdate(radius, new LatLng(lat, lon));
+				Toast.makeText(this, "Find game returned!", Toast.LENGTH_LONG)
+						.show();
+			}
 			break;
 		default:
 			// Do nothing
@@ -523,8 +553,32 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		}
 	}
 	
+	/**
+	 * 
+	 * @param radius The radius of the search in miles
+	 * @param loc The location of the center of the search
+	 */
 	private void onGameDisplayUpdate(int radius, LatLng loc) {
 		// TODO: paint pins inside mDisplayedGames
+		if (googleMap != null) {
+			if (radius != 0 && loc != null) {
+				int meters = radius * 1609; // convert miles to meters (1609 meters in 1 mile)
+				googleMap.addCircle(new CircleOptions().center(loc)
+						.radius(meters).strokeColor(Color.GREEN));
+			}
+			
+			if (mDisplayedGames != null) {
+				for (Game game : mDisplayedGames) {
+					// You can customize the marker image using images bundled with
+					// your app, or dynamically generated bitmaps. 
+					Toast.makeText(this, "game at " + game.mGameLocation.toString(), Toast.LENGTH_LONG).show();
+					googleMap.addMarker(new MarkerOptions()
+					.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_basketball_red_marker))
+					.anchor(0.5f, 1.0f) // Anchors the marker on the bottom left
+					.position(game.mGameLocation));
+				}
+			}
+		}
 	}
 
 	// Simply starts a log in activity
@@ -535,5 +589,25 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		Toast.makeText(this, "TODO: Location Activity", Toast.LENGTH_LONG)
 				.show();
 	}
-
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.v("MainActivity", "in onDestroy()");
+		//Toast.makeText(this, "destroying", Toast.LENGTH_LONG).show();
+		if (googleMap != null) {
+			CameraPosition mMyCam = googleMap.getCameraPosition();
+			double latitude = mMyCam.target.latitude;
+			double longitude = mMyCam.target.longitude;
+			float zoom = mMyCam.zoom;
+			
+			SharedPreferences settings = getSharedPreferences("Map_State", 0);
+			Editor editor = settings.edit();
+			editor.putFloat("map_lng", (float) longitude);
+			Toast.makeText(this, "" + latitude + " " + longitude + " " + zoom, Toast.LENGTH_LONG).show();
+			editor.putFloat("map_lat", (float) latitude);
+			editor.putFloat("map_zoom", zoom);
+			editor.commit();
+		}
+	}
 }

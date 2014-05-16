@@ -12,7 +12,17 @@ package com.uwcse403.pocketpickup.ParseInteraction;
  *
  */
 public class DbColumns {
+	
+	// table names
+	public static final String USER = "_USER";
+	public static final String GAME = "Game";
+	public static final String SPORT = "Sport";
 
+	// column names of all classes
+	public static final String OBJECT_ID = "objectId";
+	public static final String CREATED_AT = "createdAt";
+	public static final String ACL = "ACL";
+	
 	// column names of the Game class
 	public static final String GAME_CREATOR = "creator";
 	public static final String GAME_SPORT = "sport";
