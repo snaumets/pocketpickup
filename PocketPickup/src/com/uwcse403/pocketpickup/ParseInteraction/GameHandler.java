@@ -17,7 +17,7 @@ import com.uwcse403.pocketpickup.game.Game;
 public class GameHandler {
 	public static final String LOG_TAG = "GameHandler";
 	
-	public static void createGame(Game g) {
+	public static ParseObject createGame(Game g) {
 		Log.v(LOG_TAG, "entering CreateGame()");
 		ParseObject game = new ParseObject("Game");
 		// fill in all the setters
@@ -38,6 +38,7 @@ public class GameHandler {
 				}
 			}
 		});
+		return game;
 	} 
 	
 	public static void createDummyGame(Game g) {
@@ -141,6 +142,21 @@ public class GameHandler {
 			return sports.get(0);
 		} catch (ParseException e) {
 			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the Game ParseObject with the specified id. Returns null if no game matches the id
+	 * @param id - id of desired game
+	 * @return ParseObject representing game with id or null
+	 */
+	public static ParseObject getGameById(String id) {
+		ParseQuery<ParseObject> idQuery = new ParseQuery<>("Game");
+		try {
+			return idQuery.get(id);
+		} catch (ParseException e) {
+			Log.e(LOG_TAG, "Failed to get game by ID: " + id);
 		}
 		return null;
 	}
