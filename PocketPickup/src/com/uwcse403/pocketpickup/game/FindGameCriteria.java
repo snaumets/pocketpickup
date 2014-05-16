@@ -1,7 +1,5 @@
 package com.uwcse403.pocketpickup.game;
 
-import java.util.Date;
-
 import com.google.android.gms.maps.model.LatLng;
 
 
