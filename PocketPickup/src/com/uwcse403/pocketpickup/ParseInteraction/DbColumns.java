@@ -31,6 +31,8 @@ public class DbColumns {
 	public static final String GAME_IDEAL_SIZE = "idealGameSize";
 	public static final String GAME_START_DATE = "startDate";
 	public static final String GAME_END_DATE = "endDate";
+	public static final String GAME_DETAILS = "details";
+
 	
 	// column names of the User class
 	public static final String USER_GENDER = "gender";

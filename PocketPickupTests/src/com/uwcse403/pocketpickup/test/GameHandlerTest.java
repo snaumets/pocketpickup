@@ -113,9 +113,9 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		Log.d(LOG_TAG, "sportsAndObjs is null: " + (PocketPickupApplication.sportsAndObjs == null));
 		//ParseGeoPoint currentLocation = ParseGeoPoint. ask serge
 		Game closeGame = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(1,1), 
-				1L, 2L, "Basketball", 2);
+				1L, 2L, "Basketball", 2, "shirts vs skins");
 		Game farGame =  new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(10,10), 
-				1L, 2L, "Basketball", 2);
+				1L, 2L, "Basketball", 2, "thugs shooting hoops");
 		GameHandler.createGame(closeGame);
 		GameHandler.createGame(farGame);
 		try {

@@ -130,7 +130,7 @@
 	    android:layout_height="wrap_content"
 	    android:orientation="horizontal"
 	    android:layout_gravity="top">
-   	
+   <!-- 
 	    <Button
 	        android:id="@+id/search_pref_button"
 	        android:layout_width="0dp"
@@ -138,6 +138,13 @@
 	        android:onClick="showSportsPreferencesDialog"
 	        android:text="@string/change_pref"
 	        android:layout_weight=".75"/>
+ -->
+ 		<Spinner
+	        android:id="@+id/cg_sports_spinner"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:gravity="left"
+	        android:layout_weight=".5"/>	
 	    <Button
 	        android:id="@+id/search_reset_button"
 	        android:layout_width="0dp"

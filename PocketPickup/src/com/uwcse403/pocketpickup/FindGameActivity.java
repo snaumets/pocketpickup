@@ -95,7 +95,14 @@ public class FindGameActivity extends Activity
 			}
 			
 		});
-		
+		// initialize the sport type choices
+		Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
+		ArrayList<String> sports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
+		sports.add(0, "All Sports");
+		ArrayAdapter<String> sportsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sports);
+		sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		sportsSpinner.setAdapter(sportsAdapter);
+
 		// Initialize location text field from passed in location
 		Bundle args = getIntent().getExtras();
 		EditText editText = (EditText)findViewById(R.id.fg_location_text);
@@ -231,6 +238,7 @@ public class FindGameActivity extends Activity
 		// just basketball hard-coded for now
 		ArrayList<String> gameTypes = new ArrayList<String>();
 		gameTypes.add("Basketball");
+		gameTypes.add("Soccer");
 		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, gameTypes);
 		
 		final ArrayList<Game> searchResults = new ArrayList<Game>();

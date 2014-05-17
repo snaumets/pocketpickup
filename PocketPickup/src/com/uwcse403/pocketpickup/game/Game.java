@@ -39,6 +39,8 @@ public final class Game implements Parcelable {
 	public final String mGameType;
 	/**Ideal game size**/
 	public final int mIdealGameSize;
+	/**Game Details**/
+	public final String mDetails;
 
 	/**
 	 * Default constructor
@@ -46,13 +48,14 @@ public final class Game implements Parcelable {
 	 * @requires no arguments are null
 	 */
 	public Game(String creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
-			String gameType, int idealGameSize) {
+			String gameType, int idealGameSize, String details) {
 		this.mCreator = creator;
 		this.mGameLocation = gameLocation;
 		this.mGameStartDate = gameStartDate;
 		this.mGameEndDate = gameEndDate;
 		this.mGameType = gameType;
 		this.mIdealGameSize = idealGameSize;
+		this.mDetails = details;
 	}
 	
 	/**
@@ -66,6 +69,7 @@ public final class Game implements Parcelable {
 		mGameStartDate = null;
 		mGameEndDate = null;
 		mGameType = null;
+		mDetails = null;
 	}
 	
 	/**
@@ -83,6 +87,7 @@ public final class Game implements Parcelable {
 		mGameStartDate = in.readLong();
 		mGameEndDate = in.readLong();
 		mGameType = in.readString();
+		mDetails = in.readString();
 	}
 
 	@Override
@@ -100,6 +105,6 @@ public final class Game implements Parcelable {
 		out.writeLong(mGameStartDate);
 		out.writeLong(mGameEndDate);
 		out.writeString(mGameType);
+		out.writeString(mDetails);
 	}
-
 }

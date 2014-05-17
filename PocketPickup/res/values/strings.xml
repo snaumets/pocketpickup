@@ -46,8 +46,8 @@
     <string name="select_radius_miles">Mile(s)</string>
     <string name="select_time">Any Time</string>
     <string name="select_date">Any Date</string>
-    <string name="select_range_from">From:</string>
-    <string name="select_range_to">To:</string>
+    <string name="select_range_from">Starting After:</string>
+    <string name="select_range_to">Ending Before:</string>
     <string name="change_pref">Change Sports Preferences</string>
     <string name="reset">Reset</string>
     

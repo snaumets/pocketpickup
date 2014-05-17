@@ -30,7 +30,8 @@ public class Translator {
 		Long gameEndDate = game.getLong(DbColumns.GAME_END_DATE);
 		String gameType = game.getString(DbColumns.SPORT_NAME);
 		int idealGameSize = game.getInt(DbColumns.GAME_IDEAL_SIZE);
-		return new Game(creatorId, location, gameStartDate, gameEndDate, gameType, idealGameSize);
+		String gameDetails = game.getString(DbColumns.GAME_DETAILS);
+		return new Game(creatorId, location, gameStartDate, gameEndDate, gameType, idealGameSize, gameDetails);
 	}
 	
 	/**
@@ -59,6 +60,7 @@ public class Translator {
 		g.put(DbColumns.GAME_END_DATE, game.mGameEndDate);
 		g.put(DbColumns.GAME_IDEAL_SIZE, game.mIdealGameSize);
 		g.put(DbColumns.GAME_SPORT, PocketPickupApplication.sportsAndObjs.get(game.mGameType));
+		g.put(DbColumns.GAME_DETAILS, game.mDetails);
 		return g;
 	}
 }

@@ -228,7 +228,9 @@ public class CreateGameActivity extends Activity
 	public void submitCreate(View v) {
 		final Calendar end = Calendar.getInstance();
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
-		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), mSport, 2 /* TODO: default game size */);
+		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), 
+				mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), 
+				mSport, 2 /* TODO: default game size */, "whatver");
 		final ArrayList<Game> games = new ArrayList<Game>(); // will store only created game
 		games.add(createGame);
 		
