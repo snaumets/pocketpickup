@@ -52,7 +52,7 @@ public class Translator {
 		} else {
 			// TODO implement this, if it necessary. Currently it will never be used
 			// if it is called, throw an exception
-			throw new IllegalStateException();
+			//throw new IllegalStateException();
 		}
 		ParseGeoPoint location = new ParseGeoPoint(game.mGameLocation.latitude, game.mGameLocation.longitude);
 		g.put(DbColumns.GAME_LOCATION, location);
