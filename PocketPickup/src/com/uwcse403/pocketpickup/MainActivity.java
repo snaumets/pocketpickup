@@ -198,14 +198,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			return true;
 		}
 		// Handle action bar actions click
-		switch (item.getItemId()) {
-		/*
-		case R.id.action_settings:
-			return true;
-			*/
-		default:
-			return super.onOptionsItemSelected(item);
-		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	/* *
@@ -214,10 +207,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// if nav drawer is opened, hide the action items
-		/*
-		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
-		*/
 		return super.onPrepareOptionsMenu(menu);
 	}
 

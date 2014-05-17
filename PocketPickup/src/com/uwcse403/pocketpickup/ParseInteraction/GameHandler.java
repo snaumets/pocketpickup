@@ -138,6 +138,7 @@ public class GameHandler {
 		// it seems as though ParseGeoPoints need to be compared like doubles, as in
 		// two ParseGeoPoints are equal if they are within a very small distance from each other
 		query.whereWithinMiles(DbColumns.GAME_LOCATION, location, .0001);
+		query.whereEqualTo(DbColumns.GAME_DETAILS, g.mDetails);
 		List<ParseObject> objects = null;
 		try {
 			objects = query.find();
@@ -280,6 +281,15 @@ public class GameHandler {
 			Log.e(LOG_TAG, "Failed to get game by ID: " + id);
 		}
 		return null;
+	}
+	/**
+	 * Adds the current user to a game 
+	 * @param g the Game to join
+	 * @return true if the user was added to the game, false otherwise
+	 */
+	public static boolean joinGame(Game g) {
+		// TODO: not implemented in Beta release
+		return false;
 	}
 }
 

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,6 +19,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
+import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
@@ -132,6 +136,55 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		GameHandler.removeGame(closeGame);
 		assertTrue(results.size() == 1);
 		assertEquals(closeGame.mGameLocation, results.get(0).mGameLocation);
+	}
+	/**
+	 * Adds a user to a game and tests to see if the user was indeed added to the Game object
+	 * stored in the database.
+	 */
+	public void testJoinGame() {
+		// create a game
+		Random r = new Random();
+		long l = r.nextLong();
+		// create a random description string to act as a lookup key for retrieving the object
+		// directly from Parse instead of going through the app layer
+		String randomDescription = Long.toString(l);
+		Game game = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(1,1), 
+				1L, 2L, "Basketball", 2, randomDescription);
+		GameHandler.createGame(game);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// now add the current user to the game.
+		GameHandler.joinGame(game);
+		// now search for the game in the database and see if the current user's Parse objectId
+		// is in the array in the 'players' column
+		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Game");
+		query.whereEqualTo(DbColumns.GAME_DETAILS, randomDescription);
+		List<ParseObject> result = null;
+		try {
+			result = query.find();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ParseObject justCreatedGame = result.get(0);
+		JSONArray players = justCreatedGame.getJSONArray(DbColumns.GAME_PLAYERS);
+		// fail if the players object is null, i.e., nothing to do with adding players to games
+		// has been implemented
+		assertTrue(players != null);
+		// fail if no players were added to the game. 
+		assertTrue(players.length() > 0);
+		String id = null;
+		try {
+			id = players.getString(0);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertEquals(ParseUser.getCurrentUser().getObjectId(), id);
 	}
 	
 	/**
