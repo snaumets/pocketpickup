@@ -2,6 +2,8 @@ package com.uwcse403.pocketpickup;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -55,6 +57,7 @@ public class FindGameActivity extends Activity
 	private Calendar mStartDate;
 	private Calendar mEndDate;
 	private int      mRadius;
+	private Set<String> mSports;
 		
 	/*
 	 * (non-Javadoc)
@@ -64,6 +67,11 @@ public class FindGameActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_find_game);
+		
+		/*if (savedInstanceState == null) { // initialize the set that will hold sports to search for
+			mSports = new HashSet<String>();
+			mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
+		}*/
 		
 		// Restore button labels if necessary, otherwise init
 		if (savedInstanceState != null) {
@@ -102,6 +110,30 @@ public class FindGameActivity extends Activity
 		ArrayAdapter<String> sportsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sports);
 		sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		sportsSpinner.setAdapter(sportsAdapter);
+		sportsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int pos, long id) {
+				if (mSports == null) { // initialize the set that will hold sports to search for
+					mSports = new HashSet<String>();
+					mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
+				}
+				mSports.clear(); // get rid of all other sports
+				String sportStr = (String)parent.getItemAtPosition(pos);
+				if (pos == 0) { // Selected "All Sports", so add all sports to the set
+					mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
+				} else { // Selected single sport
+					mSports.add(sportStr);
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// do nothing
+			}
+			
+		});
 
 		// Initialize location text field from passed in location
 		Bundle args = getIntent().getExtras();
@@ -209,9 +241,14 @@ public class FindGameActivity extends Activity
 		mStartTime = null;
 		mEndDate = null;
 		mEndTime = null;
+		mSports.clear();
+		mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
 		
 		Spinner spinner = (Spinner)findViewById(R.id.radius_spinner);
 		spinner.setSelection(0);
+		
+		Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
+		sportsSpinner.setSelection(0);
 		
 		setButtonLabels();
 	}
@@ -231,10 +268,10 @@ public class FindGameActivity extends Activity
 		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / msInDay * msInDay : 0;
 		long startTime = mStartTime != null ? mStartTime.getTimeInMillis() % msInDay : 0;
 		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % msInDay : 0;
-		// just basketball hard-coded for now
 		ArrayList<String> gameTypes = new ArrayList<String>();
-		gameTypes.add("Basketball");
-		gameTypes.add("Soccer");
+		gameTypes.addAll(mSports);
+		//gameTypes.add("Basketball");
+		//gameTypes.add("Soccer");
 		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, gameTypes);
 		
 		final ArrayList<Game> searchResults = new ArrayList<Game>();

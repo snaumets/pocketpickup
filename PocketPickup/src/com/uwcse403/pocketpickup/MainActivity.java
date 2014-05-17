@@ -2,6 +2,7 @@ package com.uwcse403.pocketpickup;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
@@ -26,6 +27,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,15 +37,19 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseUser;
+import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 import com.uwcse403.pocketpickup.game.Game;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
@@ -99,7 +105,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		
 		// to print messages on phone screen
 		setUpMapIfNeeded();
-
+		
 		// Restore map zoom level and location
 		if (!firstLaunch) { // not the first launch, actually need to restore state
 			restoreMap();
@@ -318,6 +324,45 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 								updateLocationTextField();
 							}
 						});
+				
+				// Setting a custom info window adapter for the google map (for markers)
+			    googleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+
+			        // Use default InfoWindow frame
+			        @Override
+			        public View getInfoWindow(Marker arg0) {
+			            return null;
+			        }
+			        
+			        // Defines the contents of the InfoWindow
+			        @Override
+			        public View getInfoContents(Marker marker) {
+			            // Getting view from the layout file info_window_layout
+			            View v = getLayoutInflater().inflate(R.layout.windowlayout, null);
+
+			            // Getting the title from the marker
+			            String title = marker.getTitle();
+			            
+			            // Getting the snippet from the marker
+			            String snippet = marker.getSnippet();
+
+			            // Getting reference to the TextView to set title
+			            //TextView tvTitle = (TextView) v.findViewById(R.id.tv_title);
+
+			            // Getting reference to the TextView to set snippet
+			            TextView tvSnippet = (TextView) v.findViewById(R.id.tv_snippet);
+
+			            // Setting the title
+			            //tvTitle.setText(snippet);
+
+			            // Setting the snippet
+			            tvSnippet.setText(snippet);
+
+			            // Returning the view containing InfoWindow contents
+			            return v;
+
+			        }
+			    });
 			}
 		}
 	}
@@ -566,11 +611,17 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			if (mDisplayedGames != null) {
 				for (Game game : mDisplayedGames) {
 					// You can customize the marker image using images bundled with
-					// your app, or dynamically generated bitmaps. 
+					// your app, or dynamically generated bitmaps.
+					String details = (game.mDetails == null ? "None" : game.mDetails);
+					
+					String gameData = "Event starts: " + new Date(game.mGameStartDate).toString() + "\n" +
+					"Game details: " + details;
 					googleMap.addMarker(new MarkerOptions()
 					.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_basketball_red_marker))
 					.anchor(0.5f, 1.0f) // Anchors the marker on the bottom left
-					.position(game.mGameLocation));
+					.position(game.mGameLocation)
+					.title(game.mGameType)
+					.snippet(gameData));
 				}
 			}
 		}

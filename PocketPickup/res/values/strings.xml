@@ -48,7 +48,8 @@
     <string name="select_range_from">Starting After:</string>
     <string name="select_range_to">Ending Before:</string>
     <string name="change_pref">Change Sports Preferences</string>
-    <string name="reset">Reset</string>
+    <string name="select_sports">Sport:</string>
+    <string name="reset">Reset All</string>
     
     <string-array name="radius_choices">
         <item>1</item>
@@ -80,6 +81,8 @@
     <string name="cg_sport">Sport:</string>
     <string name="cg_duration">Duration:</string>
     <string name="cg_duration_hours">Hour(s)</string>
+    <string name="cg_details_hint">Add optional details</string>
+    <string name="cg_details">Details:</string>
     
     <string-array name="sport_choices">
         <item>Basketball</item>

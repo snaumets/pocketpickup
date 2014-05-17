@@ -79,7 +79,9 @@ public class LoginActivity extends Activity {
 			@Override
 			public void done(ParseUser user, ParseException err) {
 				LoginActivity.this.progressDialog.dismiss();
-				
+				if (user == null) {
+					Log.v("LoginActivity", "User is null");
+				}
 				// continue to main activity 
 				showMainActivity();
 			}

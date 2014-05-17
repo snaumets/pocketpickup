@@ -8,6 +8,7 @@ import java.util.Scanner;
 import android.app.Application;
 import android.content.res.AssetManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -24,6 +25,7 @@ public class PocketPickupApplication extends Application {
 	public static final String LOG_TAG = "PocketPickupApplication";
 	public List<ParseObject> allowedSports;
 	public static BiMap<String,ParseObject> sportsAndObjs;
+	public static BiMap<String,ParseObject> objIdAndObjs;
 	public final String SPORTS_CACHE_LABEL = "sports";
 	public static String userObjectId;
 
@@ -64,6 +66,7 @@ public class PocketPickupApplication extends Application {
 
 	private void getSports() {
 		sportsAndObjs = HashBiMap.create();
+		objIdAndObjs = HashBiMap.create();
 		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Sport");
 		// looks in the cache first
 		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
@@ -75,6 +78,7 @@ public class PocketPickupApplication extends Application {
 					Log.v(LOG_TAG, "successfully retreived sports from cache or network");
 					for (int i = 0; i < sports.size(); i++) {
 						sportsAndObjs.put(sports.get(i).getString(DbColumns.SPORT_NAME), sports.get(i));
+						objIdAndObjs.put(sports.get(i).getString(DbColumns.OBJECT_ID), sports.get(i));
 						Log.v(LOG_TAG, sports.get(i).getString("name"));
 					}
 				} else {
