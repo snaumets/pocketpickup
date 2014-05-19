@@ -10,6 +10,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -227,6 +228,9 @@ public class CreateGameActivity extends Activity
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
 		EditText details = (EditText) findViewById(R.id.cg_details);
 		String detailsText = details.getText().toString();
+		if (ParseUser.getCurrentUser() == null) {
+			Log.v("CreateGameActivity", "ParseUser.getCurrentUser() is null");
+		}
 		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), 
 				mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), 
 				mSport, 2 /* TODO: default game size */, detailsText);
