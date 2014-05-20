@@ -228,9 +228,6 @@ public class CreateGameActivity extends Activity
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
 		EditText details = (EditText) findViewById(R.id.cg_details);
 		String detailsText = details.getText().toString();
-		if (ParseUser.getCurrentUser() == null) {
-			Log.v("CreateGameActivity", "ParseUser.getCurrentUser() is null");
-		}
 		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), 
 				mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), 
 				mSport, 2 /* TODO: default game size */, detailsText);

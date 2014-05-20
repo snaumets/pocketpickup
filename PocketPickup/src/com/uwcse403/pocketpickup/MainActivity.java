@@ -53,6 +53,8 @@ import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 import com.uwcse403.pocketpickup.game.Game;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
+import com.uwcse403.pocketpickup.mapwrapper.MapStateListener;
+import com.uwcse403.pocketpickup.mapwrapper.TouchableMapFragment;
 
 // This activity is shown once the user logs in, or if the user has previously logged in,
 // without login out. It contains a map, sign up and log in buttons, and includes a 
@@ -294,8 +296,33 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
 		if (googleMap == null) {
-			googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-					R.id.map)).getMap();
+			/*googleMap = ((MapFragment) getFragmentManager().findFragmentById(
+					R.id.map)).getMap();*/
+			TouchableMapFragment tmf = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
+			googleMap = tmf.getMap();
+			
+			// This listener is simply used to 
+			new MapStateListener(googleMap, tmf, this) {
+				@Override
+				public void onMapTouched() {
+					// do nothing when map is touched
+				}
+
+				@Override
+				public void onMapReleased() {
+					// do nothing when map is released
+				}
+
+				@Override
+				public void onMapUnsettled() {
+					// do nothing when map unsettles
+				}
+
+				@Override
+				public void onMapSettled() {
+					updateLocationTextField();
+				}
+			};
 
 			// Check if we were successful in obtaining the map.
 			if (googleMap != null) {
@@ -317,13 +344,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				}
 				// This will update the location text field when the camera
 				// changes
-				googleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+				/*googleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 							@Override
 							public void onCameraChange(
 									CameraPosition cameraPosition) {
 								updateLocationTextField();
 							}
-						});
+						});*/
 				
 				// Setting a custom info window adapter for the google map (for markers)
 			    googleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
