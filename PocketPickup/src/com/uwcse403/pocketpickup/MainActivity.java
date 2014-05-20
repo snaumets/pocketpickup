@@ -315,11 +315,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 				@Override
 				public void onMapUnsettled() {
-					// do nothing when map unsettles
+					// Change the location text field to say "Updating..."
+					updateLocationTextFieldToUpdating();
 				}
 
 				@Override
 				public void onMapSettled() {
+					// Change the location text field to the actual location that the map settled on
 					updateLocationTextField();
 				}
 			};
@@ -426,6 +428,14 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				e.printStackTrace();
 			}
 
+		}
+	}
+	
+	// This method will update the location text field to "Updating..."
+	public void updateLocationTextFieldToUpdating() {
+		if (googleMap != null) {
+			EditText text = (EditText) findViewById(R.id.locationText);
+			text.setText("Updating...");
 		}
 	}
 
