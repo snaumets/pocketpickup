@@ -25,7 +25,6 @@ proguard/
 PocketPickup/assets/credentials.txt
 PocketPickup/.settings*
 PocketPickup/.classpath
-PocketPickup/project.properties
 
 appcompat_v7/.settings*
 appcompat_v7/.classpath
