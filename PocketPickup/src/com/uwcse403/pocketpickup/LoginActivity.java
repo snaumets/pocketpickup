@@ -12,7 +12,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.model.GraphUser;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -46,8 +51,11 @@ public class LoginActivity extends Activity {
 		// Check if there is a currently logged in user
 		// and they are linked to a Facebook account.
 		ParseUser currentUser = ParseUser.getCurrentUser();
+		Log.v("LoginActivity", "User is null at launch");
 		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
 			// Go to the user info activity
+			PocketPickupApplication.userObjectId = currentUser.getObjectId();
+			getFaceBookGraphObject();
 			showMainActivity();
 		}
 	}
@@ -75,17 +83,42 @@ public class LoginActivity extends Activity {
 	private void onLoginButtonClicked() {
 		LoginActivity.this.progressDialog = ProgressDialog.show(
 				LoginActivity.this, "", "Logging in...", true);
-		List<String> permissions = Arrays.asList("public_profile", "user_friends");
+		List<String> permissions = Arrays.asList("user_friends"); //"public_profile",
 		ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
 			@Override
 			public void done(ParseUser user, ParseException err) {
 				LoginActivity.this.progressDialog.dismiss();
 				if (user == null) {
-					Log.e(LOG_TAG, "user is null");
+
+					Log.v("LoginActivity", "User is null");
+					Toast.makeText(getApplicationContext(), "There was a problem during login", Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), err.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+				} else {
+					Log.v("LoginActivity", "User logged in: " + user.getUsername());
+					PocketPickupApplication.userObjectId = user.getObjectId();
+					getFaceBookGraphObject();
+					// continue to main activity
+					showMainActivity();
 				}
-				// continue to main activity 
-				showMainActivity();
 			}
+		});
+	}
+	
+	/**
+	 * This method will get a FaceBook graph object that will hold data such as the user's name
+	 */
+	public void getFaceBookGraphObject() {
+		   Session session =  ParseFacebookUtils.getSession();
+
+		   Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+
+		    @Override
+		    public void onCompleted(GraphUser user, Response response) {
+			    if(user != null){
+			    	Log.d("LoginActivity", "facebookName: " + user.getName());
+			    	Toast.makeText(getApplicationContext(), "Welcome, " + user.getFirstName(), Toast.LENGTH_LONG).show();
+			    }
+		    }
 		});
 	}
 

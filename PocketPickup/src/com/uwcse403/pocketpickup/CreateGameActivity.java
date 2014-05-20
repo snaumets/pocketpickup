@@ -10,6 +10,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +50,7 @@ public class CreateGameActivity extends Activity
 	private LatLng   mLatLng;
 	private int      mDuration;
 	private String   mSport;
+	private String 	 mDetails;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -224,9 +226,14 @@ public class CreateGameActivity extends Activity
 	public void submitCreate(View v) {
 		final Calendar end = Calendar.getInstance();
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
+		EditText details = (EditText) findViewById(R.id.cg_details);
+		String detailsText = details.getText().toString();
+		if (ParseUser.getCurrentUser() == null) {
+			Log.v("CreateGameActivity", "ParseUser.getCurrentUser() is null");
+		}
 		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), 
 				mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), 
-				mSport, 2 /* TODO: default game size */, "whatver");
+				mSport, 2 /* TODO: default game size */, detailsText);
 		final ArrayList<Game> games = new ArrayList<Game>(); // will store only created game
 		games.add(createGame);
 		
@@ -250,5 +257,8 @@ public class CreateGameActivity extends Activity
 		spinner.setSelection(0);
 		
 		setButtonLabels();	
+		
+		EditText details = (EditText) findViewById(R.id.cg_details);
+		details.setText("");
 	}
 }
