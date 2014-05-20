@@ -296,10 +296,7 @@ public class GameHandler {
 		ParseObject game = Translator.appGameToParseGame(g);
 		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
 		if (players == null) {
-			//JSONArray newPlayersArray = new JSONArray();
-			//newPlayersArray.put(ParseUser.getCurrentUser().getObjectId());
-			//game.add(DbColumns.GAME_PLAYERS, newPlayersArray);
-			game.add(DbColumns.GAME_PLAYERS, Arrays.asList(ParseUser.getCurrentUser().getObjectId()));
+			game.add(DbColumns.GAME_PLAYERS, ParseUser.getCurrentUser().getObjectId());
 		} else {
 			players.add(ParseUser.getCurrentUser().getObjectId());
 		}

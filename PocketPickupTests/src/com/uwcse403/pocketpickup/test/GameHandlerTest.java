@@ -157,8 +157,8 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		// fail if no players were added to the game. 
 		
 		assertTrue(players.size() > 0);
-		ArrayList id = null;
-		id = players.get(0).get(0);
+		String id = null;
+		id = players.get(0);
 		
 		
 		//Not implemented
