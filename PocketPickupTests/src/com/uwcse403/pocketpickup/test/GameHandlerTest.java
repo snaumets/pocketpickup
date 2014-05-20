@@ -170,6 +170,8 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// cleanup, delete the game from the database now that we have retrieved it
+		GameHandler.removeGame(game);
 		ParseObject justCreatedGame = result.get(0);
 		JSONArray players = justCreatedGame.getJSONArray(DbColumns.GAME_PLAYERS);
 		// fail if the players object is null, i.e., nothing to do with adding players to games
