@@ -24,6 +24,7 @@ import com.parse.ParseUser;
 // login if the app is not installed. Upon successful login, the main activity
 // is started.
 public class LoginActivity extends Activity {
+	public static final String LOG_TAG = "LoginActivity";
 
 	private Button loginButton;
 	private Dialog progressDialog;
@@ -79,7 +80,9 @@ public class LoginActivity extends Activity {
 			@Override
 			public void done(ParseUser user, ParseException err) {
 				LoginActivity.this.progressDialog.dismiss();
-				
+				if (user == null) {
+					Log.e(LOG_TAG, "user is null");
+				}
 				// continue to main activity 
 				showMainActivity();
 			}
