@@ -92,7 +92,7 @@ public class LoginActivity extends Activity {
 
 					Log.v("LoginActivity", "User is null");
 					Toast.makeText(getApplicationContext(), "There was a problem during login", Toast.LENGTH_LONG).show();
-					Toast.makeText(getApplicationContext(), err.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+					// Toast.makeText(getApplicationContext(), err.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 				} else {
 					Log.v("LoginActivity", "User logged in: " + user.getUsername());
 					PocketPickupApplication.userObjectId = user.getObjectId();

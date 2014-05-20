@@ -17,7 +17,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -25,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,9 +38,6 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -49,111 +46,118 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseUser;
-import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 import com.uwcse403.pocketpickup.game.Game;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
 import com.uwcse403.pocketpickup.mapwrapper.MapStateListener;
 import com.uwcse403.pocketpickup.mapwrapper.TouchableMapFragment;
 
-// This activity is shown once the user logs in, or if the user has previously logged in,
-// without login out. It contains a map, sign up and log in buttons, and includes a 
-// sliding menu (the sliding menu was implemented by following a tutorial at 
-// http://www.androidhive.info/2013/11/android-sliding-menu-using-navigation-drawer/ )
+/**
+ * This activity is shown once the user logs in, or if the user has previously logged in,
+ * without logging out. It contains a Google map, sign up and log in buttons, and a 
+ * sliding menu. 
+ * 
+ * (The sliding menu was implemented by following a tutorial at 
+ * http://www.androidhive.info/2013/11/android-sliding-menu-using-navigation-drawer/ ) 
+ */
 public class MainActivity extends Activity implements ConnectionCallbacks,
-		OnConnectionFailedListener {
+													  OnConnectionFailedListener {
+	
+	// Unique return codes to be used by activities started by this activity for result.
 	private static final int CREATE_GAME_CODE = 1111;
 	private static final int FIND_GAME_CODE = 2222;
 	
 	public static final String LOG_TAG = "MainActivity";
 
-	// This boolean will change to false after the app initializes state after it's launched
-	private boolean firstLaunch; 
-	
-	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerList;
-	private ActionBarDrawerToggle mDrawerToggle;
-	private LatLng mLatLngLocation;
-
-	// nav drawer title
-	private CharSequence mDrawerTitle;
-
-	// used to store app title
-	private CharSequence mTitle;
-
-	// slide menu items
-	private String[] navMenuTitles;
-	private TypedArray navMenuIcons;
-
-	private ArrayList<NavDrawerItem> navDrawerItems;
-	private NavDrawerListAdapter adapter;
-
-	private GoogleMap googleMap;
-	private int mapType;
-	private LocationClient locationClient;
-	private final Handler mHandler = new Handler();
-	
+	// State Fields
+	private boolean         mFirstLaunch;    // true only on first launch
+	private LatLng          mLatLngLocation;
 	private ArrayList<Game> mDisplayedGames;
+	
+	// Layout Fields
+	private GoogleMap             mGoogleMap;
+	private int                   mMapType;
+	private LocationClient        mLocationClient;
+	private CharSequence          mTitle;          // stores app title
+	private Button                mFindButton;
+	private Button                mCreateButton;
 
+	// Slide Menu Fields
+	private CharSequence             mDrawerTitle;   
+	private DrawerLayout             mDrawerLayout;
+	private ListView                 mDrawerList;
+	private ActionBarDrawerToggle    mDrawerToggle;
+	private String[]                 mNavMenuTitles;
+	private TypedArray               mNavMenuIcons;
+	private ArrayList<NavDrawerItem> mNavDrawerItems;
+	private NavDrawerListAdapter     mAdapter;
+
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
 		Log.v("MainActivity", "in onCreate()");
-
-		if (savedInstanceState == null) { // first launch, being initialized
-			firstLaunch = true;
-		} else {
-			firstLaunch = false;
-		}
 		
-		// to print messages on phone screen
-		setUpMapIfNeeded();
+		setContentView(R.layout.activity_main);
+		setUpMapIfNeeded();		
+		initializeActionBar();
+		initializeSlidingMenu();
+		initializeButtons();
 		
-		// Restore map zoom level and location
-		if (!firstLaunch) { // not the first launch, actually need to restore state
+		// Restore map zoom level and location unless this is first launch
+		mFirstLaunch = (savedInstanceState == null);
+		if (!mFirstLaunch) {
 			restoreMap();
 		}
+	}
+	
+	private void initializeSlidingMenu() {
+		mDrawerTitle = getTitle();
 		
-		mTitle = mDrawerTitle = getTitle();
-
 		// load slide menu items
-		navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+		mNavMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
 
 		// nav drawer icons from resources
-		navMenuIcons = getResources()
+		mNavMenuIcons = getResources()
 				.obtainTypedArray(R.array.nav_drawer_icons);
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-		navDrawerItems = new ArrayList<NavDrawerItem>();
+		mNavDrawerItems = new ArrayList<NavDrawerItem>();
 
 		// adding nav drawer items to array
 		// Settings
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons
+		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[0], mNavMenuIcons
 				.getResourceId(0, -1)));
 		// Help
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons
+		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[1], mNavMenuIcons
 				.getResourceId(1, -1)));
 		// Logout
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons
+		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[2], mNavMenuIcons
 				.getResourceId(2, -1)));
 
 		// Recycle the typed array
-		navMenuIcons.recycle();
+		mNavMenuIcons.recycle();
 
-		mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+		mDrawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				// display view for selected nav drawer item
+				displayView(position);
+			}
+		});
 
 		// setting the nav drawer list adapter
-		adapter = new NavDrawerListAdapter(getApplicationContext(),
-				navDrawerItems);
-		mDrawerList.setAdapter(adapter);
-
-		// enabling action bar app icon and behaving it as toggle button
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
-
+		mAdapter = new NavDrawerListAdapter(getApplicationContext(),
+				mNavDrawerItems);
+		mDrawerList.setAdapter(mAdapter);
+		
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_drawer, // nav menu toggle icon
 				R.string.app_name, // nav drawer open - description for
@@ -175,22 +179,30 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 	}
-
-	/**
-	 * Slide menu item click listener
-	 * */
-	private class SlideMenuClickListener implements
-			ListView.OnItemClickListener {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
-			// display view for selected nav drawer item
-			displayView(position);
+	
+	private void initializeActionBar() {
+		mTitle = getTitle();
+		
+		// enabling action bar app icon and behaving it as toggle button
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+	}
+	
+	private void initializeButtons() {
+		mFindButton = (Button) findViewById(R.id.findgame_button);
+		mCreateButton = (Button) findViewById(R.id.create_button);
+		if (mLatLngLocation == null) {
+			mFindButton.setEnabled(false);
+			mCreateButton.setEnabled(false);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		/*
@@ -201,6 +213,10 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// toggle nav drawer on selecting action bar app icon/title
@@ -211,7 +227,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		return super.onOptionsItemSelected(item);
 	}
 
-	/* *
+	/*
 	 * Called when invalidateOptionsMenu() is triggered
 	 */
 	@Override
@@ -244,10 +260,14 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		// update selected item and title, then close the drawer
 		mDrawerList.setItemChecked(position, true);
 		mDrawerList.setSelection(position);
-		setTitle(navMenuTitles[position]);
+		setTitle(mNavMenuTitles[position]);
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#setTitle(java.lang.CharSequence)
+	 */
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
@@ -276,10 +296,10 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	// This method will try to set the map to the given location with the given
 	// zoom level (ex: 16)
 	private void zoomMapToLocation(Location location, int zoomLevel) {
-		if (location != null && googleMap != null) {
+		if (location != null && mGoogleMap != null) {
 			LatLng latLngLocation = new LatLng(location.getLatitude(),
 					location.getLongitude());
-			googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+			mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
 					latLngLocation, zoomLevel));
 		}
 	}
@@ -297,14 +317,14 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
-		if (googleMap == null) {
+		if (mGoogleMap == null) {
 			/*googleMap = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map)).getMap();*/
 			TouchableMapFragment tmf = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
-			googleMap = tmf.getMap();
+			mGoogleMap = tmf.getMap();
 			
 			// This listener is simply used to 
-			new MapStateListener(googleMap, tmf, this) {
+			new MapStateListener(mGoogleMap, tmf, this) {
 				@Override
 				public void onMapTouched() {
 					// do nothing when map is touched
@@ -329,21 +349,21 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			};
 
 			// Check if we were successful in obtaining the map.
-			if (googleMap != null) {
+			if (mGoogleMap != null) {
 				// The Map is verified. It is now safe to manipulate the map.
-				googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-				mapType = GoogleMap.MAP_TYPE_NORMAL;
-				googleMap.getUiSettings().setZoomControlsEnabled(true);
-				googleMap.setMyLocationEnabled(true); // enables the my-location
+				mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+				mMapType = GoogleMap.MAP_TYPE_NORMAL;
+				mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+				mGoogleMap.setMyLocationEnabled(true); // enables the my-location
 														// layer, button will be
 														// visible
-				googleMap.getUiSettings().setZoomGesturesEnabled(true);
+				mGoogleMap.getUiSettings().setZoomGesturesEnabled(true);
 				
-				googleMap.getUiSettings().setTiltGesturesEnabled(false);
+				mGoogleMap.getUiSettings().setTiltGesturesEnabled(false);
 
-				locationClient = new LocationClient(this, this, this);
-				if (!locationClient.isConnected()  && !locationClient.isConnecting()) {
-					locationClient.connect(); // upon success, onConnected() is
+				mLocationClient = new LocationClient(this, this, this);
+				if (!mLocationClient.isConnected()  && !mLocationClient.isConnecting()) {
+					mLocationClient.connect(); // upon success, onConnected() is
 											// called
 				}
 				// This will update the location text field when the camera
@@ -357,7 +377,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 						});*/
 				
 				// Setting a custom info window adapter for the google map (for markers)
-			    googleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+			    mGoogleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
 
 			        // Use default InfoWindow frame
 			        @Override
@@ -403,13 +423,15 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	// the map
 	public void updateLocationTextField() {
 		Geocoder geoCoder = new Geocoder(getApplicationContext());
-		if (googleMap != null) {
+		if (mGoogleMap != null) {
 			// Find the point of the center of the map fragment
 			View map = findViewById(R.id.map);
 			Point point = new Point(map.getWidth() / 2, map.getHeight() / 2);
 
-			Projection proj = googleMap.getProjection();
+			Projection proj = mGoogleMap.getProjection();
 			mLatLngLocation = proj.fromScreenLocation(point);
+			mFindButton.setEnabled(true);
+			mCreateButton.setEnabled(true);
 			/*
 			 * Marker mark = googleMap.addMarker(new
 			 * MarkerOptions().position(latLngLocation));
@@ -435,7 +457,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	
 	// This method will update the location text field to "Updating..."
 	public void updateLocationTextFieldToUpdating() {
-		if (googleMap != null) {
+		if (mGoogleMap != null) {
 			EditText text = (EditText) findViewById(R.id.locationText);
 			text.setText("Updating...");
 		}
@@ -447,8 +469,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			super.onSaveInstanceState(outState);
 			
 		}
-		if (googleMap != null) {
-			CameraPosition map = googleMap.getCameraPosition();
+		if (mGoogleMap != null) {
+			CameraPosition map = mGoogleMap.getCameraPosition();
 			double latitude = map.target.latitude;
 			double longitude = map.target.longitude;
 			float zoom = map.zoom;
@@ -483,17 +505,17 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	@Override
 	public void onConnected(Bundle arg0) {
 		// Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
-		if (firstLaunch) {
+		if (mFirstLaunch) {
 			// When the app is launched, we want to zoom into the users location if possible
-			Location loc = locationClient.getLastLocation();
+			Location loc = mLocationClient.getLastLocation();
 			LatLng latLngLocation = null;
 			if (loc != null) {
 				latLngLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
 			}
-			if (googleMap != null && latLngLocation != null) {
+			if (mGoogleMap != null && latLngLocation != null) {
 				zoomMapToLocation(loc, 17);
 			}
-			firstLaunch = false;
+			mFirstLaunch = false;
 		}
 	}
 
@@ -515,8 +537,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	protected void onResume() {
 		Log.v(LOG_TAG, "onResume()");
 		super.onResume();
-		if (locationClient != null && !locationClient.isConnected() && !locationClient.isConnecting()) { // sanity check
-			locationClient.connect();
+		if (mLocationClient != null && !mLocationClient.isConnected() && !mLocationClient.isConnecting()) { // sanity check
+			mLocationClient.connect();
 		}
 	}
 
@@ -525,8 +547,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		Log.v(LOG_TAG, "onPause()");
 		super.onPause();
 
-		if (locationClient != null && (locationClient.isConnected() || locationClient.isConnecting())) { // sanity check
-			locationClient.disconnect();
+		if (mLocationClient != null && (mLocationClient.isConnected() || mLocationClient.isConnecting())) { // sanity check
+			mLocationClient.disconnect();
 		}
 	}
 
@@ -643,10 +665,10 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	 */
 	private void onGameDisplayUpdate(int radius, LatLng loc) {
 		// TODO: paint pins inside mDisplayedGames
-		if (googleMap != null) {
+		if (mGoogleMap != null) {
 			if (radius != 0 && loc != null) {
 				int meters = radius * 1609; // convert miles to meters (1609 meters in 1 mile)
-				googleMap.addCircle(new CircleOptions().center(loc)
+				mGoogleMap.addCircle(new CircleOptions().center(loc)
 						.radius(meters).strokeColor(Color.GREEN));
 			}
 			
@@ -660,7 +682,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					
 					String gameData = "Event starts: " + new Date(game.mGameStartDate).toString() + "\n" +
 					"Game details: " + details;
-					googleMap.addMarker(new MarkerOptions()
+					mGoogleMap.addMarker(new MarkerOptions()
 					.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_basketball_red_marker))
 					.anchor(0.5f, 1.0f) // Anchors the marker on the bottom left
 					.position(game.mGameLocation)
@@ -686,8 +708,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		super.onDestroy();
 		//Log.v("MainActivity", "in onDestroy()");
 		//Toast.makeText(this, "destroying", Toast.LENGTH_LONG).show();
-		if (googleMap != null) {
-			CameraPosition map = googleMap.getCameraPosition();
+		if (mGoogleMap != null) {
+			CameraPosition map = mGoogleMap.getCameraPosition();
 			double latitude = map.target.latitude;
 			double longitude = map.target.longitude;
 			float zoom = map.zoom;
