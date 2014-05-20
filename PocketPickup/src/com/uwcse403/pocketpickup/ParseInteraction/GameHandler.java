@@ -195,6 +195,7 @@ public class GameHandler {
 		}
 		// first create a compound query that returns games of the desired sport
 		ParseQuery<ParseObject> query = ParseQuery.or(sportTypes);
+		query.include(DbColumns.GAME_SPORT);
 		// get the location of the query, i.e., the center of the circle
 		LatLng loc = criteria.mSearchLocation;
 		ParseGeoPoint center = new ParseGeoPoint(loc.latitude, loc.longitude);

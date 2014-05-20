@@ -29,7 +29,12 @@ public class Translator {
 		LatLng location = new LatLng(parseLocation.getLatitude(), parseLocation.getLongitude());
 		Long gameStartDate = game.getLong(DbColumns.GAME_START_DATE);
 		Long gameEndDate = game.getLong(DbColumns.GAME_END_DATE);
-		String gameType = PocketPickupApplication.objIdAndObjs.get(game.getString(DbColumns.GAME_SPORT)).getString(DbColumns.SPORT_NAME);
+		//String gameType = PocketPickupApplication.objIdAndObjs.get(game.getString(DbColumns.GAME_SPORT)).getString(DbColumns.SPORT_NAME);
+		ParseObject parseSportObj = game.getParseObject(DbColumns.GAME_SPORT);
+		Log.v(LOG_TAG, "objectid: " + parseSportObj.getObjectId());
+		Log.v(LOG_TAG, "parse sport obj hash: " + parseSportObj.hashCode());
+		Log.v(LOG_TAG, "bimap contains it: " + PocketPickupApplication.sportsAndObjs.inverse().containsKey(parseSportObj));
+		String gameType = PocketPickupApplication.sportsAndObjs.inverse().get(parseSportObj);
 		int idealGameSize = game.getInt(DbColumns.GAME_IDEAL_SIZE);
 		String gameDetails = game.getString(DbColumns.GAME_DETAILS);
 		return new Game(creatorId, location, gameStartDate, gameEndDate, gameType, idealGameSize, gameDetails);

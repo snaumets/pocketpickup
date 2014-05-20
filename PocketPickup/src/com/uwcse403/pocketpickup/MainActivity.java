@@ -64,6 +64,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		OnConnectionFailedListener {
 	private static final int CREATE_GAME_CODE = 1111;
 	private static final int FIND_GAME_CODE = 2222;
+	
+	public static final String LOG_TAG = "MainActivity";
 
 	// This boolean will change to false after the app initializes state after it's launched
 	private boolean firstLaunch; 
@@ -511,6 +513,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	protected void onResume() {
+		Log.v(LOG_TAG, "onResume()");
 		super.onResume();
 		if (locationClient != null && !locationClient.isConnected() && !locationClient.isConnecting()) { // sanity check
 			locationClient.connect();
@@ -519,7 +522,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	protected void onPause() {
+		Log.v(LOG_TAG, "onPause()");
 		super.onPause();
+
 		if (locationClient != null && (locationClient.isConnected() || locationClient.isConnecting())) { // sanity check
 			locationClient.disconnect();
 		}
@@ -649,6 +654,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				for (Game game : mDisplayedGames) {
 					// You can customize the marker image using images bundled with
 					// your app, or dynamically generated bitmaps.
+					Log.v(LOG_TAG, "gameType: " + game.mGameType);
+					
 					String details = (game.mDetails == null ? "None" : game.mDetails);
 					
 					String gameData = "Event starts: " + new Date(game.mGameStartDate).toString() + "\n" +
@@ -675,6 +682,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	
 	@Override
 	public void onDestroy() {
+		Log.v(LOG_TAG, "onDestroy()");
 		super.onDestroy();
 		//Log.v("MainActivity", "in onDestroy()");
 		//Toast.makeText(this, "destroying", Toast.LENGTH_LONG).show();
