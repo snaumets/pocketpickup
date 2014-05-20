@@ -1,7 +1,10 @@
 package com.uwcse403.pocketpickup.ParseInteraction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.json.JSONArray;
 
 import android.util.Log;
 
@@ -290,7 +293,24 @@ public class GameHandler {
 	 */
 	public static boolean joinGame(Game g) {
 		// TODO: not implemented in Beta release
-		return false;
+		ParseObject game = Translator.appGameToParseGame(g);
+		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
+		if (players == null) {
+			//JSONArray newPlayersArray = new JSONArray();
+			//newPlayersArray.put(ParseUser.getCurrentUser().getObjectId());
+			//game.add(DbColumns.GAME_PLAYERS, newPlayersArray);
+			game.add(DbColumns.GAME_PLAYERS, Arrays.asList(ParseUser.getCurrentUser().getObjectId()));
+		} else {
+			players.add(ParseUser.getCurrentUser().getObjectId());
+		}
+		try {
+			game.save();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 }
 

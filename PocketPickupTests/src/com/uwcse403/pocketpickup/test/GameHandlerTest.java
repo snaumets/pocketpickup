@@ -147,29 +147,22 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 			Log.e(LOG_TAG, e.getMessage());
 		}
 		// cleanup, delete the game from the database now that we have retrieved it
-		GameHandler.removeGame(game);
-		ParseObject justCreatedGame = result.get(0);
-		JSONArray players = justCreatedGame.getJSONArray(DbColumns.GAME_PLAYERS);
+		//GameHandler.removeGame(game);
+		ParseObject justCreatedGame = result.get(1);
+		ArrayList<String> players = (ArrayList<String>) justCreatedGame.get(DbColumns.GAME_PLAYERS);
 		// fail if the players object is null, i.e., nothing to do with adding players to games
 		// has been implemented
-		
-		//Not implemented
-		//assertTrue(players != null);
+		assertTrue(players != null);
 		
 		// fail if no players were added to the game. 
 		
-		//Not implemented
-		/*assertTrue(players.length() > 0);
-		String id = null;
-		try {
-			id = players.getString(0);
-		} catch (JSONException e) {
-			Log.e(LOG_TAG, e.getMessage());
-		}
-		*/
+		assertTrue(players.size() > 0);
+		ArrayList id = null;
+		id = players.get(0).get(0);
+		
 		
 		//Not implemented
-		//assertEquals(ParseUser.getCurrentUser().getObjectId(), id);
+		assertEquals(ParseUser.getCurrentUser().getObjectId(), id);
 	}
 	
 	/**

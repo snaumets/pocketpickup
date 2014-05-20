@@ -27,7 +27,7 @@ public class DbColumns {
 	public static final String GAME_CREATOR = "creator";
 	public static final String GAME_SPORT = "sport";
 	public static final String GAME_LOCATION = "location";
-	public static final String GAME_PLAYERS = "player";
+	public static final String GAME_PLAYERS = "players";
 	public static final String GAME_IDEAL_SIZE = "idealGameSize";
 	public static final String GAME_START_DATE = "startDate";
 	public static final String GAME_END_DATE = "endDate";
