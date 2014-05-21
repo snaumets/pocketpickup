@@ -124,7 +124,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	 * Adds a user to a game and tests to see if the user was indeed added to the Game object
 	 * stored in the database.
 	 */
-	public void testJoinGame() {
+	public void testJoinAndLeaveGame() {
 		// create a game
 		Random r = new Random();
 		long l = r.nextLong();
@@ -146,8 +146,6 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		} catch (ParseException e) {
 			Log.e(LOG_TAG, e.getMessage());
 		}
-		// cleanup, delete the game from the database now that we have retrieved it
-		GameHandler.removeGame(game);
 		ParseObject justCreatedGame = result.get(0);
 		ArrayList<String> players = (ArrayList<String>) justCreatedGame.get(DbColumns.GAME_PLAYERS);
 		// fail if the players object is null, i.e., nothing to do with adding players to games
@@ -157,8 +155,25 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		assertTrue(players.size() > 0);
 		String id = null;
 		id = players.get(0);
-		//Not implemented
+		// make sure the only member of the game is the current member
 		assertEquals(ParseUser.getCurrentUser().getObjectId(), id);
+		// now leave the game
+		GameHandler.leaveGame(game);
+		// retrieve the game now that the user has left it 
+		query = new ParseQuery<ParseObject>("Game");
+		query.whereEqualTo(DbColumns.GAME_DETAILS, randomDescription);
+		result = null;
+		try {
+			result = query.find();
+		} catch (ParseException e) {
+			Log.e(LOG_TAG, e.getMessage());
+		}
+		justCreatedGame = result.get(0);
+		players = (ArrayList<String>) justCreatedGame.get(DbColumns.GAME_PLAYERS);
+		// Verify that the current user left the game
+		assertEquals(0, players.size());
+		// cleanup, delete the game from the database now that we are done testing
+		GameHandler.removeGame(game);
 	}
 	
 	/**

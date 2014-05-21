@@ -105,6 +105,7 @@ public class GameHandler {
 	 * @param sport - specifies the gameType
 	 * */
 	/*
+	 * TODO: delete this if it's never used
 	public static void createDummyGameWithPointers(Game g, ParseObject user, ParseObject sport) {
 		Log.v(LOG_TAG, "entering createDummyGame()");
 		ParseObject game = new ParseObject("Game");
@@ -327,7 +328,12 @@ public class GameHandler {
 	 * the game to begin with. Returns false if there was an error 
 	 */
 	public static boolean leaveGame(Game g) {
-		ParseObject game = getMatchingParseGame(g); 
+		ParseObject game = null;
+		if (g.id == null) {
+			game = getMatchingParseGame(g); 
+		} else {
+			game = getGame(g);
+		}
 		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
 		if (players == null) {
 			// do nothing, there are no users who have joined this game if players is null
