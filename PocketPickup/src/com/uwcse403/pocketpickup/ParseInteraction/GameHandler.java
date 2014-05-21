@@ -97,6 +97,8 @@ public class GameHandler {
 	 * @param g - target game to get
 	 * @return the Parse Game object corresponding to the app Game object passed as a 
 	 * parameter
+	 * @requires the game already exist in the database
+	 * @throws IllegalStateException if the game does not already exist in the database
 	 */
 	public static ParseObject getGameCreatedByCurrentUser(Game g) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
@@ -124,7 +126,7 @@ public class GameHandler {
 		}
 		if (objects.size() != 1) {
 			throw new IllegalStateException("found " + objects.size()  + " games that met" +
-					" the description of the input game but there should be only one");
+					" the description of the input game but there should be exactly one");
 		}
 		return objects.get(0);
 	}
