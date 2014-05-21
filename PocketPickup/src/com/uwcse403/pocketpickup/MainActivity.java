@@ -1,9 +1,13 @@
 package com.uwcse403.pocketpickup;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -41,12 +45,14 @@ import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.game.Game;
+import com.uwcse403.pocketpickup.game.Sports;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.model.NavDrawerItem;
 import com.uwcse403.pocketpickup.mapwrapper.MapStateListener;
@@ -91,6 +97,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	private TypedArray               mNavMenuIcons;
 	private ArrayList<NavDrawerItem> mNavDrawerItems;
 	private NavDrawerListAdapter     mAdapter;
+	
+	private Set<Marker> mMapMarkers;
+	private Set<Circle> mMapCircles;
 
 	
 	/*
@@ -318,8 +327,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
 		if (mGoogleMap == null) {
-			/*googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-					R.id.map)).getMap();*/
+			mMapMarkers = new HashSet<Marker>();
+			mMapCircles = new HashSet<Circle>();
 			TouchableMapFragment tmf = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
 			mGoogleMap = tmf.getMap();
 			
@@ -398,13 +407,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			            String snippet = marker.getSnippet();
 
 			            // Getting reference to the TextView to set title
-			            //TextView tvTitle = (TextView) v.findViewById(R.id.tv_title);
+			            TextView tvTitle = (TextView) v.findViewById(R.id.tv_title);
 
 			            // Getting reference to the TextView to set snippet
 			            TextView tvSnippet = (TextView) v.findViewById(R.id.tv_snippet);
 
 			            // Setting the title
-			            //tvTitle.setText(snippet);
+			            tvTitle.setText(title);
 
 			            // Setting the snippet
 			            tvSnippet.setText(snippet);
@@ -586,6 +595,22 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		Intent intent = new Intent(this, LoginActivity.class);
 		startActivity(intent);
 	}
+	
+	// This method will erase all markers and circle/radius from map
+	public void clearSearchResults(View view) {
+		Button clearButton = (Button) findViewById(R.id.buttonClearResults);
+		clearButton.setVisibility(View.GONE);
+		// Clear map markers
+		for (Marker marker : mMapMarkers) {
+			marker.remove();
+		}
+		mMapMarkers.clear();
+		// Clear map circle
+		for (Circle circle: mMapCircles) {
+			circle.remove();
+		}
+		mMapCircles.clear();
+	}
 
 	// Simply starts a sign up activity
 	public void createGame(View view) {
@@ -603,6 +628,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	// Simply starts a log in activity
 	public void findGame(View view) {
+		clearSearchResults(null); // clear previous results if any
 		Intent intent = new Intent(this, FindGameActivity.class);
 		Bundle args = new Bundle();
 		args.putCharSequence(FindGameActivity.FINDGAME_LOCATION,
@@ -649,6 +675,10 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				} else {
 					displayMessage = "Displaying " + mDisplayedGames.size() + " games!";
 				}
+				
+				// Make the clear button visible
+				Button clearButton = (Button) findViewById(R.id.buttonClearResults);
+				clearButton.setVisibility(View.VISIBLE);
 				Toast.makeText(this, displayMessage, Toast.LENGTH_LONG).show();
 			}
 			break;
@@ -664,30 +694,46 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	 * @param loc The location of the center of the search
 	 */
 	private void onGameDisplayUpdate(int radius, LatLng loc) {
-		// TODO: paint pins inside mDisplayedGames
 		if (mGoogleMap != null) {
 			if (radius != 0 && loc != null) {
 				int meters = radius * 1609; // convert miles to meters (1609 meters in 1 mile)
-				mGoogleMap.addCircle(new CircleOptions().center(loc)
+				Circle circle = mGoogleMap.addCircle(new CircleOptions().center(loc)
 						.radius(meters).strokeColor(Color.GREEN));
+				mMapCircles.add(circle);
 			}
 			
 			if (mDisplayedGames != null) {
 				for (Game game : mDisplayedGames) {
 					// You can customize the marker image using images bundled with
 					// your app, or dynamically generated bitmaps.
-					Log.v(LOG_TAG, "gameType: " + game.mGameType);
+					String gameType = game.mGameType;
+					Log.v(LOG_TAG, "gameType: " + gameType);
 					
-					String details = (game.mDetails == null ? "None" : game.mDetails);
+					String details = ((game.mDetails == null || game.mDetails.equals("")) ? "None" : game.mDetails);
 					
-					String gameData = "Event starts: " + new Date(game.mGameStartDate).toString() + "\n" +
-					"Game details: " + details;
-					mGoogleMap.addMarker(new MarkerOptions()
-					.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_basketball_red_marker))
+					Date startDate = new Date(game.mGameStartDate);
+					SimpleDateFormat formatter = new SimpleDateFormat(
+		                    "hh:mm a EE, MMM d, yyyy", Locale.getDefault());
+					String dateString = formatter.format(startDate);
+					
+					// Convert millisecond difference to hours, ms / (1000 ms/s) / (60 s/min) / (60 min/hr)
+					int durationInHours = (int) (game.mGameEndDate - game.mGameStartDate) / 1000 / 60 / 60;
+					String durationUnit = durationInHours > 1 ? " Hours" : " Hour"; 
+					
+					
+					String gameData = "Event starts: " + dateString + "\n" +
+					"Duration: " + durationInHours + durationUnit + "\n" + 
+					"Details: " + details;
+					
+					int markerResource = Sports.getResourceIdForSport(gameType);
+					
+					Marker marker = mGoogleMap.addMarker(new MarkerOptions()
+					.icon(BitmapDescriptorFactory.fromResource(markerResource))
 					.anchor(0.5f, 1.0f) // Anchors the marker on the bottom left
 					.position(game.mGameLocation)
 					.title(game.mGameType)
 					.snippet(gameData));
+					mMapMarkers.add(marker);
 				}
 			}
 		}

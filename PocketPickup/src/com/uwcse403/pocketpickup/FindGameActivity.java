@@ -77,11 +77,6 @@ public class FindGameActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_find_game);
 		
-		/*if (savedInstanceState == null) { // initialize the set that will hold sports to search for
-			mSports = new HashSet<String>();
-			mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
-		}*/
-		
 		// Restore button labels if necessary, otherwise init
 		if (savedInstanceState != null) {
 			mStartTime = initDate(savedInstanceState.getLong(STATE_START_TIME));
@@ -112,37 +107,7 @@ public class FindGameActivity extends Activity
 			}
 			
 		});
-		// initialize the sport type choices
-		/*Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
-		ArrayList<String> sports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
-		sports.add(0, "All Sports");
-		ArrayAdapter<String> sportsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sports);
-		sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		sportsSpinner.setAdapter(sportsAdapter);
-		sportsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int pos, long id) {
-				if (mSports == null) { // initialize the set that will hold sports to search for
-					mSports = new HashSet<String>();
-					mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
-				}
-				mSports.clear(); // get rid of all other sports
-				String sportStr = (String)parent.getItemAtPosition(pos);
-				if (pos == 0) { // Selected "All Sports", so add all sports to the set
-					mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
-				} else { // Selected single sport
-					mSports.add(sportStr);
-				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				// do nothing
-			}
-			
-		});*/
 		// A list of the sports to display as options to check
 		availableSports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
 		

@@ -6,4 +6,10 @@
     <color name="list_divider">#272727</color>
     <color name="counter_text_bg">#626262</color>
     <color name="counter_text_color">#c5c4c4</color>
+    
+    <color name="map_tile_bg_solid">#aaffffff</color>
+	<color name="map_tile_bg_stroke">#ff999999</color>
+	<color name="map_tile_bg_solid_pressed">#aaFF9933</color>
+	<color name="map_tile_bg_stroke_pressed">#ffcccccc</color>
+	<color name="text_google_gray">#ff555555</color>
 </resources>

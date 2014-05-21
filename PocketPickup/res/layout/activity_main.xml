@@ -82,8 +82,29 @@
 	        android:src="@drawable/ic_green_pin"
 	        android:contentDescription="pin"
 	        android:layout_gravity="center"
-	        android:paddingBottom="130dp"/>
+	        android:paddingBottom="130dp" />
     	<!-- this padding bottom value was chosen through testing, not calculated -->
+    	<RelativeLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent">
+	        <Button
+	            android:id="@+id/buttonClearResults"
+	            android:layout_width="wrap_content"
+	            android:layout_height="40dp"
+	            android:layout_alignParentLeft="true"
+	            android:layout_alignParentTop="true"
+	            android:layout_centerVertical="true"
+	            android:layout_marginLeft="10dp"
+	            android:layout_marginTop="10dp"
+	            android:paddingLeft="10dp"
+	            android:paddingRight="10dp"
+	            android:textColor="@color/text_google_gray"
+	            android:clickable="true"
+	            android:visibility="gone"
+	            android:onClick="clearSearchResults"
+	            android:text="@string/clear_results" 
+	            android:background="@drawable/map_tile_bg"/>
+    	</RelativeLayout>
     </FrameLayout>
 
     <!-- Listview to display slider menu -->

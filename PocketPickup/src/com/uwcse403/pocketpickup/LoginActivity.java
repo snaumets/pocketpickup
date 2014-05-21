@@ -116,7 +116,7 @@ public class LoginActivity extends Activity {
 		    public void onCompleted(GraphUser user, Response response) {
 			    if(user != null){
 			    	Log.d("LoginActivity", "facebookName: " + user.getName());
-			    	Toast.makeText(getApplicationContext(), "Welcome, " + user.getFirstName(), Toast.LENGTH_LONG).show();
+			    	Toast.makeText(getApplicationContext(), "Welcome, " + user.getFirstName() + "!", Toast.LENGTH_LONG).show();
 			    }
 		    }
 		});
