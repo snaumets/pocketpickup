@@ -25,9 +25,11 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
+import com.uwcse403.pocketpickup.ParseInteraction.SaveCallbackWithArgs;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
 import com.uwcse403.pocketpickup.fragments.TimePickerFragment;
 import com.uwcse403.pocketpickup.game.Game;
@@ -35,6 +37,7 @@ import com.uwcse403.pocketpickup.game.Game;
 public class CreateGameActivity extends Activity
 								implements DatePickerDialog.OnDateSetListener, 
 					   		     		   TimePickerDialog.OnTimeSetListener {
+	public static final String LOG_TAG = "CreateGameActivity";
 	public static final String CREATEGAME_LOCATION  = "creategame_location";
 	public static final String CREATEGAME_LATITUDE  = "creategame_latitude";
 	public static final String CREATEGAME_LONGITUDE = "creategame_longitude";
@@ -249,8 +252,18 @@ public class CreateGameActivity extends Activity
 		finish();
 		//setResult(Activity.RESULT_OK);
 		//finish();
-		// TODO: uncomment for functionality
-		GameHandler.createGame(createGame, null);
+		GameHandler.createGame(createGame, new SaveCallbackWithArgs(createGame) {
+			// this will add the user who just created the game as an attendee
+			@Override
+			public void done(ParseException e) {
+				if (e == null) {
+				GameHandler.joinGame(getGame(), true);
+				} else {
+					Log.e(LOG_TAG, "failed to save game: " + e.getCode() + " : " + e.getMessage());
+				}
+			}
+			
+		});
 	}
 	
 	public void resetCreate(View v) {

@@ -1,13 +1,9 @@
 package com.uwcse403.pocketpickup.ParseInteraction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.json.JSONArray;
-
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
@@ -16,6 +12,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.uwcse403.pocketpickup.JoinGameResult;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
@@ -28,6 +25,7 @@ public class GameHandler {
 	/**Label for debugging tag label**/
 	public static final String LOG_TAG = "GameHandler";
 	/**Default callback for saving in background**/
+
 	private static final SaveCallback DEFAULT_SAVE_CALLBACK = new SaveCallback() {
 		public void done(ParseException e) {
 			if (e == null) {
@@ -61,7 +59,6 @@ public class GameHandler {
 				// Failed to save game with waiting
 				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode() + ": " + e.getMessage());
 			}
-			joinGame(g, true);
 		}
 	}
 	
@@ -268,27 +265,41 @@ public class GameHandler {
 	 * @param g the Game to join
 	 * @return true if the user was added to the game, false otherwise
 	 */
-	public static boolean joinGame(Game g, boolean isCurrentUser) {
+	public static JoinGameResult joinGame(Game g, boolean isCurrentUser) {
 		ParseObject game = null;
+		String currentUserObjectId = ParseUser.getCurrentUser().getObjectId();
 		if (isCurrentUser) {
 			game = getGameCreatedByCurrentUser(g);
 		} else {
 			game = getGameUsingId(g); 
 		}
 		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
+		boolean addToAttendees = true;
 		if (players == null) {
-			game.add(DbColumns.GAME_PLAYERS, ParseUser.getCurrentUser().getObjectId());
+			game.add(DbColumns.GAME_PLAYERS, currentUserObjectId);
 		} else {
-			players.add(ParseUser.getCurrentUser().getObjectId());
+			// first check to make sure the user is not already an attendee
+			for (int i = 0; i < players.size(); i++) {
+				if (players.get(i).equals(currentUserObjectId)) {
+					addToAttendees = false;
+					break;
+				}
+			}
+			if (addToAttendees) {
+				players.add(currentUserObjectId);
+			}
 		}
 		try {
 			game.save();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
+			return JoinGameResult.ERROR_JOINING;
 		}
-		return true;
+		if (addToAttendees) {
+			return JoinGameResult.SUCCESS;
+		}
+		return JoinGameResult.ALREADY_ATTENDING;
 	}
 	
 	/**

@@ -118,12 +118,19 @@ public class GameActivity extends Activity {
 	 * This method will update the backend that the user has joined this game.
 	 */
 	public void joinGameSubmit(View v) {
-		// TODO: actually join the game, uncomment when the function works
-		if(GameHandler.joinGame(game, false)) {
+		// add current user to the game passing false to signify that the game the 
+		// user is joining was not created by him or herself. Still works if the user
+		// is the creator.
+		JoinGameResult result = GameHandler.joinGame(game, false);
+		if(result == JoinGameResult.SUCCESS) {
 			Toast.makeText(this, "Successfully added to this game!", Toast.LENGTH_LONG).show();
-		} else {
+		}else if (result == JoinGameResult.ERROR_JOINING){
 			Toast.makeText(getApplicationContext(), "Joining Game Failed", Toast.LENGTH_LONG).show();
+		} else {
+			Toast.makeText(getApplicationContext(), "You are already an attendee", Toast.LENGTH_LONG).show();;
 		}
 		finish();
 	}
+
+
 }
