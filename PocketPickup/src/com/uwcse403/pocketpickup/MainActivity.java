@@ -389,14 +389,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 							// Attach the details
 							Bundle args = new Bundle();
 							args.putParcelable(GameActivity.GAME, game);
-							args.putString(GameActivity.GAME_TYPE, game.mGameType);
-							args.putString(GameActivity.GAME_DETAILS, game.mDetails);
-							args.putLong(GameActivity.GAME_START_DATE, game.mGameStartDate);
-							args.putInt(GameActivity.GAME_DURATION, durationInHours);
-							args.putString(GameActivity.GAME_CREATOR, game.mCreator);
-							args.putInt(GameActivity.GAME_MIN_PLAYERS, game.mIdealGameSize);
-							args.putDouble(GameActivity.GAME_LOCATION_LAT, game.mGameLocation.latitude);
-							args.putDouble(GameActivity.GAME_LOCATION_LNG, game.mGameLocation.longitude);
 							intent.putExtras(args);
 							
 							startActivity(intent);

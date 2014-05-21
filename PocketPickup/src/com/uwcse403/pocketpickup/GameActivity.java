@@ -4,24 +4,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.parse.ParseUser;
+import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.game.Game;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.os.Build;
 
 public class GameActivity extends Activity {
 	
@@ -50,14 +44,16 @@ public class GameActivity extends Activity {
 		// Initialize location text field from passed in location
 		Bundle args = getIntent().getExtras();
 		game = (Game) args.get(GAME);
-		String gameType = args.getString(GAME_TYPE);
-		String gameDetails = args.getString(GAME_DETAILS);
-		long gameStartDate = args.getLong(GAME_START_DATE);
-		int gameDuration = args.getInt(GAME_DURATION);
-		String gameCreator = args.getString(GAME_CREATOR);
-		int gameMinPlayers = args.getInt(GAME_MIN_PLAYERS);
-		double gameLocationLat = args.getDouble(GAME_LOCATION_LAT);
-		double gameLocationLng = args.getDouble(GAME_LOCATION_LNG);
+		String gameType = game.mGameType;
+		String gameDetails = game.mDetails;
+		long gameStartDate = game.mGameStartDate;
+		
+		// Convert millisecond difference to hours, ms / (1000 ms/s) / (60 s/min) / (60 min/hr)
+		int durationInHours = (int) (game.mGameEndDate - game.mGameStartDate) / 1000 / 60 / 60;
+		int gameDuration = durationInHours;
+		String gameCreator = game.mCreator;
+		int gameMinPlayers = game.mIdealGameSize;
+		LatLng gameLocationLatLng = game.mGameLocation;
 		
 		TextView sport = (TextView) findViewById(R.id.gameSportTextView);
 		sport.setText(gameType);
@@ -70,7 +66,7 @@ public class GameActivity extends Activity {
 		start.setText(dateString);
 		
 		
-		String durationUnit = gameDuration > 1 ? " Hours" : " Hour"; 
+		String durationUnit = gameDuration > 1 ? " Hours" : " Hour";
 		TextView duration = (TextView) findViewById(R.id.gameDurationTextView);
 		duration.setText(gameDuration + durationUnit);
 		
@@ -80,7 +76,8 @@ public class GameActivity extends Activity {
 		
 		TextView attendees = (TextView) findViewById(R.id.gameAttendeesTextView);
 		int countAttendees = GameHandler.getCurrentNumberOfGameAttendees(game);
-		attendees.setText(countAttendees + " Users Joined This Game");
+		String attendeesUnit = countAttendees == 1 ? " User" : " Users"; 
+		attendees.setText(countAttendees + attendeesUnit + " Joined This Game");
 		
 		
 		// TODO: check if this user has joined this game yet
@@ -122,9 +119,9 @@ public class GameActivity extends Activity {
 		// user is joining was not created by him or herself. Still works if the user
 		// is the creator.
 		JoinGameResult result = GameHandler.joinGame(game, false);
-		if(result == JoinGameResult.SUCCESS) {
+		if (result == JoinGameResult.SUCCESS) {
 			Toast.makeText(this, "Successfully added to this game!", Toast.LENGTH_LONG).show();
-		}else if (result == JoinGameResult.ERROR_JOINING){
+		} else if (result == JoinGameResult.ERROR_JOINING) {
 			Toast.makeText(getApplicationContext(), "Joining Game Failed", Toast.LENGTH_LONG).show();
 		} else {
 			Toast.makeText(getApplicationContext(), "You are already an attendee", Toast.LENGTH_LONG).show();;
