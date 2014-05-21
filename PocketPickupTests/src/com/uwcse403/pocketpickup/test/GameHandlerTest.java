@@ -135,7 +135,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 				1L, 2L, "Basketball", 2, randomDescription);
 		GameHandler.createGame(game, null);
 		// now add the current user to the game.
-		GameHandler.joinGame(game);
+		GameHandler.joinGame(game, true);
 		// now search for the game in the database and see if the current user's Parse objectId
 		// is in the array in the 'players' column
 		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Game");
@@ -190,7 +190,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		GameHandler.createGame(gameDate, null);
 		//List<ParseObject> uploaded = GameHandler.getGame(gameDate);
 		//assertTrue(uploaded.size() != 0);
-		ParseObject game = GameHandler.getMatchingParseGame(gameDate);
+		ParseObject game = GameHandler.getGameCreatedByCurrentUser(gameDate);
 		assertTrue(game != null);
 	}
 	

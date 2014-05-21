@@ -119,9 +119,11 @@ public class GameActivity extends Activity {
 	 */
 	public void joinGameSubmit(View v) {
 		// TODO: actually join the game, uncomment when the function works
-		//GameHandler.joinGame(game);
-		//Toast.makeText(this, "Successfully added to this game!", Toast.LENGTH_LONG).show();
-		Toast.makeText(getApplicationContext(), "Joining Game Failed", Toast.LENGTH_LONG).show();
+		if(GameHandler.joinGame(game, false)) {
+			Toast.makeText(this, "Successfully added to this game!", Toast.LENGTH_LONG).show();
+		} else {
+			Toast.makeText(getApplicationContext(), "Joining Game Failed", Toast.LENGTH_LONG).show();
+		}
 		finish();
 	}
 }

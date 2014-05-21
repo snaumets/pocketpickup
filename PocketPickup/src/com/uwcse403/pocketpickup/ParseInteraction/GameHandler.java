@@ -54,14 +54,14 @@ public class GameHandler {
 		ParseObject game = Translator.appGameToNewParseGame(g);
 		if(cb != null) {
 			game.saveInBackground(cb);	
-		}
-		else {
+		} else {
 			try {
 				game.save();
 			} catch (ParseException e) {
 				// Failed to save game with waiting
 				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode() + ": " + e.getMessage());
 			}
+			joinGame(g, true);
 		}
 	}
 	
@@ -94,42 +94,6 @@ public class GameHandler {
 	}
 	
 	/**
-	 * Adds a game to the database of available games
-	 * Unlike {@link createGame}, this creates a game with default preferences, except
-	 * for the ideal game size provided by the {@link Game} argument and the creator
-	 * and gameType provided by the ParseObject arguments.
-	 * 
-	 * Used for debugging purposes
-	 * 
-	 * @param g - supplies the ideal game size
-	 * @param user - specifies the creator
-	 * @param sport - specifies the gameType
-	 * */
-	/*
-	 * TODO: delete this if it's never used
-	public static void createDummyGameWithPointers(Game g, ParseObject user, ParseObject sport) {
-		Log.v(LOG_TAG, "entering createDummyGame()");
-		ParseObject game = new ParseObject("Game");
-		// fill in all the setter	
-		game.put(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
-		game.put(DbColumns.GAME_CREATOR, user);
-		game.put(DbColumns.GAME_SPORT, sport);
-		
-		game.saveInBackground(new SaveCallback() {
-			public void done(ParseException e) {
-				if (e == null) {
-					// successfully created game
-					Log.v(LOG_TAG, "Successfully saved game");
-				} else {
-					// unable to create the game, alert user
-					Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
-				}
-			}
-		});
-	}
-	*/
-
-	/**
 	 * Gets a game that meets the provided criteria. Only works for games the user has created
 	 * because the query uses the current ParseUser's objectId to find the corresponding game.
 	 * 
@@ -137,7 +101,7 @@ public class GameHandler {
 	 * @return the Parse Game object corresponding to the app Game object passed as a 
 	 * parameter
 	 */
-	public static ParseObject getMatchingParseGame(Game g) {
+	public static ParseObject getGameCreatedByCurrentUser(Game g) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
 		query.whereEqualTo(DbColumns.GAME_CREATOR, ParseUser.getCurrentUser());
 		query.whereEqualTo(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
@@ -172,7 +136,7 @@ public class GameHandler {
 	 * @param app Game object 
 	 * @return the Parse Game object that the app Game object passed as a parameter represents. 
 	 */
-	public static ParseObject getGame(Game g) {
+	public static ParseObject getGameUsingId(Game g) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
 		ParseObject game = null;
 		try {
@@ -193,7 +157,7 @@ public class GameHandler {
 	 * @param g - target game to be deleted
 	 */
 	public static void removeGame(Game g) {
-		ParseObject game = getMatchingParseGame(g);
+		ParseObject game = getGameCreatedByCurrentUser(g);
 		try {
 			game.delete();
 			Log.v(LOG_TAG, "deleted game");
@@ -304,8 +268,13 @@ public class GameHandler {
 	 * @param g the Game to join
 	 * @return true if the user was added to the game, false otherwise
 	 */
-	public static boolean joinGame(Game g) {
-		ParseObject game = getMatchingParseGame(g); 
+	public static boolean joinGame(Game g, boolean isCurrentUser) {
+		ParseObject game = null;
+		if (isCurrentUser) {
+			game = getGameCreatedByCurrentUser(g);
+		} else {
+			game = getGameUsingId(g); 
+		}
 		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
 		if (players == null) {
 			game.add(DbColumns.GAME_PLAYERS, ParseUser.getCurrentUser().getObjectId());
@@ -331,9 +300,9 @@ public class GameHandler {
 	public static boolean leaveGame(Game g) {
 		ParseObject game = null;
 		if (g.id == null) {
-			game = getMatchingParseGame(g); 
+			game = getGameCreatedByCurrentUser(g); 
 		} else {
-			game = getGame(g);
+			game = getGameUsingId(g);
 		}
 		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
 		if (players == null) {
@@ -361,7 +330,7 @@ public class GameHandler {
 		if (g.id == null) {
 			throw new IllegalArgumentException("Game object must have and id that is not null");
 		}
-		ParseObject game = getGame(g);
+		ParseObject game = getGameUsingId(g);
 		if (game != null) {
 			ArrayList<String> members = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
 			if (members == null) {

@@ -250,7 +250,7 @@ public class CreateGameActivity extends Activity
 		//setResult(Activity.RESULT_OK);
 		//finish();
 		// TODO: uncomment for functionality
-		GameHandler.createGame(createGame);
+		GameHandler.createGame(createGame, null);
 	}
 	
 	public void resetCreate(View v) {

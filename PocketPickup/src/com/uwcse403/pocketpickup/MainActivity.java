@@ -731,7 +731,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					
 					if (radius == 0 && loc == null) {
 						// game was created, must get game with id from database
-						ParseObject poGame = GameHandler.getMatchingParseGame(game);
+						ParseObject poGame = GameHandler.getGameCreatedByCurrentUser(game);
 						Game gameWithId = Translator.parseGameToAppGame(poGame);
 						mMarkerToGame.put(marker, gameWithId);
 					} else {
