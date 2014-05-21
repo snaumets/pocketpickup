@@ -148,19 +148,15 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		}
 		// cleanup, delete the game from the database now that we have retrieved it
 		GameHandler.removeGame(game);
-		ParseObject justCreatedGame = result.get(1);
+		ParseObject justCreatedGame = result.get(0);
 		ArrayList<String> players = (ArrayList<String>) justCreatedGame.get(DbColumns.GAME_PLAYERS);
 		// fail if the players object is null, i.e., nothing to do with adding players to games
 		// has been implemented
 		assertTrue(players != null);
-		
 		// fail if no players were added to the game. 
-		
 		assertTrue(players.size() > 0);
 		String id = null;
 		id = players.get(0);
-		
-		
 		//Not implemented
 		assertEquals(ParseUser.getCurrentUser().getObjectId(), id);
 	}
@@ -177,8 +173,10 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		}
 		Game gameDate = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(0, 0), 0L, 1L, SAMPLE_SPORT, randomIdealSize, "");
 		GameHandler.createGame(gameDate, null);
-		List<ParseObject> uploaded = GameHandler.getGame(gameDate);
-		assertTrue(uploaded.size() != 0);
+		//List<ParseObject> uploaded = GameHandler.getGame(gameDate);
+		//assertTrue(uploaded.size() != 0);
+		ParseObject game = GameHandler.getMatchingParseGame(gameDate);
+		assertTrue(game != null);
 	}
 	
 	@Override

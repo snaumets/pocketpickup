@@ -41,9 +41,13 @@ public final class Game implements Parcelable {
 	public final int mIdealGameSize;
 	/**Game Details**/
 	public final String mDetails;
+	/** objectId of the Parse object that this game represents. The field is non-null when
+	 * a Game is returned from the database from a query.
+	 */
+	public final String id;
 
 	/**
-	 * Default constructor
+	 * Default constructor for creating a new game, i.e., one that does not exist in the database.
 	 * 
 	 * @requires no arguments are null
 	 */
@@ -56,7 +60,27 @@ public final class Game implements Parcelable {
 		this.mGameType = gameType;
 		this.mIdealGameSize = idealGameSize;
 		this.mDetails = details;
+		id = null;
 	}
+	
+	/**
+	 * Default constructor for returning a game that represents a game that is already in the
+	 * database. Should be used when returning game objects from a query. 
+	 * 
+	 * @requires no arguments are null
+	 */
+	public Game(String creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
+			String gameType, int idealGameSize, String details, String objectId) {
+		this.mCreator = creator;
+		this.mGameLocation = gameLocation;
+		this.mGameStartDate = gameStartDate;
+		this.mGameEndDate = gameEndDate;
+		this.mGameType = gameType;
+		this.mIdealGameSize = idealGameSize;
+		this.mDetails = details;
+		id = objectId;
+	}
+	
 	
 	/**
 	 * for testing only
@@ -70,6 +94,7 @@ public final class Game implements Parcelable {
 		mGameEndDate = null;
 		mGameType = null;
 		mDetails = null;
+		id = null;
 	}
 	
 	/**
@@ -88,6 +113,7 @@ public final class Game implements Parcelable {
 		mGameEndDate = in.readLong();
 		mGameType = in.readString();
 		mDetails = in.readString();
+		id = in.readString();
 	}
 
 	@Override
@@ -106,5 +132,6 @@ public final class Game implements Parcelable {
 		out.writeLong(mGameEndDate);
 		out.writeString(mGameType);
 		out.writeString(mDetails);
+		out.writeString(id);
 	}
 }

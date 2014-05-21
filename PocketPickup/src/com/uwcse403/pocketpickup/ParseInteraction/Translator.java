@@ -37,15 +37,19 @@ public class Translator {
 		String gameType = PocketPickupApplication.sportsAndObjs.inverse().get(parseSportObj);
 		int idealGameSize = game.getInt(DbColumns.GAME_IDEAL_SIZE);
 		String gameDetails = game.getString(DbColumns.GAME_DETAILS);
-		return new Game(creatorId, location, gameStartDate, gameEndDate, gameType, idealGameSize, gameDetails);
+		String objectId = game.getObjectId();
+		return new Game(creatorId, location, gameStartDate, gameEndDate, 
+				gameType, idealGameSize, gameDetails, objectId);
 	}
 	
 	/**
 	 * 
-	 * @param game object to be converted into a ParseObject game object
+	 * @param game object to be converted into a new ParseObject to be saved to the database.
+	 * This method SHOULD NOT be called if there is already a Game object in the database. This
+	 * is only for creation of new Game objects
 	 * @return Game object ready to be stored in the Parse database
 	 */
-	public static ParseObject appGameToParseGame(Game game) {
+	public static ParseObject appGameToNewParseGame(Game game) {
 		// first check to see if this Game object corresponds to a game created by the current
 		// user. If so, this means we don't have to fetch the user info from the Parse servers
 		// because we can just call ParseUser.getCurrentUser()
@@ -68,5 +72,15 @@ public class Translator {
 		g.put(DbColumns.GAME_SPORT, PocketPickupApplication.sportsAndObjs.get(game.mGameType));
 		g.put(DbColumns.GAME_DETAILS, game.mDetails);
 		return g;
+	}
+	
+	/**
+	 * @param app Game object that corresponds to a ParseObject Game object that is currently in
+	 * the database. This method is used for UPDATING EXISTING GAMES.
+	 * @return the ParseObject Game object from the database.
+	 */
+	public static ParseObject appGameToExistingParseGame(Game game) {
+		return null;	
+		
 	}
 }

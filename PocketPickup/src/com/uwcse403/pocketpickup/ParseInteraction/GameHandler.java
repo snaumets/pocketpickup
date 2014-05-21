@@ -50,7 +50,7 @@ public class GameHandler {
 	
 	public static void createGame(Game g, SaveCallback cb) {
 		Log.v(LOG_TAG, "entering CreateGame(Game, SaveCallback)");
-		ParseObject game = Translator.appGameToParseGame(g);
+		ParseObject game = Translator.appGameToNewParseGame(g);
 		if(cb != null) {
 			game.saveInBackground(cb);	
 		}
@@ -103,7 +103,8 @@ public class GameHandler {
 	 * @param g - supplies the ideal game size
 	 * @param user - specifies the creator
 	 * @param sport - specifies the gameType
-	 */
+	 * */
+	/*
 	public static void createDummyGameWithPointers(Game g, ParseObject user, ParseObject sport) {
 		Log.v(LOG_TAG, "entering createDummyGame()");
 		ParseObject game = new ParseObject("Game");
@@ -124,14 +125,17 @@ public class GameHandler {
 			}
 		});
 	}
+	*/
 
 	/**
-	 * Gets a game that meets the provided criteria. Only works for games the user has created.
+	 * Gets a game that meets the provided criteria. Only works for games the user has created
+	 * because the query uses the current ParseUser's objectId to find the corresponding game.
 	 * 
 	 * @param g - target game to get
-	 * @return
+	 * @return the Parse Game object corresponding to the app Game object passed as a 
+	 * parameter
 	 */
-	public static List<ParseObject> getGame(Game g) {
+	public static ParseObject getMatchingParseGame(Game g) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
 		query.whereEqualTo(DbColumns.GAME_CREATOR, ParseUser.getCurrentUser());
 		query.whereEqualTo(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
@@ -155,25 +159,46 @@ public class GameHandler {
 			//games that exist
 			Log.e(LOG_TAG, "no objects found to delete");
 		}
-		return objects;
+		if (objects.size() != 1) {
+			throw new IllegalStateException("found " + objects.size()  + " games that met" +
+					" the description of the input game but there should be only one");
+		}
+		return objects.get(0);
 	}
 	
+	/**
+	 * @param app Game object 
+	 * @return the Parse Game object that the app Game object passed as a parameter represents. 
+	 */
+	public static ParseObject getGame(Game g) {
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
+		ParseObject game = null;
+		try {
+			game = query.get(g.id);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Log.e(LOG_TAG, "error retreiving game: " + e.getCode() + " : " + e.getMessage());
+		}
+		return game;
+	}
+
+	
 	/** 
-	 * Removes the App game object g from the Parse database.
-	 * 
-	 * ONLY WORKS IF THE CURRENT USER CREATED THE GAME BEING DELETED
+	 * Removes the App game object g from the Parse database. 
+	 * only works if the current user created the game being deleted, but this only makes sense
+	 * because only the creator of a game should be allowed to delete it.
 	 * @param g - target game to be deleted
 	 */
 	public static void removeGame(Game g) {
-		List<ParseObject> objects = getGame(g);
-		for (int i = 0; i < objects.size(); i++) {
-			try {
-				objects.get(i).delete();
-				Log.v(LOG_TAG, "deleting object: " + i);
-			} catch (ParseException e) {
-				//Failed to delete a game
-				Log.e(LOG_TAG, "failed to delete a target game in removeGame()");
-			}
+		ParseObject game = getMatchingParseGame(g);
+		try {
+			game.delete();
+			Log.v(LOG_TAG, "deleted game");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			Log.e(LOG_TAG, "failed to delete a target game in removeGame()");
+			e.printStackTrace();
 		}
 	}
 
@@ -273,27 +298,12 @@ public class GameHandler {
 	}
 	
 	/**
-	 * Gets the Game ParseObject with the specified id. Returns null if no game matches the id
-	 * @param id - id of desired game
-	 * @return ParseObject representing game with id or null
-	 */
-	public static ParseObject getGameById(String id) {
-		ParseQuery<ParseObject> idQuery = new ParseQuery<ParseObject>("Game");
-		try {
-			return idQuery.get(id);
-		} catch (ParseException e) {
-			Log.e(LOG_TAG, "Failed to get game by ID: " + id);
-		}
-		return null;
-	}
-	/**
 	 * Adds the current user to a game 
 	 * @param g the Game to join
 	 * @return true if the user was added to the game, false otherwise
 	 */
 	public static boolean joinGame(Game g) {
-		// TODO: not implemented in Beta release
-		ParseObject game = Translator.appGameToParseGame(g);
+		ParseObject game = getMatchingParseGame(g); 
 		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
 		if (players == null) {
 			game.add(DbColumns.GAME_PLAYERS, ParseUser.getCurrentUser().getObjectId());
@@ -309,7 +319,47 @@ public class GameHandler {
 		}
 		return true;
 	}
+	
+	/**
+	 * Removes the current user from the game
+	 * @param g the Game that the current user intends to leave
+	 * @return true if the user was successfully removed or if the user was never a member of
+	 * the game to begin with. Returns false if there was an error 
+	 */
+	public static boolean leaveGame(Game g) {
+		ParseObject game = getMatchingParseGame(g); 
+		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
+		if (players == null) {
+			// do nothing, there are no users who have joined this game if players is null
+		} else {
+			players.remove(ParseUser.getCurrentUser().getObjectId());
+		}
+		try {
+			game.save();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;	
+	}
+	/**
+	 * 
+	 * @param app Game object 
+	 * @return number of attendees for this game.
+	 * @requires the Game object have a non-null id
+	 * @throws IllegalArgumentException if the Game object has a null id
+	 */
+	public static int getCurrentNumberOfGameAttendees(Game g) {
+		if (g.id == null) {
+			throw new IllegalArgumentException("Game object must have and id that is not null");
+		}
+		ParseObject game = getGame(g);
+		if (game != null) {
+			ArrayList<String> members = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
+			return members.size();
+		}
+		return 0;
+	}
 }
-
-
 
