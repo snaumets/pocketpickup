@@ -153,6 +153,12 @@ public class CreateGameActivity extends Activity
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
+		switch (item.getItemId()) {
+
+		case android.R.id.home:
+		    onBackPressed(); // This will not destroy and recreate main activity
+		    return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 	
