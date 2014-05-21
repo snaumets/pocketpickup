@@ -7,6 +7,7 @@ import java.util.List;
 import org.json.JSONArray;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
@@ -363,6 +364,9 @@ public class GameHandler {
 		ParseObject game = getGame(g);
 		if (game != null) {
 			ArrayList<String> members = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
+			if (members == null) {
+				return 0;
+			}
 			return members.size();
 		}
 		return 0;

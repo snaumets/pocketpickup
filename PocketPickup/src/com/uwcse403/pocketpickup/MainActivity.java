@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import android.app.Activity;
@@ -42,6 +44,8 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -50,7 +54,10 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
+import com.uwcse403.pocketpickup.ParseInteraction.Translator;
 import com.uwcse403.pocketpickup.game.Game;
 import com.uwcse403.pocketpickup.game.Sports;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
@@ -100,6 +107,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	
 	private Set<Marker> mMapMarkers;
 	private Set<Circle> mMapCircles;
+	private Map<Marker, Game> mMarkerToGame;
 
 	
 	/*
@@ -329,6 +337,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		if (mGoogleMap == null) {
 			mMapMarkers = new HashSet<Marker>();
 			mMapCircles = new HashSet<Circle>();
+			mMarkerToGame = new HashMap<Marker, Game>();
 			TouchableMapFragment tmf = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
 			mGoogleMap = tmf.getMap();
 			
@@ -375,54 +384,39 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					mLocationClient.connect(); // upon success, onConnected() is
 											// called
 				}
-				// This will update the location text field when the camera
-				// changes
-				/*googleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
-							@Override
-							public void onCameraChange(
-									CameraPosition cameraPosition) {
-								updateLocationTextField();
-							}
-						});*/
-				
-				// Setting a custom info window adapter for the google map (for markers)
-			    mGoogleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
-
-			        // Use default InfoWindow frame
-			        @Override
-			        public View getInfoWindow(Marker arg0) {
-			            return null;
-			        }
-			        
-			        // Defines the contents of the InfoWindow
-			        @Override
-			        public View getInfoContents(Marker marker) {
-			            // Getting view from the layout file info_window_layout
-			            View v = getLayoutInflater().inflate(R.layout.windowlayout, null);
-
-			            // Getting the title from the marker
-			            String title = marker.getTitle();
-			            
-			            // Getting the snippet from the marker
-			            String snippet = marker.getSnippet();
-
-			            // Getting reference to the TextView to set title
-			            TextView tvTitle = (TextView) v.findViewById(R.id.tv_title);
-
-			            // Getting reference to the TextView to set snippet
-			            TextView tvSnippet = (TextView) v.findViewById(R.id.tv_snippet);
-
-			            // Setting the title
-			            tvTitle.setText(title);
-
-			            // Setting the snippet
-			            tvSnippet.setText(snippet);
-
-			            // Returning the view containing InfoWindow contents
-			            return v;
-
-			        }
-			    });
+				//mGoogleMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+				mGoogleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+					@Override
+					//public void onInfoWindowClick(Marker marker) {
+					public boolean onMarkerClick(Marker marker) {
+						Game game = null;
+						if (mMarkerToGame.containsKey(marker)) {
+							game = mMarkerToGame.get(marker);
+							Intent intent = new Intent(MainActivity.this, GameActivity.class);
+							// Convert millisecond difference to hours, ms / (1000 ms/s) / (60 s/min) / (60 min/hr)
+							int durationInHours = (int) (game.mGameEndDate - game.mGameStartDate) / 1000 / 60 / 60;
+							
+							// Attach the details
+							Bundle args = new Bundle();
+							args.putParcelable(GameActivity.GAME, game);
+							args.putString(GameActivity.GAME_TYPE, game.mGameType);
+							args.putString(GameActivity.GAME_DETAILS, game.mDetails);
+							args.putLong(GameActivity.GAME_START_DATE, game.mGameStartDate);
+							args.putInt(GameActivity.GAME_DURATION, durationInHours);
+							args.putString(GameActivity.GAME_CREATOR, game.mCreator);
+							args.putInt(GameActivity.GAME_MIN_PLAYERS, game.mIdealGameSize);
+							args.putDouble(GameActivity.GAME_LOCATION_LAT, game.mGameLocation.latitude);
+							args.putDouble(GameActivity.GAME_LOCATION_LNG, game.mGameLocation.longitude);
+							intent.putExtras(args);
+							
+							startActivity(intent);
+						} else {
+							Toast.makeText(getApplicationContext(), "Sorry, no details for this game.", Toast.LENGTH_LONG).show();
+							return false;
+						}
+						return true;
+		            }
+		        });
 			}
 		}
 	}
@@ -734,6 +728,16 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					.title(game.mGameType)
 					.snippet(gameData));
 					mMapMarkers.add(marker);
+					
+					if (radius == 0 && loc == null) {
+						// game was created, must get game with id from database
+						ParseObject poGame = GameHandler.getMatchingParseGame(game);
+						Game gameWithId = Translator.parseGameToAppGame(poGame);
+						mMarkerToGame.put(marker, gameWithId);
+					} else {
+						// Games came from database since they are search results
+						mMarkerToGame.put(marker, game);
+					}
 				}
 			}
 		}

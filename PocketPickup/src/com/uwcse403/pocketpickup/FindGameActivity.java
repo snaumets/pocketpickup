@@ -290,7 +290,7 @@ public class FindGameActivity extends Activity
 	 * @param v
 	 */
 	public void submitSearch(View v) {
-		/* validate */
+		/* TODO: validate */
 		
 		/* Create FindGameCriteria object and send */
 		long msInDay = 1000 * 60 * 60 * 24; // 1000 ms/s * (60 s/min) * (60 min/hour) * (24 hr/day)

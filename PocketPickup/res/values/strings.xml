@@ -11,11 +11,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
-    
+
     <!-- facebook login strings -->
     <string name="app_id">1475481862686496</string>
-	<string name="login">Log In</string>
-	<string name="login_intro">Log in using Facebook. We will never post to Facebook or use your info without permission.</string>
+    <string name="login">Log In</string>
+    <string name="login_intro">Log in using Facebook. We will never post to Facebook or use your info without permission.</string>
 
     <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
@@ -38,8 +38,8 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_create_game">Create Game</string>
     <string name="title_activity_find_game">Find Game</string>
-    
-    <!--  Find Game Activity Strings -->
+
+    <!-- Find Game Activity Strings -->
     <string name="select_location">Location:</string>
     <string name="select_radius">Radius:</string>
     <string name="select_radius_miles">Mile(s)</string>
@@ -53,7 +53,7 @@
     <string name="select_sports">Sports:</string>
     <string name="reset">Reset All</string>
     <string name="clear_results">Clear Results</string>
-    
+
     <string-array name="radius_choices">
         <item>1</item>
         <item>2</item>
@@ -61,7 +61,6 @@
         <item>10</item>
         <item>25</item>
     </string-array>
-    
     <string-array name="duration_choices">
         <item>1</item>
         <item>2</item>
@@ -76,8 +75,8 @@
         <item>11</item>
         <item>12</item>
     </string-array>
-    
-    <!--  Create Game Activity Strings -->
+
+    <!-- Create Game Activity Strings -->
     <string name="create_select_time">Select Time</string>
     <string name="create_select_date">Select Date</string>
     <string name="cg_on">When:</string>
@@ -86,10 +85,18 @@
     <string name="cg_duration_hours">Hour(s)</string>
     <string name="cg_details_hint">Add optional details</string>
     <string name="cg_details">Details:</string>
-    
+
     <string-array name="sport_choices">
         <item>Basketball</item>
         <item>Add more here!</item>
     </string-array>
+
+    <string name="title_activity_game">Game Details</string>
+    <string name="action_settings">Settings</string>
+    
+    <!-- Game Activity Strings -->
+    <string name="join_game">Join Game</string>
+    <string name="leave_game">Leave Game</string>
+    <string name="g_attendees">Planned Attendees:</string>
 
 </resources>

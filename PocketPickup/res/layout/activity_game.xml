@@ -1,0 +1,125 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_game_scrollable_container"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+    
+	<LinearLayout
+	    android:id="@+id/activity_game_container"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_gravity="top"
+	    android:orientation="vertical"
+	    tools:context=".GameActivity"
+	    tools:ignore="MergeRootFrame" >    
+	    
+	    <TextView
+	        android:id="@+id/gameSportTextView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:textStyle="bold"
+        	android:layout_gravity="center" 
+        	android:layout_marginBottom="20dp" />
+	    
+	    <TextView
+	        android:id="@+id/gameStartTitleTextView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:text="@string/cg_on"
+	        android:textStyle="bold" />
+	
+	    <TextView
+	        android:id="@+id/gameStartTextView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:paddingLeft="20dp" 
+	        android:paddingBottom="10dp"/>
+	
+	    <TextView
+	        android:id="@+id/gameDurationTitleTextView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:text="@string/cg_duration"
+	        android:textStyle="bold" />
+	    
+	    <TextView
+	        android:id="@+id/gameDurationTextView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:paddingLeft="20dp" 
+	        android:paddingBottom="10dp"/>
+	    
+	    <TextView
+	        android:id="@+id/gameDetailsTitleTextView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:text="@string/cg_details"
+	        android:textStyle="bold" />
+	    
+	    <TextView
+	        android:id="@+id/gameDetailsTextView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:paddingLeft="20dp" 
+	        android:paddingBottom="10dp"/>
+	    
+	    <TextView
+	        android:id="@+id/gameAttendeesTitleTextView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:text="@string/g_attendees"
+	        android:textStyle="bold" />
+	    
+	    <TextView
+	        android:id="@+id/gameAttendeesTextView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge" 
+	        android:paddingLeft="20dp" 
+	        android:paddingBottom="10dp"/>
+	
+		<LinearLayout
+		    android:id="@+id/gameButtonContainer"
+		    android:layout_width="match_parent" 
+		    android:layout_height="match_parent"
+		    android:orientation="horizontal"
+		    android:gravity="bottom">
+			
+		    <View android:layout_height="0dp" 
+		        android:layout_width="0dp"
+		        android:layout_weight=".25" />
+		    <Button
+		        android:id="@+id/gameJoinButton"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:onClick="joinGameSubmit"
+		        android:text="@string/join_game"
+		        android:clickable="true"
+	            android:visibility="gone"
+		        android:layout_weight=".5"/>
+		    <Button
+		        android:id="@+id/gameLeaveButton"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:onClick="leaveGameSubmit"
+		        android:text="@string/leave_game"
+		        android:clickable="true"
+	            android:visibility="gone"
+		        android:layout_weight=".5"/>
+		    
+		    <View android:layout_height="0dp" 
+		        android:layout_width="0dp"
+		        android:layout_weight=".25" />
+		</LinearLayout>
+	
+	</LinearLayout>
+</ScrollView>
