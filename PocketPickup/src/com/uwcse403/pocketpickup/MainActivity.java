@@ -584,7 +584,14 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	// Logs the user out of Parse, but not Facebook
 	public void logout(View view) {
 		ParseUser.logOut();
-
+		// close Facebook session so that a Facebook logout will prompt the 
+		// user for Facebook credentials upon next Pocket Pickup login
+		com.facebook.Session fbs = com.facebook.Session.getActiveSession();
+		if (fbs == null) {
+			fbs = new com.facebook.Session(this);
+		    com.facebook.Session.setActiveSession(fbs);
+		}
+		fbs.closeAndClearTokenInformation();
 		// Go to the login view
 		Intent intent = new Intent(this, LoginActivity.class);
 		startActivity(intent);
