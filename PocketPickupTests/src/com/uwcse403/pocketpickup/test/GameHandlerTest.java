@@ -147,7 +147,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 			Log.e(LOG_TAG, e.getMessage());
 		}
 		// cleanup, delete the game from the database now that we have retrieved it
-		//GameHandler.removeGame(game);
+		GameHandler.removeGame(game);
 		ParseObject justCreatedGame = result.get(1);
 		ArrayList<String> players = (ArrayList<String>) justCreatedGame.get(DbColumns.GAME_PLAYERS);
 		// fail if the players object is null, i.e., nothing to do with adding players to games
