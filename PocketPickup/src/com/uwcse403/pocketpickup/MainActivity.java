@@ -52,6 +52,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
@@ -310,17 +311,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
-	// This method will try to set the map to the given location with the given
-	// zoom level (ex: 16)
-	private void zoomMapToLocation(Location location, int zoomLevel) {
-		if (location != null && mGoogleMap != null) {
-			LatLng latLngLocation = new LatLng(location.getLatitude(),
-					location.getLongitude());
-			mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-					latLngLocation, zoomLevel));
-		}
-	}
-
 	// This method will confirm the availability of a GoogleMap
 	private void setUpMapIfNeeded() {
 		// Test is google play services are available
@@ -435,10 +425,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			mLatLngLocation = proj.fromScreenLocation(point);
 			mFindButton.setEnabled(true);
 			mCreateButton.setEnabled(true);
-			/*
-			 * Marker mark = googleMap.addMarker(new
-			 * MarkerOptions().position(latLngLocation));
-			 */
 
 			try {
 				List<Address> matches = geoCoder.getFromLocation(
@@ -466,6 +452,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		}
 	}
 
+	/**
+	 * This method simple saves the state of the map so that it can
+	 * later be resumed
+	 * @param outState
+	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		if (outState != null) {
@@ -492,7 +483,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	 * It will make sure to return the map to the location and zoom level that it was left at.
 	 */
 	private void restoreMap() {
-		//Log.v("MainActivity", "in restoreMap()");
 		SharedPreferences settings = getSharedPreferences("Map_State", 0);
 		float lng = settings.getFloat("map_lng", 0); // the second arg is returned if first is not found
 		float lat = settings.getFloat("map_lat", 0);
@@ -642,6 +632,14 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		startActivityForResult(intent, FIND_GAME_CODE);
 	}
 
+	/**
+	 * This method is called when an activity that was started from this
+	 * activity waiting for a result finally returns with a result code
+	 * and data if applicable
+	 * @param requestCode
+	 * @param resultCode
+	 * @param data
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
@@ -690,6 +688,59 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	}
 	
 	/**
+	 * This method will try to set the map to the given location with the given zoom
+	 * @param location	The center location which will be zoomed to
+	 * @param zoomLevel	The zoom level
+	 */
+	private void zoomMapToLocation(Location location, int zoomLevel) {
+		if (location != null && mGoogleMap != null) {
+			LatLng latLngLocation = new LatLng(location.getLatitude(),
+					location.getLongitude());
+			mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+					latLngLocation, zoomLevel));
+		}
+	}
+	
+	/**
+	 * This method will try to set the map zoom the map, not changing the location
+	 * @param zoomLevel	The zoom level
+	 */
+	private void zoomMapToLocation(int zoomLevel) {
+		if (zoomLevel > 0 && mGoogleMap != null) {			
+			mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
+		}
+	}
+	
+	/**
+	 * This method will zoom the map to a level so that the entire circle
+	 * is shown
+	 * @param circle	The circle that must be shown
+	 */
+	private void zoomToShowCircle(Circle circle) { 
+	    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+	    double earthMeanRadius = 6371000.0; // in meters  
+	    LatLng center = circle.getCenter();
+	    double radius = circle.getRadius();
+	    
+	    // Convert lat and lng to radians 
+	    double lat = center.latitude * Math.PI / 180.0; 
+	    double lon = center.longitude * Math.PI / 180.0; 
+	    
+	    // Determine some points that are to be included as bounds
+	    for (double t = 0; t <= Math.PI * 2; t += 1.0) { // we dont need very many points
+		    double latPoint = lat + (radius / earthMeanRadius) * Math.sin(t); // y
+		    double lngPoint = lon + (radius / earthMeanRadius) * Math.cos(t) / Math.cos(lat); // x
+		
+		    // saving the location on circle as a LatLng point
+		    LatLng point =new LatLng(latPoint * 180.0 / Math.PI, lngPoint * 180.0 / Math.PI);
+		    builder.include(point);
+		}
+	    LatLngBounds bounds = builder.build();
+	    int paddingPixels = 25;
+	    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, paddingPixels));
+    }
+	
+	/**
 	 * 
 	 * @param radius The radius of the search in miles
 	 * @param loc The location of the center of the search
@@ -699,8 +750,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			if (radius != 0 && loc != null) {
 				int meters = radius * 1609; // convert miles to meters (1609 meters in 1 mile)
 				Circle circle = mGoogleMap.addCircle(new CircleOptions().center(loc)
-						.radius(meters).strokeColor(Color.GREEN));
+						.radius(meters).strokeColor(Color.GREEN).fillColor(0x2200ff00));
+						// Green outline, transparent green fill color
+						// 0xaabbbbbb => "bbbbbb" is the hex color, and "aa" is transparency
 				mMapCircles.add(circle);
+				
+				// Set map to zoom out enough for to show entire circle
+				zoomToShowCircle(circle);
 			}
 			
 			if (mDisplayedGames != null) {
