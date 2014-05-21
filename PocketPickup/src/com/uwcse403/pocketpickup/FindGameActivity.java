@@ -5,10 +5,13 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import android.animation.AnimatorSet.Builder;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -57,7 +60,13 @@ public class FindGameActivity extends Activity
 	private Calendar mStartDate;
 	private Calendar mEndDate;
 	private int      mRadius;
+	
 	private Set<String> mSports;
+	private ArrayList<String> availableSports;
+	// arraylist to save the selected sports' indexes
+	private ArrayList<Integer> selectedSports;
+	
+	private AlertDialog sportsDialog;
 		
 	/*
 	 * (non-Javadoc)
@@ -104,7 +113,7 @@ public class FindGameActivity extends Activity
 			
 		});
 		// initialize the sport type choices
-		Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
+		/*Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
 		ArrayList<String> sports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
 		sports.add(0, "All Sports");
 		ArrayAdapter<String> sportsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sports);
@@ -133,7 +142,54 @@ public class FindGameActivity extends Activity
 				// do nothing
 			}
 			
+		});*/
+		// A list of the sports to display as options to check
+		availableSports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
+		
+		// Make the equivalent CharSequence array of sports that the dialog uses to initialize
+		CharSequence[] sports = new CharSequence[availableSports.size()];
+		for (int i = 0; i < sports.length; i++) {
+			sports[i] = (CharSequence) availableSports.get(i);
+		}
+		
+		// arraylist to keep the selected items' indexes
+		selectedSports = new ArrayList<Integer>();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Sports To Search For");
+        builder.setMultiChoiceItems(sports, null,
+        		new DialogInterface.OnMultiChoiceClickListener() {
+        	@Override
+        	public void onClick(DialogInterface dialog, int indexSelected,
+			         boolean isChecked) {
+        		
+				if (isChecked) {
+					// If the user checked the item, add it to the set of selected items
+					selectedSports.add(indexSelected);
+				} else if (selectedSports.contains(indexSelected)) {
+					// Else, if the item is already in the set, remove it
+					selectedSports.remove(Integer.valueOf(indexSelected));
+				}
+        	}
+        })
+		// Set the action buttons
+		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				// Your code when user clicked on Ok
+				if (selectedSports.isEmpty()) {
+					// user submitted without any checkboxes selected
+					// All sports will still be searched for.
+					Button button = (Button) findViewById(R.id.search_pref_button);
+					button.setText(R.string.all_sports);
+				} else {
+					Button button = (Button) findViewById(R.id.search_pref_button);
+					button.setText(R.string.selected_sports);
+				}
+			}
 		});
+        
+        sportsDialog = builder.create(); //AlertDialog dialog; create like this outside onClick
 
 		// Initialize location text field from passed in location
 		Bundle args = getIntent().getExtras();
@@ -197,6 +253,12 @@ public class FindGameActivity extends Activity
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
+		switch (item.getItemId()) {
+
+		case android.R.id.home:
+		    onBackPressed(); // This will not destroy and recreate main activity
+		    return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -236,19 +298,23 @@ public class FindGameActivity extends Activity
 	    newFragment.show(getFragmentManager(), "datePicker");
 	}
 	
+	/**
+	 * This will reset the form inputs and associated state to default values
+	 * @param v		The view from which the button was called
+	 */
 	public void resetSearchForms(View v) {
 		mStartDate = null;
 		mStartTime = null;
 		mEndDate = null;
 		mEndTime = null;
-		mSports.clear();
-		mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
+		//mSports.clear();
+		//mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
 		
 		Spinner spinner = (Spinner)findViewById(R.id.radius_spinner);
 		spinner.setSelection(0);
 		
-		Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
-		sportsSpinner.setSelection(0);
+		//Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
+		//sportsSpinner.setSelection(0);
 		
 		setButtonLabels();
 	}
@@ -269,9 +335,23 @@ public class FindGameActivity extends Activity
 		long startTime = mStartTime != null ? mStartTime.getTimeInMillis() % msInDay : 0;
 		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % msInDay : 0;
 		ArrayList<String> gameTypes = new ArrayList<String>();
+		
+		// Add all of the sports that the user selected to search for.
+		// If the set is empty, then the user didnt use the dialog so
+		// add all available sports so they can be search for.
+		Set<String> mSports = new HashSet<String>();
+		if (selectedSports.isEmpty()) {
+			// No sports were selected in the dialog, add all available ones
+			mSports.addAll(availableSports);
+		} else {
+			// At least one sport was selected, add only those
+			for (int i = 0; i < selectedSports.size(); i++) {
+				int selectedIndex = selectedSports.get(i);
+				mSports.add(availableSports.get(selectedIndex));
+			}
+		}
+		
 		gameTypes.addAll(mSports);
-		//gameTypes.add("Basketball");
-		//gameTypes.add("Soccer");
 		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, gameTypes);
 		
 		final ArrayList<Game> searchResults = new ArrayList<Game>();
@@ -287,7 +367,8 @@ public class FindGameActivity extends Activity
 	}
 	
 	public void showSportsPreferencesDialog(View v) {
-		Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
+		sportsDialog.show();
+		//Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
 	}
 
 	public void setLocation(View v) {
