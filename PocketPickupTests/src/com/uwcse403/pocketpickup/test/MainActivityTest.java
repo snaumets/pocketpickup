@@ -49,9 +49,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	 * Asserts that 
 	 */
 	public void testActivityInitialized() {
-		assertTrue(mActivity != null);
-		assertTrue(mCreateGameButton != null);
-		assertTrue(mFindGameButton != null);
+		assertNotNull(mActivity);
+		assertNotNull(mCreateGameButton);
+		assertNotNull(mFindGameButton);
 		
 		assertNotNull(ParseUser.getCurrentUser());
 	}
@@ -155,7 +155,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	 * Tests that Create Game paints a pin on the map.
 	 */
 	public void testCreateGameButtonResult() {
-		
+	
 	}
 	
 	/**
