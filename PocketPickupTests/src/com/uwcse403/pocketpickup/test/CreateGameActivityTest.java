@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.Intent;
+import android.os.Bundle;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -12,7 +14,6 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import com.uwcse403.pocketpickup.CreateGameActivity;
-import com.uwcse403.pocketpickup.FindGameActivity;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 
 public class CreateGameActivityTest 
@@ -43,8 +44,14 @@ extends ActivityInstrumentationTestCase2<CreateGameActivity> {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		// TODO mock intent
+		Intent mockIntent = new Intent();
+		Bundle args = new Bundle();
+		args.putCharSequence(CreateGameActivity.CREATEGAME_LOCATION, mDefLocationText);
+		args.putDouble(CreateGameActivity.CREATEGAME_LATITUDE, mDefLatitude);
+		args.putDouble(CreateGameActivity.CREATEGAME_LONGITUDE, mDefLongitude);
+		mockIntent.putExtras(args);
 		
+		setActivityIntent(mockIntent);
 		mActivity = getActivity();
 		mInstrumentation = getInstrumentation();
 		
@@ -104,8 +111,9 @@ extends ActivityInstrumentationTestCase2<CreateGameActivity> {
 	 * dialog
 	 */
 	public void testDateButtonOpensDialog() {
-		// TODO: set up fragment monitor?
+		// TODO: get Robotium
 				
+	    mInstrumentation.waitForIdleSync();
 	    mActivity.runOnUiThread(new Runnable() {
 	        public void run() {
 	          mDateButton.performClick();

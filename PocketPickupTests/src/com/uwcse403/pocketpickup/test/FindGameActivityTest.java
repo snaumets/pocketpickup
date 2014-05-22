@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.Intent;
+import android.os.Bundle;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,7 +47,12 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 		mDefLatitude  = 50.0;
 		mDefLongitude = 60.0;
 		
-		// TODO mock intent, get these values
+		Intent mockIntent = new Intent();
+		Bundle args = new Bundle();
+		args.putCharSequence(FindGameActivity.FINDGAME_LOCATION, mDefLocationText);
+		args.putDouble(FindGameActivity.FINDGAME_LATITUDE, mDefLatitude);
+		args.putDouble(FindGameActivity.FINDGAME_LONGITUDE, mDefLongitude);
+		mockIntent.putExtras(args);
 		
 		mActivity = getActivity();
 		mInstrumentation = getInstrumentation();
@@ -68,7 +75,6 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 				com.uwcse403.pocketpickup.R.id.search_reset_button);
 		mSubmitButton     = (Button) mActivity.findViewById(
 				com.uwcse403.pocketpickup.R.id.find_game_submit_button);
-		
 	}
 	
 	/**
