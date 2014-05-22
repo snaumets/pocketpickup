@@ -1,5 +1,7 @@
 package com.uwcse403.pocketpickup.test;
 
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
@@ -11,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import com.robotium.solo.Solo;
 import com.uwcse403.pocketpickup.FindGameActivity;
 
 public class FindGameActivityTest 
@@ -51,6 +54,7 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 		args.putDouble(FindGameActivity.FINDGAME_LONGITUDE, mDefLongitude);
 		mockIntent.putExtras(args);
 		
+		setActivityIntent(mockIntent);
 		mActivity = getActivity();
 		mInstrumentation = getInstrumentation();
 		
@@ -89,7 +93,7 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 		assertNotNull(mResetButton);
 		assertNotNull(mSubmitButton);
 		
-		assertEquals(mDefLocationText, mLocationText.getText());
+		assertEquals(mDefLocationText, mLocationText.getText().toString());
 		assertEquals(mActivity.getResources()
 				.getString(com.uwcse403.pocketpickup.R.string.select_time),
 				     mStartTimeButton.getText());
@@ -110,24 +114,26 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	 * Tests that the Start Time button opens the time dialog
 	 */
 	public void testStartTimeButtonShowsDialog() {
-		// TODO: set up fragment monitor?
+		Solo solo = new Solo(mInstrumentation, mActivity);
 		
+		mInstrumentation.waitForIdleSync();
 	    mActivity.runOnUiThread(new Runnable() {
 	        public void run() {
 	          mStartTimeButton.performClick();
 	        }
 	      });	    
 	    mInstrumentation.waitForIdleSync();
-	    // TODO: assert fragment is shown
-
-	    // TODO: close fragment
+	    
+	    assertTrue(solo.waitForDialogToOpen());
+	    
+	    solo.goBack();
 	}
 	
 	/**
 	 * Tests that the End Time button opens the time dialog
 	 */
 	public void testEndTimeButtonShowsDialog() {
-		// TODO: set up fragment monitor?
+		Solo solo = new Solo(mInstrumentation, mActivity);
 		
 	    mActivity.runOnUiThread(new Runnable() {
 	        public void run() {
@@ -135,16 +141,17 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	        }
 	      });	    
 	    mInstrumentation.waitForIdleSync();
-	    // TODO: assert fragment is shown
+	   
+	    assertTrue(solo.waitForDialogToOpen());
 
-	    // TODO: close fragment
+	    solo.goBack();
 	}
 	
 	/**
 	 * Tests that the Start Date button opens the date dialog
 	 */
 	public void testStartDateButtonShowsDialog() {
-		// TODO: set up fragment monitor?
+		Solo solo = new Solo(mInstrumentation, mActivity);
 		
 	    mActivity.runOnUiThread(new Runnable() {
 	        public void run() {
@@ -152,16 +159,17 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	        }
 	      });	    
 	    mInstrumentation.waitForIdleSync();
-	    // TODO: assert fragment is shown
+	    
+	    assertTrue(solo.waitForDialogToOpen());
 
-	    // TODO: close fragment
+	    solo.goBack();
 	}
 	
 	/**
 	 * Tests that the End Date button opens the date dialog
 	 */
 	public void testEndDateButtonShowsDialog() {
-		// TODO: set up fragment monitor?
+		Solo solo = new Solo(mInstrumentation, mActivity);
 		
 	    mActivity.runOnUiThread(new Runnable() {
 	        public void run() {
@@ -169,9 +177,9 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	        }
 	      });	    
 	    mInstrumentation.waitForIdleSync();
-	    // TODO: assert fragment is shown
 
-	    // TODO: close fragment
+	    assertTrue(solo.waitForDialogToOpen());
+	    solo.goBack();
 	}
 	
 	/**
@@ -197,9 +205,66 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	 * to the default values
 	 */
 	public void testResetButtonClearsForm() {
-		// TODO: set date and time 
-		mRadiusSpinner.setSelection(1);
+		Calendar c = Calendar.getInstance();
+		Solo solo = new Solo(mInstrumentation, mActivity);
 		
+		// Set start time
+	    mActivity.runOnUiThread(new Runnable() {
+	        public void run() {
+	          mStartTimeButton.performClick();
+	        }
+	      });	    
+	    mInstrumentation.waitForIdleSync();
+	    
+	    solo.waitForDialogToOpen();
+	    solo.setTimePicker(0, 1, 0);
+	    solo.clickOnText("Set");
+	    
+	    // Set end time
+	    mActivity.runOnUiThread(new Runnable() {
+	        public void run() {
+	          mEndTimeButton.performClick();
+	        }
+	      });	    
+	    mInstrumentation.waitForIdleSync();
+	    
+	    solo.waitForDialogToOpen();
+	    solo.setTimePicker(0, 3, 0);
+	    solo.clickOnText("Set");
+		
+		
+		// Set start date
+	    mActivity.runOnUiThread(new Runnable() {
+	        public void run() {
+	          mStartDateButton.performClick();
+	        }
+	      });	    
+	    mInstrumentation.waitForIdleSync();
+	    
+	    solo.waitForDialogToOpen();
+	    solo.setDatePicker(0, c.get(Calendar.YEAR) + 1, 1, 1);
+	    solo.clickOnText("Set");
+	    
+	    // Set end date
+	    mActivity.runOnUiThread(new Runnable() {
+	        public void run() {
+	          mEndDateButton.performClick();
+	        }
+	      });	    
+	    mInstrumentation.waitForIdleSync();
+	    
+	    solo.waitForDialogToOpen();
+	    solo.setDatePicker(0, c.get(Calendar.YEAR) + 2, 1, 1);
+	    solo.clickOnText("Set");
+	    		
+	    mActivity.runOnUiThread(new Runnable() {
+	    	public void run() {
+	    		mRadiusSpinner.setSelection(1);
+	    	}
+	    });
+	    mInstrumentation.waitForIdleSync();
+		
+		// Issue reset
 	    mActivity.runOnUiThread(new Runnable() {
 	        public void run() {
 	          mResetButton.performClick();
@@ -208,6 +273,14 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	    mInstrumentation.waitForIdleSync();
 	    
 	    assertEquals(0, mRadiusSpinner.getSelectedItemPosition());
+		assertTrue(mStartTimeButton.getText().equals(
+				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_time)));
+		assertTrue(mEndTimeButton.getText().equals(
+				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_time)));
+		assertTrue(mStartDateButton.getText().equals(
+				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_date)));
+		assertTrue(mEndDateButton.getText().equals(
+				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_date)));
 	}
 	
 	/**
@@ -215,20 +288,20 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	 * a SearchCriteria object, sends it to the database,
 	 * and returns the list of results
 	 */
-	public void testFindGameSubmitButton() {
-		// TODO: set date and time 
-		mRadiusSpinner.setSelection(1);
-		
-		// TODO: mock database call
-		
-	    mActivity.runOnUiThread(new Runnable() {
-	        public void run() {
-	          mSubmitButton.performClick();
-	        }
-	      });
-	    mInstrumentation.waitForIdleSync();
-	    
-	    // TODO assert everything was properly called
-	    // TODO get intent somehow and check values?
-	}
+//	public void testFindGameSubmitButton() {
+//		// TODO: set date and time 
+//		mRadiusSpinner.setSelection(1);
+//		
+//		// TODO: mock database call
+//		
+//	    mActivity.runOnUiThread(new Runnable() {
+//	        public void run() {
+//	          mSubmitButton.performClick();
+//	        }
+//	      });
+//	    mInstrumentation.waitForIdleSync();
+//	    
+//	    // TODO assert everything was properly called
+//	    // TODO get intent somehow and check values?
+//	}
 }
