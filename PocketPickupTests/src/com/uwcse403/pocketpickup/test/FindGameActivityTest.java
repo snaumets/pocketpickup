@@ -1,7 +1,5 @@
 package com.uwcse403.pocketpickup.test;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
@@ -14,7 +12,6 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import com.uwcse403.pocketpickup.FindGameActivity;
-import com.uwcse403.pocketpickup.PocketPickupApplication;
 
 public class FindGameActivityTest 
 extends ActivityInstrumentationTestCase2<FindGameActivity> {
@@ -28,7 +25,7 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	private Button   mStartDateButton;
 	private Button   mEndDateButton;
 	private Spinner  mRadiusSpinner;
-	private Spinner  mSportsSpinner;
+	private Button   mSportsButton;
 	private Button   mResetButton;
 	private Button   mSubmitButton;
 	
@@ -69,11 +66,11 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 				com.uwcse403.pocketpickup.R.id.end_date_button);
 		mRadiusSpinner   = (Spinner) mActivity.findViewById(
 				com.uwcse403.pocketpickup.R.id.radius_spinner);
-		mSportsSpinner   = (Spinner) mActivity.findViewById(
-				com.uwcse403.pocketpickup.R.id.fg_sports_spinner);
+		mSportsButton    = (Button) mActivity.findViewById(
+				com.uwcse403.pocketpickup.R.id.search_pref_button);
 		mResetButton     = (Button) mActivity.findViewById(
 				com.uwcse403.pocketpickup.R.id.search_reset_button);
-		mSubmitButton     = (Button) mActivity.findViewById(
+		mSubmitButton    = (Button) mActivity.findViewById(
 				com.uwcse403.pocketpickup.R.id.find_game_submit_button);
 	}
 	
@@ -88,7 +85,7 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 		assertNotNull(mStartDateButton);
 		assertNotNull(mEndDateButton);
 		assertNotNull(mRadiusSpinner);
-		assertNotNull(mSportsSpinner);
+		assertNotNull(mSportsButton);
 		assertNotNull(mResetButton);
 		assertNotNull(mSubmitButton);
 		
@@ -107,10 +104,6 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 					 mEndDateButton.getText());
 		
 		assertEquals(0, mRadiusSpinner.getSelectedItemPosition());
-		assertEquals(0, mSportsSpinner.getSelectedItemPosition());
-		assertEquals(mActivity.getResources()
-				.getString(com.uwcse403.pocketpickup.R.string.all_sports),
-					 mSportsSpinner.getSelectedItem().toString());
 	}
 	
 	/**
@@ -200,30 +193,12 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	}
 	
 	/**
-	 * Tests that the sports spinner includes all the sports
-	 * from the Parse Application's sports BiMap, as well as
-	 * a general "All Sports" option
-	 */
-	public void testSportsSpinnerIsPopulated() {
-		ArrayList<String> expected = new ArrayList<String>(
-				PocketPickupApplication.sportsAndObjs.keySet());
-		
-		SpinnerAdapter actual = mSportsSpinner.getAdapter();
-		
-		assertEquals(expected.size(), actual.getCount());
-		for (int i = 0; i < expected.size(); ++i) {
-			assertEquals(expected.get(i), (String)actual.getItem(i));
-		}
-	}
-	
-	/**
 	 * Tests that the reset button clears all form components
 	 * to the default values
 	 */
 	public void testResetButtonClearsForm() {
 		// TODO: set date and time 
 		mRadiusSpinner.setSelection(1);
-		mSportsSpinner.setSelection(1);
 		
 	    mActivity.runOnUiThread(new Runnable() {
 	        public void run() {
@@ -233,7 +208,6 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	    mInstrumentation.waitForIdleSync();
 	    
 	    assertEquals(0, mRadiusSpinner.getSelectedItemPosition());
-	    assertEquals(0, mSportsSpinner.getSelectedItemPosition());
 	}
 	
 	/**
@@ -244,7 +218,6 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	public void testFindGameSubmitButton() {
 		// TODO: set date and time 
 		mRadiusSpinner.setSelection(1);
-		mSportsSpinner.setSelection(1);
 		
 		// TODO: mock database call
 		

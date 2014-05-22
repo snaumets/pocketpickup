@@ -1,5 +1,0 @@
-<factorypath>
-    <factorypathentry kind="VARJAR" id="ANDROID_RUNTIME" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="APP_UNDER_TEST" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="WKSPJAR" id="/PocketPickup/libs/AndroidMockGenerator.jar" enabled="true" runInBatchMode="false"/>
-</factorypath>
