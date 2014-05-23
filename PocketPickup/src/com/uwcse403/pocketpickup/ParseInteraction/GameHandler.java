@@ -50,18 +50,28 @@ public class GameHandler {
 	public static void createGame(Game g, SaveCallback cb) {
 		Log.v(LOG_TAG, "entering CreateGame(Game, SaveCallback)");
 		ParseObject game = Translator.appGameToNewParseGame(g);
+		ParseObject currentUser = ParseUser.getCurrentUser();
 		if(cb != null) {
 			game.saveInBackground(cb);	
+			currentUser.add(DbColumns.USER_GAMES_ATTENDING, game.getObjectId());
+			currentUser.add(DbColumns.USER_GAMES_CREATED, game.getObjectId());
+			currentUser.saveInBackground(cb);
 		} else {
 			try {
 				game.save();
 			} catch (ParseException e) {
 				// Failed to save game with waiting
 				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode() + ": " + e.getMessage());
+				//Do not update User table if we failed to update the Games table
+				return;
 			}
 			try {
-				//ParseUser.getCurrentUser().add(key, value);
-			} catch(Exception e){}
+				currentUser.add(DbColumns.USER_GAMES_ATTENDING, game.getObjectId());
+				currentUser.add(DbColumns.USER_GAMES_CREATED, game.getObjectId());
+				currentUser.save();
+			} catch(ParseException e) {
+				Log.e(LOG_TAG, "error adding user created game to gamesAttending/Created");
+			}
 		}
 	}
 	
