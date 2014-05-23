@@ -143,14 +143,13 @@
 		    android:hint="@string/cg_details_hint"
 		    android:inputType="textMultiLine"
 		    android:ems="10"
-		    android:layout_weight="0.75" />
+		    android:layout_weight="0.65" />
 
         <Button
             android:id="@+id/cg_reset"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:textSize="16sp"
+            android:layout_weight="0.35"
             android:onClick="resetCreate"
             android:text="@string/reset" />
     </LinearLayout>
