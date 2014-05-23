@@ -348,12 +348,17 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				public void onMapUnsettled() {
 					// Change the location text field to say "Updating..."
 					updateLocationTextFieldToUpdating();
+					mFindButton.setEnabled(false);
+					mCreateButton.setEnabled(false);
 				}
 
 				@Override
 				public void onMapSettled() {
 					// Change the location text field to the actual location that the map settled on
 					updateLocationTextField();
+					
+					mFindButton.setEnabled(true);
+					mCreateButton.setEnabled(true);
 				}
 			};
 
