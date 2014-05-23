@@ -38,6 +38,8 @@ public class DbColumns {
 	public static final String USER_GENDER = "gender";
 	public static final String USER_BIRTHDAY = "birthday";
 	public static final String USER_SPORT_PREFERENCES = "sportPreferences";
+	public static final String USER_GAMES_ATTENDING = "gamesAttending";
+	public static final String USER_GAMES_CREATED = "gamesCreated";
 	
 	// column names of the Sport class
 	public static final String SPORT_NAME = "name";

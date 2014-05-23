@@ -59,6 +59,9 @@ public class GameHandler {
 				// Failed to save game with waiting
 				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode() + ": " + e.getMessage());
 			}
+			try {
+				//ParseUser.getCurrentUser().add(key, value);
+			} catch(Exception e){}
 		}
 	}
 	
@@ -141,7 +144,6 @@ public class GameHandler {
 		try {
 			game = query.get(g.id);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Log.e(LOG_TAG, "error retreiving game: " + e.getCode() + " : " + e.getMessage());
 		}
@@ -161,7 +163,6 @@ public class GameHandler {
 			game.delete();
 			Log.v(LOG_TAG, "deleted game");
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			Log.e(LOG_TAG, "failed to delete a target game in removeGame()");
 			e.printStackTrace();
 		}
@@ -275,6 +276,7 @@ public class GameHandler {
 		} else {
 			game = getGameUsingId(g); 
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
 		boolean addToAttendees = true;
 		if (players == null) {
@@ -294,8 +296,8 @@ public class GameHandler {
 		try {
 			game.save();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Log.e(LOG_TAG, "Failed to join game");
 			return JoinGameResult.ERROR_JOINING;
 		}
 		if (addToAttendees) {
@@ -317,6 +319,7 @@ public class GameHandler {
 		} else {
 			game = getGameUsingId(g);
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
 		if (players == null) {
 			// do nothing, there are no users who have joined this game if players is null
@@ -326,7 +329,7 @@ public class GameHandler {
 		try {
 			game.save();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+			Log.e(LOG_TAG, "Failed to leave game");
 			e.printStackTrace();
 			return false;
 		}
@@ -345,6 +348,7 @@ public class GameHandler {
 		}
 		ParseObject game = getGameUsingId(g);
 		if (game != null) {
+			@SuppressWarnings("unchecked")
 			ArrayList<String> members = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
 			if (members == null) {
 				return 0;
@@ -352,6 +356,12 @@ public class GameHandler {
 			return members.size();
 		}
 		return 0;
+	}
+	
+	public static ArrayList<ParseObject> getGamesCreatedBy(String userId) {
+		ParseObject games = null;
+		
+		return null;
 	}
 }
 
