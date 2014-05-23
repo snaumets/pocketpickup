@@ -278,8 +278,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		// update selected item and title, then close the drawer
 		mDrawerList.setItemChecked(position, true);
 		mDrawerList.setSelection(position);
-		setTitle(mNavMenuTitles[position]);
+		//setTitle(mNavMenuTitles[position]);
 		mDrawerLayout.closeDrawer(mDrawerList);
+		mDrawerList.clearChoices();
 	}
 
 	/*
@@ -805,6 +806,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		updateLocationTextField();
 		Toast.makeText(this, "TODO: Location Activity", Toast.LENGTH_LONG)
 				.show();
+	}
+	
+	// causes back button to function like home button, as there's nothing 
+	// we want to go back to from the main activity
+	@Override
+	public void onBackPressed() {
+	    moveTaskToBack(true);
 	}
 	
 	@Override
