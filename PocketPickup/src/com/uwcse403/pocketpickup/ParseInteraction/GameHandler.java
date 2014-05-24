@@ -22,9 +22,9 @@ import com.uwcse403.pocketpickup.game.Game;
  * This implementation is dependent on the Parse library
  */
 public class GameHandler {
-	/**Label for debugging tag label**/
+	/** Label for debugging tag label. **/
 	public static final String LOG_TAG = "GameHandler";
-	/**Default callback for saving in background**/
+	/** Default callback for saving in background. **/
 
 	private static final SaveCallback DEFAULT_SAVE_CALLBACK = new SaveCallback() {
 		public void done(ParseException e) {
@@ -39,7 +39,7 @@ public class GameHandler {
 	};
 	
 	/**
-	 * Adds a game to the database of available games
+	 * Adds a game to the database of available games.
 	 * 
 	 * @param g - contains user settings for the game
 	 */
@@ -51,7 +51,7 @@ public class GameHandler {
 		Log.v(LOG_TAG, "entering CreateGame(Game, SaveCallback)");
 		ParseObject game = Translator.appGameToNewParseGame(g);
 		ParseObject currentUser = ParseUser.getCurrentUser();
-		if(cb != null) {
+		if (cb != null) {
 			game.saveInBackground(cb);	
 		} else {
 			try {
@@ -66,7 +66,7 @@ public class GameHandler {
 				currentUser.add(DbColumns.USER_GAMES_ATTENDING, game.getObjectId());
 				currentUser.add(DbColumns.USER_GAMES_CREATED, game.getObjectId());
 				currentUser.save();
-			} catch(ParseException e) {
+			} catch (ParseException e) {
 				Log.e(LOG_TAG, "error adding user created game to gamesAttending/Created");
 			}
 		}
@@ -273,7 +273,7 @@ public class GameHandler {
 	}
 	
 	/**
-	 * Adds the current user to a game 
+	 * Adds the current user to a game. 
 	 * @param g the Game to join
 	 * @return true if the user was added to the game, false otherwise
 	 */
@@ -316,7 +316,7 @@ public class GameHandler {
 	}
 	
 	/**
-	 * Removes the current user from the game
+	 * Removes the current user from the game.
 	 * @param g the Game that the current user intends to leave
 	 * @return true if the user was successfully removed or if the user was never a member of
 	 * the game to begin with. Returns false if there was an error 
@@ -330,9 +330,7 @@ public class GameHandler {
 		}
 		@SuppressWarnings("unchecked")
 		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
-		if (players == null) {
-			// do nothing, there are no users who have joined this game if players is null
-		} else {
+		if (players != null) {
 			players.remove(ParseUser.getCurrentUser().getObjectId());
 		}
 		try {

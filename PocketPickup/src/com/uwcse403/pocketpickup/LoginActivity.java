@@ -105,7 +105,7 @@ public class LoginActivity extends Activity {
 	}
 	
 	/**
-	 * This method will get a FaceBook graph object that will hold data such as the user's name
+	 * This method will get a FaceBook graph object that will hold data such as the user's name.
 	 */
 	public void getFaceBookGraphObject() {
 		   Session session =  ParseFacebookUtils.getSession();
@@ -114,7 +114,7 @@ public class LoginActivity extends Activity {
 
 		    @Override
 		    public void onCompleted(GraphUser user, Response response) {
-			    if(user != null){
+			    if (user != null) {
 			    	Log.d("LoginActivity", "facebookName: " + user.getName());
 			    	Toast.makeText(getApplicationContext(), "Welcome, " + user.getFirstName() + "!", Toast.LENGTH_LONG).show();
 			    }

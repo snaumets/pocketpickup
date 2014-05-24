@@ -14,21 +14,21 @@ import com.parse.ParseUser;
  * @author Jacob Gile
  */
 public final class Game2 {
-	/** user who created the game**/
+	/** user who created the game. **/
 	private ParseUser creator = null;
-	/**Location of the game**/
+	/** Location of the game. **/
 	private LatLng location = null;
-	/**Date and time for the beginning of the game**/
+	/** Date and time for the beginning of the game. **/
 	private Date startDate = null;
-	/**Date and time for the end of the game**/
+	/** Date and time for the end of the game. **/
 	private Date endDate = null;
-	/**Type of game**/
+	/** Type of game. **/
 	private ParseObject type = null;
 	// ideal game size
 	private int idealSize;
 	
 	/**
-	 * Default constructor
+	 * Default constructor.
 	 * 
 	 * @requires no arguments are null
 	 */

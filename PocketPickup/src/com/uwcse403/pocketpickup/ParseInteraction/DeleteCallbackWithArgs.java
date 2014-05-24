@@ -5,10 +5,10 @@ import java.util.List;
 import com.parse.DeleteCallback;
 import com.parse.ParseObject;
 
-public abstract class DeleteCallbackWithArgs extends DeleteCallback{
+public abstract class DeleteCallbackWithArgs extends DeleteCallback {
 	private List<ParseObject> parseObjectList;
 	
-	public DeleteCallbackWithArgs(List<ParseObject> parseObjectList ) {
+	public DeleteCallbackWithArgs(List<ParseObject> parseObjectList) {
 		this.parseObjectList = parseObjectList;
 	}
 	

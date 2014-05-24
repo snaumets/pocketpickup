@@ -6,26 +6,26 @@ import com.google.android.gms.maps.model.LatLng;
 
 
 public final class FindGameCriteria {
-	/** Default radius, in miles **/
+	/** Default radius, in miles. **/
 	private static final double DEFAULT_RADIUS = 1.0;
-	/** Radius of search results to highlight **/
+	/** Radius of search results to highlight. **/
 	public final double mRadius;
-	/** Location of the center of the search radius **/
+	/** Location of the center of the search radius. **/
 	public final LatLng mSearchLocation;
-	/** Date for the beginning of the game **/
+	/** Date for the beginning of the game. **/
 	public final long mStartDate;
-	/** Date for the end of the game **/
+	/** Date for the end of the game. **/
 	public final long mEndDate;
-	/** Time for the beginning of the game **/
+	/** Time for the beginning of the game. **/
 	public final long mStartTime;
-	/** Time for the end of the game **/
+	/** Time for the end of the game. **/
 	public final long mEndTime;
 	
-	/**Type of game**/
+	/** Type of game. **/
 	public final ArrayList<String> mGameTypes;
 	
 	/**
-	 * Object holding criteria input by the user from the Find Game screen
+	 * Object holding criteria input by the user from the Find Game screen.
 	 * 
 	 * @param radius	Search radius, must be positive
 	 * @param loc       Location of the center of the search radius

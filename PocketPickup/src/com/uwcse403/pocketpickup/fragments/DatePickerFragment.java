@@ -43,7 +43,7 @@ public class DatePickerFragment extends DialogFragment  {
  
 
         // Create a new instance of DatePickerDialog and set date constraints
-        dpd = new DatePickerDialog(getActivity(), (OnDateSetListener)getActivity(), year, month, day);
+        dpd = new DatePickerDialog(getActivity(), (OnDateSetListener) getActivity(), year, month, day);
         final DatePicker picker = dpd.getDatePicker();
         
         // minimum date defaults to current date

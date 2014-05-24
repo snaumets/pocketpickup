@@ -53,7 +53,6 @@ public class CreateGameActivity extends Activity
 	private LatLng   mLatLng;
 	private int      mDuration;
 	private String   mSport;
-	private String 	 mDetails;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

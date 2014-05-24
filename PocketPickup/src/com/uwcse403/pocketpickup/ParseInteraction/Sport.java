@@ -6,7 +6,7 @@ import com.parse.ParseObject;
 @ParseClassName("Sport")
 public class Sport extends ParseObject {
 	
-	public Sport() {}
+	public Sport() { }
 
 	/**
 	 * Parse store additional data with the ParseObjects returned by queries
@@ -19,7 +19,7 @@ public class Sport extends ParseObject {
 		return super.getObjectId().hashCode();
 	}
 	/**
-	 * Two Sport objects are equal iff they have the same objectId
+	 * Two Sport objects are equal iff they have the same objectId.
 	 */
 	@Override
 	public boolean equals(Object obj) {

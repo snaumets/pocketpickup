@@ -42,7 +42,7 @@ public abstract class MapStateListener {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 unsettleMap();
-                if(!mMapTouched) {
+                if (!mMapTouched) {
                     runSettleTimer();
                 }
             }
@@ -75,7 +75,7 @@ public abstract class MapStateListener {
     private void runSettleTimer() {
         updateLastPosition();
 
-        if(mTimer != null) {
+        if (mTimer != null) {
             mTimer.cancel();
             mTimer.purge();
         }
@@ -97,15 +97,15 @@ public abstract class MapStateListener {
     }
 
     private synchronized void releaseMap() {
-        if(mMapTouched) {
+        if (mMapTouched) {
             mMapTouched = false;
             onMapReleased();
         }
     }
 
     private void touchMap() {
-        if(!mMapTouched) {
-            if(mTimer != null) {
+        if (!mMapTouched) {
+            if (mTimer != null) {
                 mTimer.cancel();
                 mTimer.purge();
             }
@@ -115,8 +115,8 @@ public abstract class MapStateListener {
     }
 
     public void unsettleMap() {
-        if(mMapSettled) {
-            if(mTimer != null) {
+        if (mMapSettled) {
+            if (mTimer != null) {
                 mTimer.cancel();
                 mTimer.purge();
             }
@@ -127,7 +127,7 @@ public abstract class MapStateListener {
     }
 
     public void settleMap() {
-        if(!mMapSettled) {
+        if (!mMapSettled) {
             mMapSettled = true;
             onMapSettled();
         }

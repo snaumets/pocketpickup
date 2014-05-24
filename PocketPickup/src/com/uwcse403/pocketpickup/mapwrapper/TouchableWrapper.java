@@ -31,13 +31,15 @@ public class TouchableWrapper extends FrameLayout {
             case MotionEvent.ACTION_UP:
                 onTouchListener.onRelease();
                 break;
+            default:
+            	break;
         }
 
         return super.dispatchTouchEvent(event);
     }
 
     public interface OnTouchListener {
-        public void onTouch();
-        public void onRelease();
+        void onTouch();
+        void onRelease();
     }
 }

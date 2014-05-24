@@ -15,7 +15,7 @@ import com.google.android.gms.maps.model.LatLng;
 public final class Game implements Parcelable {
 	
 	/**
-	 * Parcel grunt
+	 * Parcel grunt.
 	 */
 	public static final Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {
 		public Game createFromParcel(Parcel in) {
@@ -27,19 +27,19 @@ public final class Game implements Parcelable {
 	    }
 	};
 	
-	/**ParseObject objectId of the user who created the game**/
+	/** ParseObject objectId of the user who created the game. **/
 	public final String mCreator;
-	/**Location of the game**/
+	/** Location of the game. **/
 	public final LatLng mGameLocation;
-	/**Date and time for the beginning of the game**/
+	/** Date and time for the beginning of the game. **/
 	public final Long mGameStartDate;
-	/**Date and time for the end of the game**/
+	/** Date and time for the end of the game. **/
 	public final Long mGameEndDate;
-	/**Type of game**/
+	/** Type of game. **/
 	public final String mGameType;
-	/**Ideal game size**/
+	/** Ideal game size. **/
 	public final int mIdealGameSize;
-	/**Game Details**/
+	/** Game Details. **/
 	public final String mDetails;
 	/** objectId of the Parse object that this game represents. The field is non-null when
 	 * a Game is returned from the database from a query.
@@ -83,7 +83,7 @@ public final class Game implements Parcelable {
 	
 	
 	/**
-	 * for testing only
+	 * for testing only.
 	 * @param idealSize
 	 */
 	public Game(int idealSize) {
@@ -98,7 +98,7 @@ public final class Game implements Parcelable {
 	}
 	
 	/**
-	 * Creates a game from a parcel
+	 * Creates a game from a parcel.
 	 * @param in - parcel to be converted to Game
 	 */
 	private Game(Parcel in) {

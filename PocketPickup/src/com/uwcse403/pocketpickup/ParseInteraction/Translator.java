@@ -12,7 +12,7 @@ import com.uwcse403.pocketpickup.game.Game;
 /**
  * Translates between PocketPickup Game objects (for use communicating 
  * between activities in the app) and ParseObject Game objects to be
- * stored in the database
+ * stored in the database.
  * @author imathieu
  *
  */
