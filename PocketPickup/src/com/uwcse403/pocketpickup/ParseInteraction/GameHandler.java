@@ -165,7 +165,7 @@ public final class GameHandler {
 			game = query.get(id);
 		} catch (ParseException e) {
 			e.printStackTrace();
-			Log.e(LOG_TAG, "error retreiving game: " + e.getCode() + " : " + e.getMessage());
+			Log.e(LOG_TAG, "error retreiving game with id " + id + ": " + e.getCode() + " : " + e.getMessage());
 		}
 		return game;
 	}
@@ -438,8 +438,12 @@ public final class GameHandler {
 	public static ArrayList<Game> parseGameListToApp(ArrayList<String> pgames) {
 		ArrayList<Game> games = new ArrayList<Game>();
 		for (String pg : pgames) {
-			Game g = Translator.parseGameToAppGame(getGameUsingId(pg));
-			games.add(g);
+			Log.e(LOG_TAG + "ptog", "Game id: " + pg);
+			ParseObject parseGame = getGameUsingId(pg);
+			if(parseGame != null) {
+				Game g = Translator.parseGameToAppGame(getGameUsingId(pg));
+				games.add(g);
+			}
 		}
 		return games;
 	}
