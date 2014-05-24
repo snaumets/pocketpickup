@@ -83,7 +83,8 @@ public final class Game implements Parcelable {
 	
 	
 	/**
-	 * for testing only.
+	 * Creates a game with only an idealSie field.
+	 * For testing only; will not pass validation in regular use cases
 	 * @param idealSize
 	 */
 	public Game(int idealSize) {
@@ -98,7 +99,8 @@ public final class Game implements Parcelable {
 	}
 	
 	/**
-	 * for testing only.
+	 * Create a game with only an ObjectId field
+	 * For testing only will; will not pass validation in regular use cases
 	 * @param id
 	 */
 	public Game(String id) {
