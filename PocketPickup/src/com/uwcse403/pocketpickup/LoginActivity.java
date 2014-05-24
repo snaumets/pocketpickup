@@ -22,17 +22,27 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.uwcse403.pocketpickup.user.User;
 
-// This activity is shown once the user logs in. It contains a message
-// a Facebook login button. Once the log in button is pressed, it connects
-// to Facebook via the installed app, or opens up a dialog to perform Facebook
-// login if the app is not installed. Upon successful login, the main activity
-// is started.
+/**
+ * This activity is shown once the user logs in. It contains a message
+ * a Facebook login button. Once the log in button is pressed, it connects
+ * to Facebook via the installed app, or opens up a dialog to perform Facebook
+ * login if the app is not installed. Upon successful login, the main activity
+ * is started.
+ */
 public class LoginActivity extends Activity {
 	public static final String LOG_TAG = "LoginActivity";
 
 	private Button loginButton;
 	private Dialog progressDialog;
+	
+	/**
+	 * This field will hold all of the user information that can be gathered from
+	 * Facebook. It will also be accessed other activities in order to get 
+	 * that information.
+	 */
+	public static User user;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +65,7 @@ public class LoginActivity extends Activity {
 		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
 			// Go to the user info activity
 			PocketPickupApplication.userObjectId = currentUser.getObjectId();
-			getFaceBookGraphObject();
+			initializeUser();
 			showMainActivity();
 		}
 	}
@@ -96,7 +106,7 @@ public class LoginActivity extends Activity {
 				} else {
 					Log.v("LoginActivity", "User logged in: " + user.getUsername());
 					PocketPickupApplication.userObjectId = user.getObjectId();
-					getFaceBookGraphObject();
+					initializeUser();
 					// continue to main activity
 					showMainActivity();
 				}
@@ -107,7 +117,7 @@ public class LoginActivity extends Activity {
 	/**
 	 * This method will get a FaceBook graph object that will hold data such as the user's name.
 	 */
-	public void getFaceBookGraphObject() {
+	public void initializeUser() {
 		   Session session =  ParseFacebookUtils.getSession();
 
 		   Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
@@ -115,8 +125,17 @@ public class LoginActivity extends Activity {
 		    @Override
 		    public void onCompleted(GraphUser user, Response response) {
 			    if (user != null) {
+			    	String firstName = user.getFirstName();
+			    	String lastName = user.getLastName();
+			    	String email = ""; // when email permissions added :user.getInnerJSONObject().getString("email");
+			    	int age = -1; // default value for now, but "age_range" field should be suffiecient; need public_profile permissions
+			    	String gender = "";
+			    	LoginActivity.user = new User(firstName, lastName, email, age, gender);
+			    	// TODO: call methods from GameHandler to fill sets inside of user
+			    	// (attendingGames, createdGames, and preferredSports)
+
 			    	Log.d("LoginActivity", "facebookName: " + user.getName());
-			    	Toast.makeText(getApplicationContext(), "Welcome, " + user.getFirstName() + "!", Toast.LENGTH_LONG).show();
+			    	Toast.makeText(getApplicationContext(), "Welcome, " + firstName + "!", Toast.LENGTH_LONG).show();
 			    }
 		    }
 		});

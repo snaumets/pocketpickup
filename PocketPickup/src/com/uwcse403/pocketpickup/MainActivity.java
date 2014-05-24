@@ -146,15 +146,21 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		mNavDrawerItems = new ArrayList<NavDrawerItem>();
 
 		// adding nav drawer items to array
-		// Settings
+		// My Joined Games
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[0], mNavMenuIcons
 				.getResourceId(0, -1)));
-		// Help
+		// My Created Games
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[1], mNavMenuIcons
 				.getResourceId(1, -1)));
+		// Settings: Not yet implemented, placeholder for now
+		/*mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[2], mNavMenuIcons
+				.getResourceId(2, -1)));*/
+		// Help
+		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[3], mNavMenuIcons
+				.getResourceId(3, -1)));
 		// Logout
-		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[2], mNavMenuIcons
-				.getResourceId(2, -1)));
+		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[4], mNavMenuIcons
+				.getResourceId(4, -1)));
 
 		// Recycle the typed array
 		mNavMenuIcons.recycle();
@@ -258,14 +264,20 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		// update the main content by starting new activities
 		switch (position) {
 		case 0:
+			myJoinedGames();
+			break;
+		case 1:
+			myCreatedGames();
+			break;
+		case 2:
 			settings(null); // View supposed to be passed in, but it is not
 							// used, therefore null is fine
 			break;
-		case 1:
+		case 3:
 			help(null); // View supposed to be passed in, but it is not used,
 						// therefore null is fine
 			break;
-		case 2:
+		case 4:
 			logout(null);
 			break;
 		default:
@@ -542,12 +554,16 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	// ////////////////////// The methods below start new activities /////////////////////////////
 
-	// Simply starts a sign up activity
-	public void signUp(View view) {
-		Intent intent = new Intent(this, SignUpActivity.class);
-		startActivity(intent);
+	// This method will display the user's joined games on the map
+	private void myJoinedGames() {
+		Toast.makeText(this, "joined games", Toast.LENGTH_LONG).show();
 	}
-
+	
+	// This method will display the user's created games on the map
+	private void myCreatedGames() {
+		Toast.makeText(this, "created games", Toast.LENGTH_LONG).show();
+	}
+	
 	// Simply starts a log in activity
 	public void logIn(View view) {
 		Intent intent = new Intent(this, LoginActivity.class);
