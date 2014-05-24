@@ -22,11 +22,6 @@ import com.uwcse403.pocketpickup.game.Game;
  * This implementation is dependent on the Parse library
  */
 public final class GameHandler {
-	
-	private GameHandler() {
-		
-	}
-	
 	/** Label for debugging tag label. **/
 	public static final String LOG_TAG = "GameHandler";
 	/** Default callback for saving in background. **/
@@ -51,9 +46,16 @@ public final class GameHandler {
 	public static void createGame(Game g) {
 		createGame(g, DEFAULT_SAVE_CALLBACK);
 	} 
-	
 
-	
+	/**
+	 * Adds a game 
+	 * 
+	 * A game is added to the database; the User becomes a member, and User is registered as
+	 * having created and joined the game. 
+	 * @param g - game to create
+	 * @param cb - function to complete after saving (null for thread blocking, non-blocking
+	 * otherwise)
+	 */
 	public static void createGame(Game g, SaveCallback cb) {
 		Log.v(LOG_TAG, "entering CreateGame(Game, SaveCallback)");
 		ParseObject game = Translator.appGameToNewParseGame(g);
@@ -219,13 +221,7 @@ public final class GameHandler {
 		// if the user did not specify any date/time constraints, show all games
 		// that will be happening in the future
 		if (criteria.mEndDate == 0 && criteria.mEndTime == 0) {
-			/* TODO uncomment this once criteria validation is implemented to enforce
-			 * start date/time to be initialized to the current time
-			if (criteria.mStartDate == 0 || criteria.mStartTime == 0) {
-				throw new IllegalStateException("search criteria start date or start time" +
-							" cannot be zero");
-			}
-			*/
+			// TODO criteria validation
 			query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
 		} else {
 			query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
@@ -268,7 +264,7 @@ public final class GameHandler {
 	
 	/**
 	 * Gets the first sport in the Sort table. For debugging purposes.
-	 * @return a PArseObject representing the first Sport in the Sport table
+	 * @return a ParseObject representing the first Sport in the Sport table
 	 */
 	public static ParseObject getASport() {
 		ParseQuery<ParseObject> uQuery = new ParseQuery<ParseObject>("Sport");
@@ -328,8 +324,6 @@ public final class GameHandler {
 			Log.e(LOG_TAG, "Failed to update join");
 			return JoinGameResult.ERROR_JOINING;
 		}
-		
-		
 		if (addToAttendees) {
 			return JoinGameResult.SUCCESS;
 		}
@@ -364,6 +358,7 @@ public final class GameHandler {
 		return true;	
 	}
 	/**
+	 * Returns the number of players for a game
 	 * 
 	 * @param app Game object 
 	 * @return number of attendees for this game.
