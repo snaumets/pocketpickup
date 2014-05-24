@@ -193,6 +193,19 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		assertTrue(myGames.size() > 0);
 	}
 	
+	public void testGamesCreated() {
+		ArrayList<Game> myGames = GameHandler.getGamesCreatedBy(SAMPLE_USER);
+		assertTrue(myGames.size() > 0);
+	}
+	
+	public void testGamesCreatedAreAlsoAttended() {
+		ArrayList<Game> myGames = GameHandler.getGamesCreatedBy(SAMPLE_USER);
+		ArrayList<Game> attendingGames = GameHandler.getGamesAttendingBy(SAMPLE_USER);
+		for(Game g : myGames) {
+			assertTrue(attendingGames.contains(g));
+		}
+	}
+	
 	@Override
 	protected void tearDown() {
 		terminateApplication();
