@@ -28,6 +28,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	private static int randomIdealSize;
 	private static String SAMPLE_USER = "wHpws114Eo";
 	private static String SAMPLE_SPORT = "Basketball";
+	private static Game SAMPLE_GAME = new Game("pXBpH4exWI");
 	
 	public GameHandlerTest() {
 		super(PocketPickupApplication.class);
@@ -191,11 +192,13 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	public void testGetGamesAttending() {
 		ArrayList<Game> myGames = GameHandler.getGamesAttendingBy(SAMPLE_USER);
 		assertTrue(myGames.size() > 0);
+		assertTrue(myGames.contains(SAMPLE_GAME));
 	}
 	
 	public void testGamesCreated() {
 		ArrayList<Game> myGames = GameHandler.getGamesCreatedBy(SAMPLE_USER);
 		assertTrue(myGames.size() > 0);
+		assertTrue(myGames.contains(SAMPLE_GAME));
 	}
 	
 	public void testGamesCreatedAreAlsoAttended() {
@@ -204,6 +207,11 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		for(Game g : myGames) {
 			assertTrue(attendingGames.contains(g));
 		}
+		assertTrue(myGames.contains(SAMPLE_GAME));
+	}
+	
+	public void testGameCreatedInUserTable() {
+		
 	}
 	
 	@Override

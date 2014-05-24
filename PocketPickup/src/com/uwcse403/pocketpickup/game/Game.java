@@ -98,6 +98,21 @@ public final class Game implements Parcelable {
 	}
 	
 	/**
+	 * for testing only.
+	 * @param id
+	 */
+	public Game(String id) {
+		mIdealGameSize = 2;
+		mCreator = null;
+		mGameLocation = null;
+		mGameStartDate = null;
+		mGameEndDate = null;
+		mGameType = null;
+		mDetails = null;
+		this.id = id;
+	}
+	
+	/**
 	 * Creates a game from a parcel.
 	 * @param in - parcel to be converted to Game
 	 */
