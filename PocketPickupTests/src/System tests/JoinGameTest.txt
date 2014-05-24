@@ -1,0 +1,11 @@
+1. One game must exist and the user has to see the mark.
+2. Click on the mark.
+3. A window with the game details shows up.
+4. The date, duration, details and planned attendees are displayed.
+5. Click the Join Game button.
+6. The app shows the user the map again.
+7. There is a message at the bottom saying you successfully joined the game.
+
+       
+
+	

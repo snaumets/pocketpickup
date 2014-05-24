@@ -1,0 +1,12 @@
+1. Navigate the pin to the location around which you want to look for games.
+2. Wait for the address to be updated and the Create Game and Find Game buttons to be clickable.
+3. Click the Find Game button.
+4. New window with searching criteria shows up.
+5. Verify that the location bar shows the location of the pin from the previous screen.
+6. Select starting time, ending time, radius within which to look for games and sports.
+7. Click the Find Game button.
+8. The app switches to the map again.
+9. The map should be zoomed so that the whole circle is highlighted in green and fully shown on the map.
+10. There is a message at the bottom saying how many games were found and mark representing each of them are shown on the map.
+11. The ball inside each mark represents the type of sport of that game.
+

@@ -1,0 +1,14 @@
+1. Navigate the pin to a desired location of the game.
+2. Wait for the address to be updated to the adress of the pin and the Create Game and 
+   Find Game buttons to be clickable.
+3. Click the Create Game button.
+4. New window with game information shows up.
+5. Verify that the location bar shows the location of the pin from the previous screen.
+6. Select sport, date, time, duration and add details if you want to.
+7. Click create game.
+8. The app takes you back to the map.
+9. Verify that there is a new mark on the map.
+10. Click on the mark.
+11. Verify that the date, time, duration and details of the game match with the input 
+    from the Create Game screen.
+
