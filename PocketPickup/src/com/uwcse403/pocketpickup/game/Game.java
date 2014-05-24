@@ -101,7 +101,7 @@ public final class Game implements Parcelable {
 	/**
 	 * Create a game with only an ObjectId field
 	 * For testing only will; will not pass validation in regular use cases
-	 * @param id
+	 * @param id - ObjectID known to be in the database
 	 */
 	public Game(String id) {
 		mIdealGameSize = 2;
