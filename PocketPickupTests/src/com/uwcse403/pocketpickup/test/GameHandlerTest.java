@@ -26,7 +26,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	
 	private static Game game;
 	private static int randomIdealSize;
-	private static String SAMPLE_USER = "GUzx6W5p2b";
+	private static String SAMPLE_USER = "wHpws114Eo";
 	private static String SAMPLE_SPORT = "Basketball";
 	
 	public GameHandlerTest() {
@@ -90,10 +90,6 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	}
 	
 	/**
-	 * This test case simulates a user looking for 
-	 */
-	
-	/**
 	 * This test case simulates a user looking for games within 5 miles of their current
 	 * location. Two games are created, one at the same location as the current user 
 	 * and one that is more than 5 miles away from the current user.
@@ -144,6 +140,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 			Log.e(LOG_TAG, e.getMessage());
 		}
 		ParseObject justCreatedGame = result.get(0);
+		@SuppressWarnings("unchecked")
 		ArrayList<String> players = (ArrayList<String>) justCreatedGame.get(DbColumns.GAME_PLAYERS);
 		// fail if the players object is null, i.e., nothing to do with adding players to games
 		// has been implemented
@@ -189,6 +186,11 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		//assertTrue(uploaded.size() != 0);
 		ParseObject game = GameHandler.getGameCreatedByCurrentUser(gameDate);
 		assertTrue(game != null);
+	}
+	
+	public void testGetGamesAttending() {
+		ArrayList<Game> myGames = GameHandler.getGamesAttendingBy(SAMPLE_USER);
+		assertTrue(myGames.size() > 0);
 	}
 	
 	@Override
