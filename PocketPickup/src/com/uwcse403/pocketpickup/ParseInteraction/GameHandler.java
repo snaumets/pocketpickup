@@ -319,6 +319,17 @@ public final class GameHandler {
 			Log.e(LOG_TAG, "Failed to join game");
 			return JoinGameResult.ERROR_JOINING;
 		}
+		ParseObject currentUser = ParseUser.getCurrentUser();
+		try {
+			currentUser.add(DbColumns.USER_GAMES_ATTENDING, game.getObjectId());
+			currentUser.save();
+		} catch (ParseException e) {
+			e.printStackTrace();
+			Log.e(LOG_TAG, "Failed to update join");
+			return JoinGameResult.ERROR_JOINING;
+		}
+		
+		
 		if (addToAttendees) {
 			return JoinGameResult.SUCCESS;
 		}
