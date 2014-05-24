@@ -36,10 +36,6 @@ public class GameActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
-
-		if (savedInstanceState == null) {
-			
-		}
 		
 		// Initialize location text field from passed in location
 		Bundle args = getIntent().getExtras();
@@ -71,7 +67,7 @@ public class GameActivity extends Activity {
 		duration.setText(gameDuration + durationUnit);
 		
 		TextView details = (TextView) findViewById(R.id.gameDetailsTextView);
-		String detailsStr = (gameDetails.equals("") ? "None" : gameDetails);
+		String detailsStr = gameDetails.equals("") ? "None" : gameDetails;
 		details.setText(detailsStr);
 		
 		TextView attendees = (TextView) findViewById(R.id.gameAttendeesTextView);
@@ -107,6 +103,9 @@ public class GameActivity extends Activity {
 		case android.R.id.home:
 		    onBackPressed(); // This will not destroy and recreate main activity
 		    return true;
+		    
+		default:
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -124,7 +123,7 @@ public class GameActivity extends Activity {
 		} else if (result == JoinGameResult.ERROR_JOINING) {
 			Toast.makeText(getApplicationContext(), "Joining Game Failed", Toast.LENGTH_LONG).show();
 		} else {
-			Toast.makeText(getApplicationContext(), "You are already an attendee", Toast.LENGTH_LONG).show();;
+			Toast.makeText(getApplicationContext(), "You are already an attendee", Toast.LENGTH_LONG).show();
 		}
 		finish();
 	}

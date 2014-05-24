@@ -127,7 +127,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		initializeButtons();
 		
 		// Restore map zoom level and location unless this is first launch
-		mFirstLaunch = (savedInstanceState == null);
+		mFirstLaunch = savedInstanceState == null;
 		if (!mFirstLaunch) {
 			restoreMap();
 		}
@@ -255,7 +255,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	}
 
 	/**
-	 * Starting activity for selected nav drawer list item
+	 * Starting activity for selected nav drawer list item.
 	 * */
 	private void displayView(int position) {
 		// update the main content by starting new activities
@@ -427,7 +427,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			try {
 				List<Address> matches = geoCoder.getFromLocation(
 						mLatLngLocation.latitude, mLatLngLocation.longitude, 1);
-				Address bestMatch = (matches.isEmpty() ? null : matches.get(0));
+				Address bestMatch = matches.isEmpty() ? null : matches.get(0);
 				EditText text = (EditText) findViewById(R.id.locationText);
 				if (bestMatch != null) {
 					text.setText(bestMatch.getAddressLine(0));
@@ -452,7 +452,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	/**
 	 * This method simple saves the state of the map so that it can
-	 * later be resumed
+	 * later be resumed.
 	 * @param outState
 	 */
 	@Override
@@ -633,7 +633,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	/**
 	 * This method is called when an activity that was started from this
 	 * activity waiting for a result finally returns with a result code
-	 * and data if applicable
+	 * and data if applicable.
 	 * @param requestCode
 	 * @param resultCode
 	 * @param data
@@ -686,8 +686,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	}
 	
 	/**
-	 * This method will try to set the map to the given location with the given zoom
-	 * @param location	The center location which will be zoomed to
+	 * This method will try to set the map to the given location with the given zoom.
+	 * @param location	The center location which will be zoomed to.
 	 * @param zoomLevel	The zoom level
 	 */
 	private void zoomMapToLocation(Location location, int zoomLevel) {
@@ -700,8 +700,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	}
 	
 	/**
-	 * This method will try to set the map zoom the map, not changing the location
-	 * @param zoomLevel	The zoom level
+	 * This method will try to set the map zoom the map, not changing the location.
+	 * @param zoomLevel	The zoom level.
 	 */
 	private void zoomMapToLocation(int zoomLevel) {
 		if (zoomLevel > 0 && mGoogleMap != null) {			
@@ -711,7 +711,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	
 	/**
 	 * This method will zoom the map to a level so that the entire circle
-	 * is shown
+	 * is shown.
 	 * @param circle	The circle that must be shown
 	 */
 	private void zoomToShowCircle(Circle circle) { 
@@ -730,7 +730,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		    double lngPoint = lon + (radius / earthMeanRadius) * Math.cos(t) / Math.cos(lat); // x
 		
 		    // saving the location on circle as a LatLng point
-		    LatLng point =new LatLng(latPoint * 180.0 / Math.PI, lngPoint * 180.0 / Math.PI);
+		    LatLng point = new LatLng(latPoint * 180.0 / Math.PI, lngPoint * 180.0 / Math.PI);
 		    builder.include(point);
 		}
 	    LatLngBounds bounds = builder.build();
@@ -764,7 +764,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					String gameType = game.mGameType;
 					Log.v(LOG_TAG, "gameType: " + gameType);
 					
-					String details = ((game.mDetails == null || game.mDetails.equals("")) ? "None" : game.mDetails);
+					String details = (game.mDetails == null || game.mDetails.equals("")) ? "None" : game.mDetails;
 					
 					Date startDate = new Date(game.mGameStartDate);
 					SimpleDateFormat formatter = new SimpleDateFormat(
@@ -776,9 +776,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					String durationUnit = durationInHours > 1 ? " Hours" : " Hour"; 
 					
 					
-					String gameData = "Event starts: " + dateString + "\n" +
-					"Duration: " + durationInHours + durationUnit + "\n" + 
-					"Details: " + details;
+					String gameData = "Event starts: " + dateString + "\n"
+					+ "Duration: " + durationInHours + durationUnit + "\n"
+					+ "Details: " + details;
 					
 					int markerResource = Sports.getResourceIdForSport(gameType);
 					

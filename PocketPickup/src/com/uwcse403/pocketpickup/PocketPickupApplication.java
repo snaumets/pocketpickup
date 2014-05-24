@@ -25,7 +25,7 @@ import com.uwcse403.pocketpickup.ParseInteraction.Sport;
 public class PocketPickupApplication extends Application {
 	public static final String LOG_TAG = "PocketPickupApplication";
 	public List<ParseObject> allowedSports;
-	public static BiMap<String,ParseObject> sportsAndObjs;
+	public static BiMap<String, ParseObject> sportsAndObjs;
 	//public static BiMap<String,ParseObject> objIdAndObjs;
 	public final String SPORTS_CACHE_LABEL = "sports";
 	public static String userObjectId;

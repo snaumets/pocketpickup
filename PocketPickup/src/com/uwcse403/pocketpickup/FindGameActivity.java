@@ -87,7 +87,7 @@ public class FindGameActivity extends Activity
 		setButtonLabels();
 		
 		// Initialize radius choices
-		Spinner radiusSpinner = (Spinner)findViewById(R.id.radius_spinner);
+		Spinner radiusSpinner = (Spinner) findViewById(R.id.radius_spinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.radius_choices, 
 				android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -97,7 +97,7 @@ public class FindGameActivity extends Activity
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) {
-				String radiusStr = (String)parent.getItemAtPosition(pos);
+				String radiusStr = (String) parent.getItemAtPosition(pos);
 				mRadius = Integer.parseInt(radiusStr);
 			}
 
@@ -158,7 +158,7 @@ public class FindGameActivity extends Activity
 
 		// Initialize location text field from passed in location
 		Bundle args = getIntent().getExtras();
-		EditText editText = (EditText)findViewById(R.id.fg_location_text);
+		EditText editText = (EditText) findViewById(R.id.fg_location_text);
 		editText.setText(args.getCharSequence(FINDGAME_LOCATION));
 
 		final double lat = args.getDouble(FINDGAME_LATITUDE);
@@ -183,18 +183,18 @@ public class FindGameActivity extends Activity
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
-			savedInstanceState.putLong(STATE_START_TIME, ( (mStartTime == null) ? 0L : mStartTime.getTimeInMillis() ));
-			savedInstanceState.putLong(STATE_END_TIME,   ( (mEndTime == null)   ? 0L : mEndTime.getTimeInMillis() ));
-			savedInstanceState.putLong(STATE_START_DATE, ( (mStartDate == null) ? 0L : mStartDate.getTimeInMillis() ));
-			savedInstanceState.putLong(STATE_END_DATE,   ( (mEndDate == null)   ? 0L : mEndDate.getTimeInMillis() ));
+			savedInstanceState.putLong(STATE_START_TIME, (mStartTime == null) ? 0L : mStartTime.getTimeInMillis());
+			savedInstanceState.putLong(STATE_END_TIME,   (mEndTime == null)   ? 0L : mEndTime.getTimeInMillis());
+			savedInstanceState.putLong(STATE_START_DATE, (mStartDate == null) ? 0L : mStartDate.getTimeInMillis());
+			savedInstanceState.putLong(STATE_END_DATE,   (mEndDate == null)   ? 0L : mEndDate.getTimeInMillis());
 		}
 	}
 	
 	private void setButtonLabels() {
-		((Button)findViewById(R.id.start_time_button)).setText(getTimeButtonString(mStartTime));
-		((Button)findViewById(R.id.end_time_button)).setText(getTimeButtonString(mEndTime));
-		((Button)findViewById(R.id.start_date_button)).setText(getDateButtonString(mStartDate));
-		((Button)findViewById(R.id.end_date_button)).setText(getDateButtonString(mEndDate));
+		((Button) findViewById(R.id.start_time_button)).setText(getTimeButtonString(mStartTime));
+		((Button) findViewById(R.id.end_time_button)).setText(getTimeButtonString(mEndTime));
+		((Button) findViewById(R.id.start_date_button)).setText(getDateButtonString(mStartDate));
+		((Button) findViewById(R.id.end_date_button)).setText(getDateButtonString(mEndDate));
 	}
 
 	/*
@@ -219,16 +219,19 @@ public class FindGameActivity extends Activity
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
-
+		
 		case android.R.id.home:
 		    onBackPressed(); // This will not destroy and recreate main activity
 		    return true;
+		  
+		default:
+		
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
 	/**
-	 * Displays dialog for selecting game time
+	 * Displays dialog for selecting game time.
 	 * 
 	 * @param v		view for dialog fragment
 	 */
@@ -239,7 +242,7 @@ public class FindGameActivity extends Activity
 	}
 	
 	/**
-	 * Displays dialog for selecting game date
+	 * Displays dialog for selecting game date.
 	 * 
 	 * @param v		view for dialog fragment
 	 */
@@ -264,7 +267,7 @@ public class FindGameActivity extends Activity
 	}
 	
 	/**
-	 * This will reset the form inputs and associated state to default values
+	 * This will reset the form inputs and associated state to default values.
 	 * @param v		The view from which the button was called
 	 */
 	public void resetSearchForms(View v) {
@@ -275,7 +278,7 @@ public class FindGameActivity extends Activity
 		//mSports.clear();
 		//mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
 		
-		Spinner spinner = (Spinner)findViewById(R.id.radius_spinner);
+		Spinner spinner = (Spinner) findViewById(R.id.radius_spinner);
 		spinner.setSelection(0);
 		
 		//Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
@@ -342,7 +345,7 @@ public class FindGameActivity extends Activity
 	
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-		final Button dateButton = (Button)findViewById(mLastButtonId);
+		final Button dateButton = (Button) findViewById(mLastButtonId);
 		
 		if (mLastButtonId == R.id.start_date_button) {
 			if (mStartDate == null) {
@@ -361,7 +364,7 @@ public class FindGameActivity extends Activity
 	
 	@Override
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-		final Button timeButton = (Button)findViewById(mLastButtonId);
+		final Button timeButton = (Button) findViewById(mLastButtonId);
 		
 		if (timeButton.getId() == R.id.start_time_button) {
 			if (mStartTime == null) {

@@ -1,6 +1,6 @@
 package com.uwcse403.pocketpickup;
 
-public enum JoinGameResult{ 
+public enum JoinGameResult { 
 	ERROR_JOINING, ALREADY_ATTENDING, SUCCESS
 }
 /*

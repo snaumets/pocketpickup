@@ -43,8 +43,8 @@ public class CreateGameActivity extends Activity
 	public static final String CREATEGAME_LONGITUDE = "creategame_longitude";
 	public static final String CREATEGAME_GAMELIST = "creategame_gamelist";
 	
-	private static final long FIVE_MIN = (5 * 60 * 1000L);
-	private static final long HOUR = (60 * 60 * 1000L);
+	private static final long FIVE_MIN = 5 * 60 * 1000L;
+	private static final long HOUR = 60 * 60 * 1000L;
 
 	// Bundle IDs for persistent button names
 	private static final String STATE_GAME_TIME = "cg_time";
@@ -65,7 +65,7 @@ public class CreateGameActivity extends Activity
 		
 		final Bundle args = getIntent().getExtras();
 		
-		EditText editText = (EditText)findViewById(R.id.cg_location_text);
+		EditText editText = (EditText) findViewById(R.id.cg_location_text);
 		editText.setText(args.getCharSequence(CREATEGAME_LOCATION));
 		final double lat = args.getDouble(CREATEGAME_LATITUDE);
 		final double lon = args.getDouble(CREATEGAME_LONGITUDE);
@@ -74,8 +74,8 @@ public class CreateGameActivity extends Activity
 		setButtonLabels();
 		
 		// Initialize sports choices
-		Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
-		PocketPickupApplication app = (PocketPickupApplication)getApplication();
+		Spinner sportsSpinner = (Spinner) findViewById(R.id.cg_sports_spinner);
+		PocketPickupApplication app = (PocketPickupApplication) getApplication();
 		ArrayList<String> sports = new ArrayList<String>(app.sportsAndObjs.keySet());
 		ArrayAdapter<String> sportsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sports);
 		sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -85,7 +85,7 @@ public class CreateGameActivity extends Activity
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) {
-				mSport = (String)parent.getItemAtPosition(pos);
+				mSport = (String) parent.getItemAtPosition(pos);
 			}
 
 			@Override
@@ -96,7 +96,7 @@ public class CreateGameActivity extends Activity
 		});
 		
 		// Initialize duration choices
-		Spinner durationSpinner = (Spinner)findViewById(R.id.cg_duration_spinner);
+		Spinner durationSpinner = (Spinner) findViewById(R.id.cg_duration_spinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.duration_choices, 
 				android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -106,7 +106,7 @@ public class CreateGameActivity extends Activity
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) {
-				String durationStr = (String)parent.getItemAtPosition(pos);
+				String durationStr = (String) parent.getItemAtPosition(pos);
 				mDuration = Integer.parseInt(durationStr);
 			}
 
@@ -134,13 +134,13 @@ public class CreateGameActivity extends Activity
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
-			savedInstanceState.putLong(STATE_GAME_TIME, ( (mDate == null) ? 0L : mDate.getTimeInMillis() ));
+			savedInstanceState.putLong(STATE_GAME_TIME, (mDate == null) ? 0L : mDate.getTimeInMillis());
 		}
 	}
 	
 	private void setButtonLabels() {
-		((Button)findViewById(R.id.create_time_button)).setText(getTimeButtonString(mDate));
-		((Button)findViewById(R.id.create_date_button)).setText(getDateButtonString(mDate));
+		((Button) findViewById(R.id.create_time_button)).setText(getTimeButtonString(mDate));
+		((Button) findViewById(R.id.create_date_button)).setText(getDateButtonString(mDate));
 	}
 
 	@Override
@@ -161,12 +161,15 @@ public class CreateGameActivity extends Activity
 		case android.R.id.home:
 		    onBackPressed(); // This will not destroy and recreate main activity
 		    return true;
+		    
+		default:
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
 	/**
-	 * Displays dialog for selecting game time
+	 * Displays dialog for selecting game time.
 	 * 
 	 * @param v		view for dialog fragment
 	 */
@@ -176,7 +179,7 @@ public class CreateGameActivity extends Activity
 	}
 	
 	/**
-	 * Displays dialog for selecting game date
+	 * Displays dialog for selecting game date.
 	 * 
 	 * @param v		view for dialog fragment
 	 */
@@ -200,7 +203,7 @@ public class CreateGameActivity extends Activity
 		}
 		mDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
 		mDate.set(Calendar.MINUTE, minute);
-		((Button)findViewById(R.id.create_time_button)).setText(getTimeButtonString(mDate));
+		((Button) findViewById(R.id.create_time_button)).setText(getTimeButtonString(mDate));
 	}
 
 	@Override
@@ -209,7 +212,7 @@ public class CreateGameActivity extends Activity
 			mDate = Calendar.getInstance();
 		}
 		mDate.set(year, monthOfYear, dayOfMonth);
-		((Button)findViewById(R.id.create_date_button)).setText(getDateButtonString(mDate));
+		((Button) findViewById(R.id.create_date_button)).setText(getDateButtonString(mDate));
 	}
 	
 	private String getDateButtonString(final Calendar date) {
@@ -269,7 +272,7 @@ public class CreateGameActivity extends Activity
 	public void resetCreate(View v) {
 		mDate = initDate(0);
 		
-		Spinner spinner = (Spinner)findViewById(R.id.cg_duration_spinner);
+		Spinner spinner = (Spinner) findViewById(R.id.cg_duration_spinner);
 		spinner.setSelection(0);
 		
 		setButtonLabels();	

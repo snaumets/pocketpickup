@@ -32,6 +32,8 @@ public class HelpActivity extends Activity {
 		case android.R.id.home:
 		    onBackPressed(); // This will not destroy and recreate main activity
 		    return true;
+		    
+		default:
 		}
 		return super.onOptionsItemSelected(item);
 	}
