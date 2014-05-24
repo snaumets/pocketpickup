@@ -102,5 +102,18 @@
     <string name="join_game">Join Game</string>
     <string name="leave_game">Leave Game</string>
     <string name="g_attendees">Planned Attendees:</string>
+    
+    <!-- Help Strings -->
+    <string name="instructions_header">Instructions For Use</string>
+    <string name="instructions_create">To create a game, navigate until the pin is on the desired
+        location, press the "Create Game" button, fill in the details, and finish by pressing 
+        "Create Game"</string>
+    <string name="instructions_find">To find games, press the "Find Game" button, fill in the details
+        and press "Find Game." Games fitting the desired parameters will be displayed on the map</string>
+    <string name="instructions_join">To join games, click on the pin, then on the "Join Game" button
+        in the details view</string>
+    <string name="developer_info">Pocket Pickup was developed in 2014 by Serge Naumets, Jacob Gile, Patrick Larson, 
+        Isaiah Mathieu, Viktor Farkas and Kane Swanson</string>
+    <string name="contact_info">We can be reached at cse-403-team-poseidon@googlegroups.com</string>
 
 </resources>
