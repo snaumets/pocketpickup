@@ -22,11 +22,6 @@ import com.uwcse403.pocketpickup.game.Game;
  * This implementation is dependent on the Parse library
  */
 public final class GameHandler {
-	
-	private GameHandler() {
-		
-	}
-	
 	/** Label for debugging tag label. **/
 	public static final String LOG_TAG = "GameHandler";
 	/** Default callback for saving in background. **/
