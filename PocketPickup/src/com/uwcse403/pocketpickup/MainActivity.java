@@ -408,7 +408,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 							args.putParcelable(GameActivity.GAME, game);
 							intent.putExtras(args);
 							
-							startActivity(intent);
+							startActivityForResult(intent, GAME_DETAILS_CODE);
 						} else {
 							Toast.makeText(getApplicationContext(), "Sorry, no details for this game.", Toast.LENGTH_LONG).show();
 							return false;
