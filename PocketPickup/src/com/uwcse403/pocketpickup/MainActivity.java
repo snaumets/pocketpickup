@@ -77,6 +77,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	// Unique return codes to be used by activities started by this activity for result.
 	private static final int CREATE_GAME_CODE = 1111;
 	private static final int FIND_GAME_CODE = 2222;
+	private static final int GAME_DETAILS_CODE = 3333;
 	
 	public static final String LOG_TAG = "MainActivity";
 
@@ -337,6 +338,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		if (mGoogleMap == null) {
 			mMapMarkers = new HashSet<Marker>();
 			mMapCircles = new HashSet<Circle>();
+			mDisplayedGames = new ArrayList<Game>();
 			mMarkerToGame = new HashMap<Marker, Game>();
 			TouchableMapFragment tmf = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
 			mGoogleMap = tmf.getMap();
@@ -557,20 +559,41 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	// This method will display the user's joined games on the map
 	private void myJoinedGames() {
 		clearSearchResults(null); // clear previous results if any
-		mDisplayedGames.addAll(LoginActivity.user.mAttendingGames);
-		onGameDisplayUpdate(0, null);
-		zoomToShowAllMarkers(mMapMarkers);
-		Toast.makeText(this, "joined games", Toast.LENGTH_LONG).show();
+		Set<Game> joinedGames = LoginActivity.user.mAttendingGames;
 		
+		if (joinedGames != null && joinedGames.size() > 0) {
+			if (mDisplayedGames == null) {
+				mDisplayedGames = new ArrayList<Game>();
+			} else {
+				mDisplayedGames.clear();
+			}
+			mDisplayedGames.addAll(joinedGames);
+			onGameDisplayUpdate();
+			zoomToShowAllMarkers(mMapMarkers);
+		} else {
+			Toast.makeText(this, "No Joined Games", Toast.LENGTH_LONG).show();
+		}
+		showClearButton();
 	}
 	
 	// This method will display the user's created games on the map
 	private void myCreatedGames() {
 		clearSearchResults(null); // clear previous results if any
-		mDisplayedGames.addAll(LoginActivity.user.mCreatedGames);
-		onGameDisplayUpdate(0, null);
-		zoomToShowAllMarkers(mMapMarkers);
-		Toast.makeText(this, "created games", Toast.LENGTH_LONG).show();
+		Set<Game> createdGames = LoginActivity.user.mCreatedGames;
+		
+		if (createdGames != null && createdGames.size() > 0) {
+			if (mDisplayedGames == null) {
+				mDisplayedGames = new ArrayList<Game>();
+			} else {
+				mDisplayedGames.clear();
+			}
+			mDisplayedGames.addAll(createdGames);
+			onGameDisplayUpdate();
+			zoomToShowAllMarkers(mMapMarkers);
+		} else {
+			Toast.makeText(this, "No Created Games", Toast.LENGTH_LONG).show();	
+		}
+		showClearButton();
 	}
 	
 	// Simply starts a log in activity
@@ -612,15 +635,30 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		Button clearButton = (Button) findViewById(R.id.buttonClearResults);
 		clearButton.setVisibility(View.GONE);
 		// Clear map markers
-		for (Marker marker : mMapMarkers) {
-			marker.remove();
+		if (mMapMarkers != null) {
+			for (Marker marker : mMapMarkers) {
+				marker.remove();
+			}
+			mMapMarkers.clear();
 		}
-		mMapMarkers.clear();
-		// Clear map circle
-		for (Circle circle: mMapCircles) {
-			circle.remove();
+		
+		if (mMapCircles != null) {
+			// Clear map circle
+			for (Circle circle: mMapCircles) {
+				circle.remove();
+			}
+			mMapCircles.clear();
 		}
-		mMapCircles.clear();
+		
+		if (mDisplayedGames != null) {
+			mDisplayedGames.clear();
+		}
+	}
+	
+	// This will show the 
+	private void showClearButton() {
+		Button clearButton = (Button) findViewById(R.id.buttonClearResults);
+		clearButton.setVisibility(View.VISIBLE);
 	}
 
 	// Simply starts a sign up activity
@@ -669,6 +707,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				
 				onGameDisplayUpdate(0, null);
 				Toast.makeText(this, "Your game was created!", Toast.LENGTH_LONG).show();
+				showClearButton();
+				LoginActivity.user.mCreatedGames.add(mDisplayedGames.get(0)); // there will be only one game
+				LoginActivity.user.mAttendingGames.add(mDisplayedGames.get(0)); // there will be only one game
 			}
 			break;
 		case FIND_GAME_CODE:
@@ -692,11 +733,38 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				}
 				
 				// Make the clear button visible
-				Button clearButton = (Button) findViewById(R.id.buttonClearResults);
-				clearButton.setVisibility(View.VISIBLE);
+				showClearButton();
 				Toast.makeText(this, displayMessage, Toast.LENGTH_LONG).show();
 			}
 			break;
+		case GAME_DETAILS_CODE:
+			if (data != null) {
+				// This string will tell whether the user deleted, left, or joined a game
+				int result = data.getIntExtra(GameActivity.GAME_RESULT, GameActivity.GAME_RESULT_JOIN_FAILED);
+				Game game = data.getParcelableExtra(GameActivity.GAME);
+				switch (result) {
+				case GameActivity.GAME_RESULT_JOINED:
+					LoginActivity.user.mAttendingGames.add(game);
+					break;
+				case GameActivity.GAME_RESULT_ALREADY_JOINED:
+					break;
+				case GameActivity.GAME_RESULT_JOIN_FAILED:
+					break;
+				case GameActivity.GAME_RESULT_LEFT:
+					LoginActivity.user.mAttendingGames.remove(game);
+					break;
+				case GameActivity.GAME_RESULT_LEFT_FAILED:
+					break;
+				case GameActivity.GAME_RESULT_DELETED:
+					LoginActivity.user.mAttendingGames.remove(game);
+					LoginActivity.user.mCreatedGames.remove(game);
+					break;
+				default:
+					// Do nothing
+					break;
+				}
+				clearSearchResults(null); // clear previous results if any
+			}
 		default:
 			// Do nothing
 			break;
@@ -769,12 +837,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		}
 		
 		LatLngBounds bounds = builder.build();
-	    int paddingPixels = 25;
+	    int paddingPixels = 200;
 	    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, paddingPixels));
 	}
 	
 	/**
-	 * 
+	 * This will display the games in the global arraylist mDisplayedGames and 
+	 * will draw a circle with the given radius and at the given location.
 	 * @param radius The radius of the search in miles
 	 * @param loc The location of the center of the search
 	 */
@@ -793,6 +862,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			}
 			
 			if (mDisplayedGames != null) {
+				Game gameWithId = null;
 				for (Game game : mDisplayedGames) {
 					// You can customize the marker image using images bundled with
 					// your app, or dynamically generated bitmaps.
@@ -820,21 +890,50 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					Marker marker = mGoogleMap.addMarker(new MarkerOptions()
 					.icon(BitmapDescriptorFactory.fromResource(markerResource))
 					.anchor(0.5f, 1.0f) // Anchors the marker on the bottom left
-					.position(game.mGameLocation)
-					.title(game.mGameType)
-					.snippet(gameData));
+					.position(game.mGameLocation));
+					//.title(game.mGameType)
+					//.snippet(gameData));
 					mMapMarkers.add(marker);
 					
 					if (radius == 0 && loc == null) {
 						// game was created, must get game with id from database
 						ParseObject poGame = GameHandler.getGameCreatedByCurrentUser(game);
-						Game gameWithId = Translator.parseGameToAppGame(poGame);
+						gameWithId = Translator.parseGameToAppGame(poGame);
 						mMarkerToGame.put(marker, gameWithId);
 					} else {
 						// Games came from database since they are search results
 						mMarkerToGame.put(marker, game);
 					}
 				}
+				// If the game was created, we want to put the game object with the id from
+				// the database set
+				if (radius == 0 && loc == null) {
+					mDisplayedGames.clear();
+					mDisplayedGames.add(gameWithId);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * This function will simply draw the games that are currently in the 
+	 * global arraylist mDisplayedGames that are to be draw. The precondition is that the
+	 * arraylist mDisplayedGames was already filled with the games.
+	 */
+	private void onGameDisplayUpdate() {			
+		if (mDisplayedGames != null) {
+			for (Game game : mDisplayedGames) {
+				// You can customize the marker image using images bundled with
+				// your app, or dynamically generated bitmaps.
+				String gameType = game.mGameType;
+				int markerResource = Sports.getResourceIdForSport(gameType);
+				
+				Marker marker = mGoogleMap.addMarker(new MarkerOptions()
+				.icon(BitmapDescriptorFactory.fromResource(markerResource))
+				.anchor(0.5f, 1.0f) // Anchors the marker on the bottom left
+				.position(game.mGameLocation));
+				mMapMarkers.add(marker);
+				mMarkerToGame.put(marker, game);
 			}
 		}
 	}

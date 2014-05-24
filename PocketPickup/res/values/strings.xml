@@ -56,7 +56,7 @@
     <string name="selected_sports">Selected Sports</string>
     <string name="select_sports">Sports:</string>
     <string name="reset">Reset All</string>
-    <string name="clear_results">Clear Results</string>
+    <string name="clear_results">Clear Map</string>
     
     <string-array name="radius_choices">
         <item>1</item>
@@ -101,6 +101,7 @@
     <!-- Game Activity Strings -->
     <string name="join_game">Join Game</string>
     <string name="leave_game">Leave Game</string>
+    <string name="delete_game">Delete Game</string>
     <string name="g_attendees">Planned Attendees:</string>
     
     <!-- Help Strings -->

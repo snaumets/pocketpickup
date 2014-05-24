@@ -9,6 +9,7 @@ import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.game.Game;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +30,13 @@ public class GameActivity extends Activity {
 	public static final String GAME_LOCATION_LAT = "gameLocationLat";
 	public static final String GAME_LOCATION_LNG = "gameLocationLng";
 	public static final String GAME = "game";
+	public static final String GAME_RESULT = "gameResult";
+	public static final int GAME_RESULT_JOINED = 0;
+	public static final int GAME_RESULT_ALREADY_JOINED = 1;
+	public static final int GAME_RESULT_JOIN_FAILED = 2;
+	public static final int GAME_RESULT_LEFT = 3;
+	public static final int GAME_RESULT_LEFT_FAILED = 4;
+	public static final int GAME_RESULT_DELETED = 5;
 	
 	private Game game;
 		
@@ -75,11 +83,20 @@ public class GameActivity extends Activity {
 		String attendeesUnit = countAttendees == 1 ? " User" : " Users"; 
 		attendees.setText(countAttendees + attendeesUnit + " Joined This Game");
 		
+		// Show the correct button
+		if (!LoginActivity.user.mAttendingGames.contains(game)) { // user can join this game
+			Button joinButton = (Button) findViewById(R.id.gameJoinButton);
+			joinButton.setVisibility(View.VISIBLE);
+		} else if (LoginActivity.user.mCreatedGames.contains(game) && countAttendees == 1) { // delete game
+			Button deleteButton = (Button) findViewById(R.id.gameDeleteButton);
+			deleteButton.setVisibility(View.VISIBLE);
+		} else if (LoginActivity.user.mAttendingGames.contains(game) && countAttendees > 1) { // leave game
+			Button leaveButton = (Button) findViewById(R.id.gameLeaveButton);
+			leaveButton.setVisibility(View.VISIBLE);
+		} else {
+			// Sanity check, but should not show button in this case
+		}
 		
-		// TODO: check if this user has joined this game yet
-		// Show the join button if the user hasnt joined this game yet
-		Button joinButton = (Button) findViewById(R.id.gameJoinButton);
-		joinButton.setVisibility(View.VISIBLE);
 		
 		// Show the leave button if the user has already joined this game
 		
@@ -118,15 +135,50 @@ public class GameActivity extends Activity {
 		// user is joining was not created by him or herself. Still works if the user
 		// is the creator.
 		JoinGameResult result = GameHandler.joinGame(game, false);
+		Intent returnIntent = new Intent();
+		returnIntent.putExtra(GAME, game);
 		if (result == JoinGameResult.SUCCESS) {
-			Toast.makeText(this, "Successfully added to this game!", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Successfully Added To Game!", Toast.LENGTH_LONG).show();
+			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_JOINED);
 		} else if (result == JoinGameResult.ERROR_JOINING) {
 			Toast.makeText(getApplicationContext(), "Joining Game Failed", Toast.LENGTH_LONG).show();
+			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_JOIN_FAILED);
 		} else {
-			Toast.makeText(getApplicationContext(), "You are already an attendee", Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), "You Are Already An Attendee", Toast.LENGTH_LONG).show();
+			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_ALREADY_JOINED);
 		}
+		setResult(Activity.RESULT_OK, returnIntent);
 		finish();
 	}
-
-
+	
+	/**
+	 * This method will update the backend that the user has deleted this game.
+	 */
+	public void deleteGameSubmit(View v) {
+		GameHandler.removeGame(game);
+		Toast.makeText(this, "Successfully Deleted Game", Toast.LENGTH_LONG).show();
+		Intent returnIntent = new Intent();
+		returnIntent.putExtra(GAME, game);
+		returnIntent.putExtra(GAME_RESULT, GAME_RESULT_DELETED);
+		setResult(Activity.RESULT_OK, returnIntent);
+		finish();
+	}
+	
+	/**
+	 * This method will update the backend that the user has left this game.
+	 */
+	public void leaveGameSubmit(View v) {
+		boolean result = GameHandler.leaveGame(game);
+		Intent returnIntent = new Intent();
+		returnIntent.putExtra(GAME, game);
+		if (result) { // successfully left
+			Toast.makeText(this, "Successfully Left Game", Toast.LENGTH_LONG).show();
+			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_LEFT);
+		} else {
+			Toast.makeText(this, "Failed To Leave Game", Toast.LENGTH_LONG).show();
+			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_LEFT_FAILED);
+		}
+		setResult(Activity.RESULT_OK, returnIntent);
+		finish();
+	}
 }
