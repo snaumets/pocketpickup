@@ -367,6 +367,12 @@ public class GameHandler {
 		return 0;
 	}
 	
+	/**
+	 * Gets a List of games that have been created by the user
+	 * 
+	 * @param userId - ID of the user to query
+	 * @return List of Game objects
+	 */
 	public static ArrayList<Game> getGamesCreatedBy(String userId) {
 		ParseQuery<ParseUser> users = ParseUser.getQuery();
 		ParseObject currentUser = null;
@@ -381,10 +387,19 @@ public class GameHandler {
 		return parseGameListToApp(parseGames);
 	}
 	
+	/**
+	 * Returns games created by current user
+	 * @return List of game objects
+	 */
 	public static ArrayList<Game> getGamesCreated() {
 		return getGamesCreatedBy(ParseUser.getCurrentUser().getObjectId());
 	}
 	
+	/**
+	 * Returns games created by the user
+	 * @param userId - The User to query
+	 * @return a list of games attending by the user
+	 */
 	public static ArrayList<Game> getGamesAttendingBy(String userId) {
 		ParseQuery<ParseUser> users = ParseUser.getQuery();
 		ParseObject currentUser = null;
@@ -399,10 +414,19 @@ public class GameHandler {
 		return parseGameListToApp(parseGames);
 	}
 	
+	/**
+	 * Gets  list of game the user current user is attending
+	 * @return List of game objects representing what the games is user attending
+	 */
 	public static ArrayList<Game> getGamesAttending() {
 		return getGamesAttendingBy(ParseUser.getCurrentUser().getObjectId());
 	}
 	
+	/**
+	 * Helper function to return a list of Game objects instead of Parse Objects
+	 * @param pgames
+	 * @return list of corresponding Games
+	 */
 	public static ArrayList<Game> parseGameListToApp(ArrayList<ParseObject> pgames) {
 		ArrayList<Game> games = new ArrayList<Game>();
 		for (ParseObject pg : pgames) {
