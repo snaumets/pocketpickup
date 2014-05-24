@@ -1,5 +1,6 @@
 package com.uwcse403.pocketpickup;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,6 +23,8 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
+import com.uwcse403.pocketpickup.game.Game;
 import com.uwcse403.pocketpickup.user.User;
 
 /**
@@ -132,7 +135,14 @@ public class LoginActivity extends Activity {
 			    	String gender = "";
 			    	LoginActivity.user = new User(firstName, lastName, email, age, gender);
 			    	// TODO: call methods from GameHandler to fill sets inside of user
-			    	// (attendingGames, createdGames, and preferredSports)
+			    	// (preferredSports)
+			    	ArrayList<Game> createdGames = GameHandler.getGamesCreated();
+			    	LoginActivity.user.mCreatedGames.addAll(createdGames);
+			    	Log.v("LoginActivity", "Number games created by user: " + createdGames.size());
+			    	
+			    	ArrayList<Game> attendingGames = GameHandler.getGamesAttending();
+			    	LoginActivity.user.mAttendingGames.addAll(attendingGames);
+			    	Log.v("LoginActivity", "Number games user attending: " + attendingGames.size());
 
 			    	Log.d("LoginActivity", "facebookName: " + user.getName());
 			    	Toast.makeText(getApplicationContext(), "Welcome, " + firstName + "!", Toast.LENGTH_LONG).show();

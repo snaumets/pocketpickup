@@ -156,11 +156,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		/*mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[2], mNavMenuIcons
 				.getResourceId(2, -1)));*/
 		// Help
+		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[2], mNavMenuIcons
+				.getResourceId(2, -1)));
+		// Logout
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[3], mNavMenuIcons
 				.getResourceId(3, -1)));
-		// Logout
-		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[4], mNavMenuIcons
-				.getResourceId(4, -1)));
 
 		// Recycle the typed array
 		mNavMenuIcons.recycle();
@@ -269,15 +269,15 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		case 1:
 			myCreatedGames();
 			break;
-		case 2:
+		/*case 2:
 			settings(null); // View supposed to be passed in, but it is not
 							// used, therefore null is fine
-			break;
-		case 3:
+			break;*/
+		case 2:
 			help(null); // View supposed to be passed in, but it is not used,
 						// therefore null is fine
 			break;
-		case 4:
+		case 3:
 			logout(null);
 			break;
 		default:
@@ -556,11 +556,20 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	// This method will display the user's joined games on the map
 	private void myJoinedGames() {
+		clearSearchResults(null); // clear previous results if any
+		mDisplayedGames.addAll(LoginActivity.user.mAttendingGames);
+		onGameDisplayUpdate(0, null);
+		zoomToShowAllMarkers(mMapMarkers);
 		Toast.makeText(this, "joined games", Toast.LENGTH_LONG).show();
+		
 	}
 	
 	// This method will display the user's created games on the map
 	private void myCreatedGames() {
+		clearSearchResults(null); // clear previous results if any
+		mDisplayedGames.addAll(LoginActivity.user.mCreatedGames);
+		onGameDisplayUpdate(0, null);
+		zoomToShowAllMarkers(mMapMarkers);
 		Toast.makeText(this, "created games", Toast.LENGTH_LONG).show();
 	}
 	
@@ -746,6 +755,23 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	    int paddingPixels = 25;
 	    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, paddingPixels));
     }
+	
+	/**
+	 * This method will zoom the map out/in enough to show all of the markers
+	 * that are in the given set.
+	 * @param mapMarkers	The set which contains all markers which need to be shown
+	 */
+	private void zoomToShowAllMarkers(Set<Marker> mapMarkers) {
+		LatLngBounds.Builder builder = new LatLngBounds.Builder();
+		for (Marker marker : mapMarkers) {
+			LatLng point = marker.getPosition();
+			builder.include(point);
+		}
+		
+		LatLngBounds bounds = builder.build();
+	    int paddingPixels = 25;
+	    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, paddingPixels));
+	}
 	
 	/**
 	 * 
