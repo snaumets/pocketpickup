@@ -437,6 +437,7 @@ public final class GameHandler {
 	 */
 	public static ArrayList<Game> parseGameListToApp(ArrayList<String> pgames) {
 		ArrayList<Game> games = new ArrayList<Game>();
+		if (pgames == null) return games;
 		for (String pg : pgames) {
 			Log.e(LOG_TAG + "ptog", "Game id: " + pg);
 			ParseObject parseGame = getGameUsingId(pg);
