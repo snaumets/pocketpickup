@@ -367,8 +367,7 @@ public class GameHandler {
 		return 0;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static ArrayList<ParseObject> getGamesCreatedBy(String userId) {
+	public static ArrayList<Game> getGamesCreatedBy(String userId) {
 		ParseQuery<ParseUser> users = ParseUser.getQuery();
 		ParseObject currentUser = null;
 		try {
@@ -377,15 +376,16 @@ public class GameHandler {
 			Log.e(LOG_TAG, "Failed to get user");
 			return null;
 		}
-		return (ArrayList<ParseObject>) currentUser.get(DbColumns.USER_GAMES_CREATED);
+		@SuppressWarnings("unchecked")
+		ArrayList<ParseObject> parseGames = (ArrayList<ParseObject>) currentUser.get(DbColumns.USER_GAMES_CREATED);
+		return parseGameListToApp(parseGames);
 	}
 	
-	public static ArrayList<ParseObject> getGamesCreated() {
+	public static ArrayList<Game> getGamesCreated() {
 		return getGamesCreatedBy(ParseUser.getCurrentUser().getObjectId());
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static ArrayList<ParseObject> getGamesAttendingBy(String userId) {
+	public static ArrayList<Game> getGamesAttendingBy(String userId) {
 		ParseQuery<ParseUser> users = ParseUser.getQuery();
 		ParseObject currentUser = null;
 		try {
@@ -394,11 +394,22 @@ public class GameHandler {
 			Log.e(LOG_TAG, "Failed to get attending games");
 			return null;
 		}
-		return (ArrayList<ParseObject>) currentUser.get(DbColumns.USER_GAMES_ATTENDING);
+		@SuppressWarnings("unchecked")
+		ArrayList<ParseObject> parseGames = (ArrayList<ParseObject>) currentUser.get(DbColumns.USER_GAMES_ATTENDING);
+		return parseGameListToApp(parseGames);
 	}
 	
-	public static ArrayList<ParseObject> getGamesAttending() {
+	public static ArrayList<Game> getGamesAttending() {
 		return getGamesAttendingBy(ParseUser.getCurrentUser().getObjectId());
+	}
+	
+	public static ArrayList<Game> parseGameListToApp(ArrayList<ParseObject> pgames) {
+		ArrayList<Game> games = new ArrayList<Game>();
+		for (ParseObject pg : pgames) {
+			Game g = Translator.parseGameToAppGame(pg);
+			games.add(g);
+		}
+		return games;
 	}
 }
 
