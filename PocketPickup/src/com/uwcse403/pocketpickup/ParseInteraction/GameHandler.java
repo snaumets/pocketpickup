@@ -52,6 +52,8 @@ public final class GameHandler {
 		createGame(g, DEFAULT_SAVE_CALLBACK);
 	} 
 	
+
+	
 	public static void createGame(Game g, SaveCallback cb) {
 		Log.v(LOG_TAG, "entering CreateGame(Game, SaveCallback)");
 		ParseObject game = Translator.appGameToNewParseGame(g);
@@ -153,17 +155,20 @@ public final class GameHandler {
 	 * @return the Parse Game object that the app Game object passed as a parameter represents. 
 	 */
 	public static ParseObject getGameUsingId(Game g) {
+		return getGameUsingId(g.id);
+	}
+	
+	public static ParseObject getGameUsingId(String id) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
 		ParseObject game = null;
 		try {
-			game = query.get(g.id);
+			game = query.get(id);
 		} catch (ParseException e) {
 			e.printStackTrace();
 			Log.e(LOG_TAG, "error retreiving game: " + e.getCode() + " : " + e.getMessage());
 		}
 		return game;
 	}
-
 	
 	/** 
 	 * Removes the App game object g from the Parse database. 
@@ -386,7 +391,7 @@ public final class GameHandler {
 			return null;
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<ParseObject> parseGames = (ArrayList<ParseObject>) currentUser.get(DbColumns.USER_GAMES_CREATED);
+		ArrayList<String> parseGames = (ArrayList<String>) currentUser.get(DbColumns.USER_GAMES_CREATED);
 		return parseGameListToApp(parseGames);
 	}
 	
@@ -413,7 +418,7 @@ public final class GameHandler {
 			return null;
 		}
 		@SuppressWarnings("unchecked")
-		ArrayList<ParseObject> parseGames = (ArrayList<ParseObject>) currentUser.get(DbColumns.USER_GAMES_ATTENDING);
+		ArrayList<String> parseGames = (ArrayList<String>) currentUser.get(DbColumns.USER_GAMES_ATTENDING);
 		return parseGameListToApp(parseGames);
 	}
 	
@@ -430,10 +435,10 @@ public final class GameHandler {
 	 * @param pgames
 	 * @return list of corresponding Games
 	 */
-	public static ArrayList<Game> parseGameListToApp(ArrayList<ParseObject> pgames) {
+	public static ArrayList<Game> parseGameListToApp(ArrayList<String> pgames) {
 		ArrayList<Game> games = new ArrayList<Game>();
-		for (ParseObject pg : pgames) {
-			Game g = Translator.parseGameToAppGame(pg);
+		for (String pg : pgames) {
+			Game g = Translator.parseGameToAppGame(getGameUsingId(pg));
 			games.add(g);
 		}
 		return games;
