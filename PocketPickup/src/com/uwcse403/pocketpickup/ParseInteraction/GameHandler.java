@@ -53,9 +53,6 @@ public class GameHandler {
 		ParseObject currentUser = ParseUser.getCurrentUser();
 		if(cb != null) {
 			game.saveInBackground(cb);	
-			currentUser.add(DbColumns.USER_GAMES_ATTENDING, game.getObjectId());
-			currentUser.add(DbColumns.USER_GAMES_CREATED, game.getObjectId());
-			currentUser.saveInBackground(cb);
 		} else {
 			try {
 				game.save();
@@ -138,8 +135,10 @@ public class GameHandler {
 			Log.e(LOG_TAG, "no objects found to delete");
 		}
 		if (objects.size() != 1) {
-			throw new IllegalStateException("found " + objects.size()  + " games that met" +
-					" the description of the input game but there should be exactly one");
+			String errorString = "found " + objects.size()  + " games that met" +
+					" the description of the input game but there should be exactly one";
+			Log.e(LOG_TAG, errorString);
+			throw new IllegalStateException(errorString);
 		}
 		return objects.get(0);
 	}
@@ -368,10 +367,38 @@ public class GameHandler {
 		return 0;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static ArrayList<ParseObject> getGamesCreatedBy(String userId) {
-		ParseObject games = null;
-		
-		return null;
+		ParseQuery<ParseUser> users = ParseUser.getQuery();
+		ParseObject currentUser = null;
+		try {
+			currentUser = users.get(userId);
+		} catch (ParseException e) {
+			Log.e(LOG_TAG, "Failed to get user");
+			return null;
+		}
+		return (ArrayList<ParseObject>) currentUser.get(DbColumns.USER_GAMES_CREATED);
+	}
+	
+	public static ArrayList<ParseObject> getGamesCreated() {
+		return getGamesCreatedBy(ParseUser.getCurrentUser().getObjectId());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static ArrayList<ParseObject> getGamesAttendingBy(String userId) {
+		ParseQuery<ParseUser> users = ParseUser.getQuery();
+		ParseObject currentUser = null;
+		try {
+			currentUser = users.get(userId);
+		} catch (ParseException e) {
+			Log.e(LOG_TAG, "Failed to get attending games");
+			return null;
+		}
+		return (ArrayList<ParseObject>) currentUser.get(DbColumns.USER_GAMES_ATTENDING);
+	}
+	
+	public static ArrayList<ParseObject> getGamesAttending() {
+		return getGamesAttendingBy(ParseUser.getCurrentUser().getObjectId());
 	}
 }
 
