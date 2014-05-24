@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.uwcse403.pocketpickup.ParseInteraction.CreateGameAsCreatorCallback;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.ParseInteraction.SaveCallbackWithArgs;
 import com.uwcse403.pocketpickup.fragments.DatePickerFragment;
@@ -252,18 +253,7 @@ public class CreateGameActivity extends Activity
 		finish();
 		//setResult(Activity.RESULT_OK);
 		//finish();
-		GameHandler.createGame(createGame, new SaveCallbackWithArgs(createGame) {
-			// this will add the user who just created the game as an attendee
-			@Override
-			public void done(ParseException e) {
-				if (e == null) {
-				GameHandler.joinGame(getGame(), true);
-				} else {
-					Log.e(LOG_TAG, "failed to save game: " + e.getCode() + " : " + e.getMessage());
-				}
-			}
-			
-		});
+		GameHandler.createGame(createGame, new CreateGameAsCreatorCallback(createGame));
 	}
 	
 	public void resetCreate(View v) {
