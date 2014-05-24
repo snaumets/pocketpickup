@@ -205,8 +205,37 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	 * to the default values
 	 */
 	public void testResetButtonClearsForm() {
-		Calendar c = Calendar.getInstance();
 		Solo solo = new Solo(mInstrumentation, mActivity);
+		setTimeDateButtons(solo);
+	    		
+	    mActivity.runOnUiThread(new Runnable() {
+	    	public void run() {
+	    		mRadiusSpinner.setSelection(1);
+	    	}
+	    });
+	    mInstrumentation.waitForIdleSync();
+		
+		// Issue reset
+	    mActivity.runOnUiThread(new Runnable() {
+	        public void run() {
+	          mResetButton.performClick();
+	        }
+	      });
+	    mInstrumentation.waitForIdleSync();
+	    
+	    assertEquals(0, mRadiusSpinner.getSelectedItemPosition());
+		assertTrue(mStartTimeButton.getText().equals(
+				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_time)));
+		assertTrue(mEndTimeButton.getText().equals(
+				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_time)));
+		assertTrue(mStartDateButton.getText().equals(
+				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_date)));
+		assertTrue(mEndDateButton.getText().equals(
+				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_date)));
+	}
+	
+	private void setTimeDateButtons(Solo solo) {
+		Calendar c = Calendar.getInstance();
 		
 		// Set start time
 	    mActivity.runOnUiThread(new Runnable() {
@@ -256,52 +285,5 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	    solo.waitForDialogToOpen();
 	    solo.setDatePicker(0, c.get(Calendar.YEAR) + 2, 1, 1);
 	    solo.clickOnText("Set");
-	    		
-	    mActivity.runOnUiThread(new Runnable() {
-	    	public void run() {
-	    		mRadiusSpinner.setSelection(1);
-	    	}
-	    });
-	    mInstrumentation.waitForIdleSync();
-		
-		// Issue reset
-	    mActivity.runOnUiThread(new Runnable() {
-	        public void run() {
-	          mResetButton.performClick();
-	        }
-	      });
-	    mInstrumentation.waitForIdleSync();
-	    
-	    assertEquals(0, mRadiusSpinner.getSelectedItemPosition());
-		assertTrue(mStartTimeButton.getText().equals(
-				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_time)));
-		assertTrue(mEndTimeButton.getText().equals(
-				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_time)));
-		assertTrue(mStartDateButton.getText().equals(
-				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_date)));
-		assertTrue(mEndDateButton.getText().equals(
-				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_date)));
 	}
-	
-	/**
-	 * Tests that the submit button properly creates
-	 * a SearchCriteria object, sends it to the database,
-	 * and returns the list of results
-	 */
-//	public void testFindGameSubmitButton() {
-//		// TODO: set date and time 
-//		mRadiusSpinner.setSelection(1);
-//		
-//		// TODO: mock database call
-//		
-//	    mActivity.runOnUiThread(new Runnable() {
-//	        public void run() {
-//	          mSubmitButton.performClick();
-//	        }
-//	      });
-//	    mInstrumentation.waitForIdleSync();
-//	    
-//	    // TODO assert everything was properly called
-//	    // TODO get intent somehow and check values?
-//	}
 }
