@@ -13,6 +13,10 @@ package com.uwcse403.pocketpickup.ParseInteraction;
  */
 public class DbColumns {
 	
+	private DbColumns() { 
+		// You ain't constructin' shit.
+	}
+	
 	// table names
 	public static final String USER = "_USER";
 	public static final String GAME = "Game";

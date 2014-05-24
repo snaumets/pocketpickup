@@ -1,7 +1,6 @@
 package com.uwcse403.pocketpickup.ParseInteraction;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseGeoPoint;
@@ -16,7 +15,12 @@ import com.uwcse403.pocketpickup.game.Game;
  * @author imathieu
  *
  */
-public class Translator {
+public final class Translator {
+	private Translator() {
+		
+	}
+	
+	
 	public static final String LOG_TAG = "Translator";
 	/**
 	 * 

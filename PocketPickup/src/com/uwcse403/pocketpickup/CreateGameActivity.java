@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.ParseInteraction.SaveCallbackWithArgs;
@@ -74,8 +73,7 @@ public class CreateGameActivity extends Activity
 		
 		// Initialize sports choices
 		Spinner sportsSpinner = (Spinner) findViewById(R.id.cg_sports_spinner);
-		PocketPickupApplication app = (PocketPickupApplication) getApplication();
-		ArrayList<String> sports = new ArrayList<String>(app.sportsAndObjs.keySet());
+		ArrayList<String> sports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
 		ArrayAdapter<String> sportsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sports);
 		sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		sportsSpinner.setAdapter(sportsAdapter);

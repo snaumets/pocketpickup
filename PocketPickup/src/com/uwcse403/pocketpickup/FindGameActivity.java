@@ -60,7 +60,6 @@ public class FindGameActivity extends Activity
 	private Calendar mEndDate;
 	private int      mRadius;
 	
-	private Set<String> mSports;
 	private ArrayList<String> availableSports;
 	// arraylist to save the selected sports' indexes
 	private ArrayList<Integer> selectedSports;

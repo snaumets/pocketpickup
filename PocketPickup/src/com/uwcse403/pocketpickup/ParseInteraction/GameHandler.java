@@ -21,7 +21,12 @@ import com.uwcse403.pocketpickup.game.Game;
  * 
  * This implementation is dependent on the Parse library
  */
-public class GameHandler {
+public final class GameHandler {
+	
+	private GameHandler() {
+		
+	}
+	
 	/** Label for debugging tag label. **/
 	public static final String LOG_TAG = "GameHandler";
 	/** Default callback for saving in background. **/
@@ -135,8 +140,8 @@ public class GameHandler {
 			Log.e(LOG_TAG, "no objects found to delete");
 		}
 		if (objects.size() != 1) {
-			String errorString = "found " + objects.size()  + " games that met" +
-					" the description of the input game but there should be exactly one";
+			String errorString = "found " + objects.size()  + " games that met" 
+					+ " the description of the input game but there should be exactly one";
 			Log.e(LOG_TAG, errorString);
 			throw new IllegalStateException(errorString);
 		}
@@ -366,7 +371,7 @@ public class GameHandler {
 	}
 	
 	/**
-	 * Gets a List of games that have been created by the user
+	 * Gets a List of games that have been created by the user.
 	 * 
 	 * @param userId - ID of the user to query
 	 * @return List of Game objects
@@ -386,7 +391,7 @@ public class GameHandler {
 	}
 	
 	/**
-	 * Returns games created by current user
+	 * Returns games created by current user.
 	 * @return List of game objects
 	 */
 	public static ArrayList<Game> getGamesCreated() {
@@ -394,7 +399,7 @@ public class GameHandler {
 	}
 	
 	/**
-	 * Returns games created by the user
+	 * Returns games created by the user.
 	 * @param userId - The User to query
 	 * @return a list of games attending by the user
 	 */
@@ -413,7 +418,7 @@ public class GameHandler {
 	}
 	
 	/**
-	 * Gets  list of game the user current user is attending
+	 * Gets  list of game the user current user is attending.
 	 * @return List of game objects representing what the games is user attending
 	 */
 	public static ArrayList<Game> getGamesAttending() {
@@ -421,7 +426,7 @@ public class GameHandler {
 	}
 	
 	/**
-	 * Helper function to return a list of Game objects instead of Parse Objects
+	 * Helper function to return a list of Game objects instead of Parse Objects.
 	 * @param pgames
 	 * @return list of corresponding Games
 	 */

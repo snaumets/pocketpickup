@@ -8,7 +8,11 @@ import com.uwcse403.pocketpickup.R;
  * marker which should be used.
  *
  */
-public class Sports {
+public final class Sports {
+	private Sports() {
+		
+	}
+	
 	// sports
 	public static final String BASKETBALL = "Basketball";
 	public static final String BASEBALL = "Baseball";

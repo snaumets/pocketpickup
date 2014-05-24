@@ -33,7 +33,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -43,8 +42,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -644,10 +641,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		case CREATE_GAME_CODE:
 			if (data != null) {
 				mDisplayedGames = data.getParcelableArrayListExtra(CreateGameActivity.CREATEGAME_GAMELIST);
-				
-				// Defaults will never get used
-				final double lat = data.getDoubleExtra(CreateGameActivity.CREATEGAME_LATITUDE, 0.0);
-				final double lon = data.getDoubleExtra(CreateGameActivity.CREATEGAME_LONGITUDE, 0.0);
 				
 				onGameDisplayUpdate(0, null);
 				Toast.makeText(this, "Your game was created!", Toast.LENGTH_LONG).show();

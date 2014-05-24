@@ -10,7 +10,7 @@ import com.uwcse403.pocketpickup.game.Game;
 public class CreateGameAsCreatorCallback extends SaveCallbackWithArgs {
 	private static final String LOG_TAG = "CreateGameAsCreatorCallback";
 
-	public CreateGameAsCreatorCallback(Game g){
+	public CreateGameAsCreatorCallback(Game g) {
 		super(g);
 	}
 	@Override
