@@ -63,6 +63,8 @@
 				        android:layout_gravity="bottom"
 				        android:layout_weight="1"
 				        android:onClick="createGame"
+				        android:background="@drawable/button_general"
+				        android:textColor="@android:color/white"
 				        android:text="@string/create_game" />
 				
 				    <Button
@@ -72,6 +74,8 @@
 				        android:layout_gravity="bottom"
 				        android:layout_weight="1"
 				        android:onClick="findGame"
+				        android:background="@drawable/button_general"
+				        android:textColor="@android:color/white"
 				        android:text="@string/find_game" />
 				</LinearLayout>
     		</LinearLayout>
@@ -109,9 +113,10 @@
     </FrameLayout>
 
     <!-- Listview to display slider menu -->
+    <!-- To make the slider menu wider when opened, adjsut the layout_width -->
     <ListView
         android:id="@+id/list_slidermenu"
-        android:layout_width="240dp"
+        android:layout_width="298dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"

@@ -106,6 +106,8 @@
 		        android:text="@string/join_game"
 		        android:clickable="true"
 	            android:visibility="gone"
+	            android:background="@drawable/button_general"
+				android:textColor="@android:color/white"
 		        android:layout_weight=".5"/>
 		    <Button
 		        android:id="@+id/gameLeaveButton"
@@ -115,6 +117,8 @@
 		        android:text="@string/leave_game"
 		        android:clickable="true"
 	            android:visibility="gone"
+	            android:background="@drawable/button_general"
+				android:textColor="@android:color/white"
 		        android:layout_weight=".5"/>
 		    
 		    <Button
@@ -125,6 +129,8 @@
 		        android:text="@string/delete_game"
 		        android:clickable="true"
 	            android:visibility="gone"
+	            android:background="@drawable/button_general"
+				android:textColor="@android:color/white"
 		        android:layout_weight=".5"/>
 		    
 		    <View android:layout_height="0dp" 
