@@ -2,6 +2,7 @@ package com.uwcse403.pocketpickup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import android.app.Activity;
@@ -136,11 +137,16 @@ public class LoginActivity extends Activity {
 			    	LoginActivity.user = new User(firstName, lastName, email, age, gender);
 			    	// TODO: call methods from GameHandler to fill sets inside of user
 			    	// (preferredSports)
+			    	/*
 			    	ArrayList<Game> createdGames = GameHandler.getGamesCreated();
 			    	LoginActivity.user.mCreatedGames.addAll(createdGames);
 			    	Log.v("LoginActivity", "Number games created by user: " + createdGames.size());
+			    	*/
+			    	GameHandler.setGamesCreatedBy();
 			    	
 			    	ArrayList<Game> attendingGames = GameHandler.getGamesAttending();
+			    	// temporary
+			    	LoginActivity.user.mAttendingGames = new HashSet<Game>();
 			    	LoginActivity.user.mAttendingGames.addAll(attendingGames);
 			    	Log.v("LoginActivity", "Number games user attending: " + attendingGames.size());
 

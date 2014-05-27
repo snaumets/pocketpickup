@@ -253,7 +253,8 @@ public class CreateGameActivity extends Activity
 		finish();
 		//setResult(Activity.RESULT_OK);
 		//finish();
-		GameHandler.createGame(createGame, new CreateGameAsCreatorCallback(createGame));
+		GameHandler.createGame(createGame, null); 
+		//GameHandler.createGame(createGame, new CreateGameAsCreatorCallback(createGame));
 	}
 	
 	public void resetCreate(View v) {
