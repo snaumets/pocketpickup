@@ -12,4 +12,6 @@
 	<color name="map_tile_bg_solid_pressed">#aaFF9933</color>
 	<color name="map_tile_bg_stroke_pressed">#ffcccccc</color>
 	<color name="text_google_gray">#ff555555</color>
+	
+	<color name="green_theme">#33b3d77a</color>
 </resources>

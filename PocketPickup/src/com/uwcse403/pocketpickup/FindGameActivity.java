@@ -2,6 +2,7 @@ package com.uwcse403.pocketpickup;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -273,14 +274,9 @@ public class FindGameActivity extends Activity
 		mStartTime = null;
 		mEndDate = null;
 		mEndTime = null;
-		//mSports.clear();
-		//mSports.addAll(PocketPickupApplication.sportsAndObjs.keySet());
 		
 		Spinner spinner = (Spinner) findViewById(R.id.radius_spinner);
 		spinner.setSelection(0);
-		
-		//Spinner sportsSpinner = (Spinner)findViewById(R.id.cg_sports_spinner);
-		//sportsSpinner.setSelection(0);
 		
 		setButtonLabels();
 	}
@@ -292,6 +288,12 @@ public class FindGameActivity extends Activity
 	 */
 	public void submitSearch(View v) {
 		/* TODO: validate */
+		Date date = new Date();
+		long nowTime = date.getTime();
+		if (mStartDate.getTimeInMillis() < nowTime) { // User tried to create a game back in time (expired)
+			Toast.makeText(this, "Can't Find Games More Than An Hour In The Past, Please Fix The Starting Time", Toast.LENGTH_LONG).show();
+			return;
+		}
 		
 		/* Create FindGameCriteria object and send */
 		long msInDay = 1000 * 60 * 60 * 24; // 1000 ms/s * (60 s/min) * (60 min/hour) * (24 hr/day)

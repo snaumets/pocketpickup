@@ -58,9 +58,55 @@ public class User {
 		this.mEmail = email;
 		this.mAge = age;
 		this.mGender = gender;
+		// The following sets are null, the set has not yet been initialized from the database
+		this.mPreferredSports = null;
+		this.mAttendingGames = null;
+		this.mCreatedGames = null;
+	}
+	
+	/**
+	 * This method will initialize the preferred sports set
+	 */
+	public void initPreferredSports() {
 		this.mPreferredSports = new HashSet<String>();
+	}
+	
+	/**
+	 * This method will initialize the preferred sports set
+	 */
+	public void initAttendingGames() {
 		this.mAttendingGames = new HashSet<Game>();
+	}
+	
+	/**
+	 * This method will initialize the preferred sports set
+	 */
+	public void initCreatedGames() {
 		this.mCreatedGames = new HashSet<Game>();
+	}
+	
+	/**
+	 * Returns true if the preferred sports set is initialized.
+	 * @return	true if the set is not null, false otherwise
+	 */
+	public boolean isPreferredSportsInitialized() {
+		return mCreatedGames != null;
+	}
+	
+	/**
+	 * Returns true if the attending games set is initialized.
+	 * @return	true if the set is not null, false otherwise
+	 */
+	public boolean isAttendingGamesInitialized() {
+		return mCreatedGames != null;
+	}
+	
+	/**
+	 * Returns true if the created games set is initialized.
+	 * @return	true if the set is not null, false otherwise
+	 */
+	public boolean isCreateGamesInitialized() {
+		return mCreatedGames != null;
 	}
 	
 	// TODO: possibly make the two game sets private, add appropriate getters and setters,
