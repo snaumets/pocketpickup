@@ -1,11 +1,14 @@
 package com.uwcse403.pocketpickup.ParseInteraction;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -13,6 +16,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.uwcse403.pocketpickup.JoinGameResult;
+import com.uwcse403.pocketpickup.LoginActivity;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
@@ -65,6 +69,7 @@ public final class GameHandler {
 		} else {
 			try {
 				game.save();
+				joinGame(g, true);
 			} catch (ParseException e) {
 				// Failed to save game with waiting
 				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode() + ": " + e.getMessage());
@@ -73,7 +78,7 @@ public final class GameHandler {
 			}
 			try {
 				currentUser.add(DbColumns.USER_GAMES_ATTENDING, game.getObjectId());
-				currentUser.add(DbColumns.USER_GAMES_CREATED, game.getObjectId());
+				//currentUser.add(DbColumns.USER_GAMES_CREATED, game.getObjectId());
 				currentUser.save();
 			} catch (ParseException e) {
 				Log.e(LOG_TAG, "error adding user created game to gamesAttending/Created");
@@ -381,6 +386,34 @@ public final class GameHandler {
 		return 0;
 	}
 	
+	public static void setGamesCreatedBy() {
+		ParseQuery<ParseObject> games = ParseQuery.getQuery("Game");
+		games.whereEqualTo(DbColumns.GAME_CREATOR, ParseUser.getCurrentUser());
+		games.findInBackground(new FindCallback<ParseObject>() {
+
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					Log.v(LOG_TAG, "retreived " + objects.size()
+							+ " games created by current user");
+					Set<Game> results = new HashSet<Game>();
+					for (ParseObject game : objects) {
+						Game g = Translator.parseGameToAppGame(game);
+						Log.v(LOG_TAG, "game with id: " + g.id);
+						results.add(g);
+					}
+					LoginActivity.user.mCreatedGames = results;
+				} else {
+					Log.e(LOG_TAG, "unable to retreive games created by user");
+				}
+			}
+		});
+	}
+	
+	public static void setGamesAttending() {
+		ParseQuery<>
+	}
+	
 	/**
 	 * Gets a List of games that have been created by the user.
 	 * 
@@ -396,9 +429,12 @@ public final class GameHandler {
 			Log.e(LOG_TAG, "Failed to get user");
 			return null;
 		}
+		/*
 		@SuppressWarnings("unchecked")
 		ArrayList<String> parseGames = (ArrayList<String>) currentUser.get(DbColumns.USER_GAMES_CREATED);
 		return parseGameListToApp(parseGames);
+		*/
+		return null;
 	}
 	
 	/**

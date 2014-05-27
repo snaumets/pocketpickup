@@ -40,7 +40,7 @@ public class CreateGameAsCreatorCallback extends SaveCallbackWithArgs {
 				}
 				else {
 					currentUser.add(DbColumns.USER_GAMES_ATTENDING, createdGame.getObjectId());
-					currentUser.add(DbColumns.USER_GAMES_CREATED, createdGame.getObjectId());
+					//currentUser.add(DbColumns.USER_GAMES_CREATED, createdGame.getObjectId());
 				try {
 					currentUser.save();
 				} catch (ParseException updateUserFail) {

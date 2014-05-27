@@ -58,9 +58,9 @@ public class User {
 		this.mEmail = email;
 		this.mAge = age;
 		this.mGender = gender;
-		this.mPreferredSports = new HashSet<String>();
-		this.mAttendingGames = new HashSet<Game>();
-		this.mCreatedGames = new HashSet<Game>();
+		this.mPreferredSports = null;
+		this.mAttendingGames = null;
+		this.mCreatedGames = null; 
 	}
 	
 	// TODO: possibly make the two game sets private, add appropriate getters and setters,

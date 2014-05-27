@@ -31,7 +31,8 @@ public class DbColumns {
 	public static final String GAME_CREATOR = "creator";
 	public static final String GAME_SPORT = "sport";
 	public static final String GAME_LOCATION = "location";
-	public static final String GAME_PLAYERS = "players";
+	//public static final String GAME_PLAYERS = "players";
+	public static final String GAME_ATTENDEES = "attendees";
 	public static final String GAME_IDEAL_SIZE = "idealGameSize";
 	public static final String GAME_START_DATE = "startDate";
 	public static final String GAME_END_DATE = "endDate";
@@ -43,7 +44,7 @@ public class DbColumns {
 	public static final String USER_BIRTHDAY = "birthday";
 	public static final String USER_SPORT_PREFERENCES = "sportPreferences";
 	public static final String USER_GAMES_ATTENDING = "gamesAttending";
-	public static final String USER_GAMES_CREATED = "gamesCreated";
+	//public static final String USER_GAMES_CREATED = "gamesCreated";
 	
 	// column names of the Sport class
 	public static final String SPORT_NAME = "name";
