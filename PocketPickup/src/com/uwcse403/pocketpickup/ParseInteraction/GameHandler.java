@@ -60,6 +60,7 @@ public final class GameHandler {
 	public static void createGame(Game g, SaveCallback cb) {
 		Log.v(LOG_TAG, "entering CreateGame(Game, SaveCallback)");
 		ParseObject game = Translator.appGameToNewParseGame(g);
+		game.put(DbColumns.GAME_IS_VALID, true);
 		if (cb != null) {
 			game.saveInBackground(cb);	
 		} else {
@@ -169,18 +170,36 @@ public final class GameHandler {
 	/** 
 	 * Removes the App game object g from the Parse database. 
 	 * only works if the current user created the game being deleted, but this only makes sense
-	 * because only the creator of a game should be allowed to delete it.
+	 * because only the creator of a game should be allowed to delete it. 
+	 * Also deletes the associated Attends relations. 
 	 * @param g - target game to be deleted
 	 */
 	public static void removeGame(Game g) {
 		ParseObject game = getGameCreatedByCurrentUser(g);
-		try {
-			game.delete();
-			Log.v(LOG_TAG, "deleted game");
-		} catch (ParseException e) {
-			Log.e(LOG_TAG, "failed to delete a target game in removeGame()");
-			e.printStackTrace();
-		}
+		// now mark the game as invalid
+				game.put(DbColumns.GAME_IS_VALID, false);
+				Log.v(LOG_TAG, "marked game as invalid");
+				game.saveInBackground();
+
+		// set the attends relation to invalid. There should be just one
+		ParseQuery<ParseObject> attendsQuery = ParseQuery.getQuery("Attends");
+		attendsQuery.whereEqualTo(DbColumns.ATTENDS_GAME, game);
+		attendsQuery.findInBackground(new FindCallback<ParseObject>() {
+
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				int numAttendsRelations = objects.size();
+				if (numAttendsRelations != 1) {
+					Log.w(LOG_TAG, "expected exactly one Attends relation to mark as invalid but found " + numAttendsRelations);
+				}
+				for (int i = 0; i < objects.size(); i++) {
+					ParseObject toMarkInvalid = objects.get(i);
+					Log.v(LOG_TAG, "marking invalid the Attends relationship with objectId: " + toMarkInvalid.getObjectId());
+					toMarkInvalid.put(DbColumns.ATTENDS_IS_VALID, false);
+					toMarkInvalid.saveInBackground();
+				}
+			}
+		});
 	}
 
 	/**
@@ -221,7 +240,8 @@ public final class GameHandler {
 			query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
 			query.whereLessThan(DbColumns.GAME_END_DATE, criteria.mEndDate + criteria.mEndTime);
 		}
-
+		// only look for valid games
+		query.whereEqualTo(DbColumns.GAME_IS_VALID, true);
 		List<ParseObject> results = null;
 		try {
 			results = query.find();
@@ -271,13 +291,17 @@ public final class GameHandler {
 		}
 		return null;
 	}
-	
+	/**
+	 * 
+	 * @param g the game to join. Must be the game that the current user just created
+	 */
 	public static void joinGameJustCreatedByCurrentUser(Game g) {
 		ParseObject game = getGameCreatedByCurrentUser(g);
 		ParseObject attends = new ParseObject("Attends");
 		attends.put(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
 		attends.put(DbColumns.ATTENDS_GAME, game);
 		attends.put(DbColumns.ATTENDS_JOINED_AT, System.currentTimeMillis());
+		attends.put(DbColumns.ATTENDS_IS_VALID, true);
 		attends.saveInBackground();
 	}
 	
@@ -311,6 +335,7 @@ public final class GameHandler {
 			attends.put(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
 			attends.put(DbColumns.ATTENDS_GAME, game);
 			attends.put(DbColumns.ATTENDS_JOINED_AT, System.currentTimeMillis());
+			attends.put(DbColumns.ATTENDS_IS_VALID, true);
 			try {
 				game.save();
 				return JoinGameResult.SUCCESS;
@@ -320,8 +345,17 @@ public final class GameHandler {
 				return JoinGameResult.ERROR_JOINING;
 			}
 		} else if (results.size() == 1) {
-			// already attending this game
-			return JoinGameResult.ALREADY_ATTENDING;
+			// there are two cases here: they once were joining but they left, or they have already
+			// joined the game
+			ParseObject attends = results.get(0);
+			boolean alreadyJoined = attends.getBoolean(DbColumns.ATTENDS_IS_VALID);
+			if (alreadyJoined) {
+				return JoinGameResult.ALREADY_ATTENDING;
+			} else {
+				// set the flag to true to show they are attending now
+				attends.put(DbColumns.ATTENDS_IS_VALID, true);
+				return JoinGameResult.SUCCESS;
+			}
 		} else {
 			// database is in an inconsistent state
 			Log.e(LOG_TAG, "database inconsistency: user is joined this game " + results.size() + " times.");
@@ -379,6 +413,7 @@ public final class GameHandler {
 		if (game != null) {
 			ParseQuery<ParseObject> attendeesQuery = ParseQuery.getQuery("Attends"); 
 			attendeesQuery.whereEqualTo(DbColumns.ATTENDS_GAME, game);
+			attendeesQuery.whereEqualTo(DbColumns.ATTENDS_IS_VALID, true);
 			try {
 				int count = attendeesQuery.count();
 				Log.v(LOG_TAG, "number of attendees for game with id " + g.id + ": " + count);
@@ -399,6 +434,7 @@ public final class GameHandler {
 	public static ArrayList<Game> getGamesCreatedByCurrentUser() {
 		ParseQuery<ParseObject> gamesCreatedQuery = ParseQuery.getQuery("Game");
 		gamesCreatedQuery.whereEqualTo(DbColumns.GAME_CREATOR, ParseUser.getCurrentUser());
+		gamesCreatedQuery.whereEqualTo(DbColumns.GAME_IS_VALID, true);
 		List<ParseObject> results = null;
 		try {
 			results = gamesCreatedQuery.find();
@@ -425,6 +461,7 @@ public final class GameHandler {
 		ParseQuery<ParseObject> gamesAttendingQuery = ParseQuery.getQuery("Attends");
 		gamesAttendingQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
 		gamesAttendingQuery.include(DbColumns.ATTENDS_GAME);
+		gamesAttendingQuery.whereEqualTo(DbColumns.ATTENDS_IS_VALID, true);
 		try {
 			List<ParseObject> results = gamesAttendingQuery.find();
 			ArrayList<Game> games = new ArrayList<Game>();
@@ -432,6 +469,10 @@ public final class GameHandler {
 				ParseObject parseGame = attends.getParseObject(DbColumns.ATTENDS_GAME);
 				if (parseGame != null) {
 					games.add(Translator.parseGameToAppGame(parseGame));
+				} else {
+					// this means there is an inconsistency in the database
+					Log.w(LOG_TAG, "An Attends relation refers to a nonexistent Game object." +
+								" Attends relation objectId: " + attends.getObjectId());
 				}
 			}
 			return games;
@@ -446,6 +487,7 @@ public final class GameHandler {
 	 * @param pgames
 	 * @return list of corresponding Games
 	 */
+	/*
 	public static ArrayList<Game> parseGameListToApp(ArrayList<String> pgames) {
 		ArrayList<Game> games = new ArrayList<Game>();
 		if (pgames == null) return games;
@@ -459,5 +501,6 @@ public final class GameHandler {
 		}
 		return games;
 	}
+	*/
 }
 

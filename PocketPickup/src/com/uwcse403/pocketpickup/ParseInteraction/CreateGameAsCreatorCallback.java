@@ -39,7 +39,7 @@ public class CreateGameAsCreatorCallback extends SaveCallbackWithArgs {
 					Log.e(LOG_TAG, "Did not find created game in database");
 				}
 				else {
-					currentUser.add(DbColumns.USER_GAMES_ATTENDING, createdGame.getObjectId());
+					//currentUser.add(DbColumns.USER_GAMES_ATTENDING, createdGame.getObjectId());
 					//currentUser.add(DbColumns.USER_GAMES_CREATED, createdGame.getObjectId());
 				try {
 					currentUser.save();

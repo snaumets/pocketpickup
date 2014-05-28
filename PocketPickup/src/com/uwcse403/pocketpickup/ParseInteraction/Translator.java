@@ -1,10 +1,14 @@
 package com.uwcse403.pocketpickup.ParseInteraction;
 
+import java.util.List;
+
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.game.Game;
@@ -12,7 +16,6 @@ import com.uwcse403.pocketpickup.game.Game;
  * Translates between PocketPickup Game objects (for use communicating 
  * between activities in the app) and ParseObject Game objects to be
  * stored in the database.
- * @author imathieu
  *
  */
 public final class Translator {
@@ -81,10 +84,28 @@ public final class Translator {
 	/**
 	 * @param app Game object that corresponds to a ParseObject Game object that is currently in
 	 * the database. This method is used for UPDATING EXISTING GAMES.
-	 * @return the ParseObject Game object from the database.
+	 * @requires Game object have a valid id field
+	 * @return the ParseObject Game object from the database if found, else returns null.
 	 */
 	public static ParseObject appGameToExistingParseGame(Game game) {
-		return null;	
-		
+		if (game.id == null) {
+			throw new IllegalArgumentException("Game object must have non-null id field");
+		}
+		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
+		gameQuery.whereEqualTo(LOG_TAG, game.id);
+		List<ParseObject> result = null;
+		try {
+			result = gameQuery.find();
+		} catch (ParseException e) {
+			e.printStackTrace();
+			Log.e(LOG_TAG, e.getMessage());
+			return null;
+		}
+		if (result.size() == 1) {
+			return result.get(0);
+		} else {
+			Log.e(LOG_TAG, "expected to find exactly one game but found " + result.size());
+			return null;
+		}
 	}
 }

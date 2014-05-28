@@ -13,10 +13,6 @@ package com.uwcse403.pocketpickup.ParseInteraction;
  */
 public class DbColumns {
 	
-	private DbColumns() { 
-		// You ain't constructin' shit.
-	}
-	
 	// table names
 	public static final String USER = "_USER";
 	public static final String GAME = "Game";
@@ -37,6 +33,7 @@ public class DbColumns {
 	public static final String GAME_START_DATE = "startDate";
 	public static final String GAME_END_DATE = "endDate";
 	public static final String GAME_DETAILS = "details";
+	public static final String GAME_IS_VALID = "isValid";
 
 	
 	// column names of the User class
@@ -53,5 +50,6 @@ public class DbColumns {
 	public static final String ATTENDS_ATTENDEE = "attendee";
 	public static final String ATTENDS_GAME = "game";
 	public static final String ATTENDS_JOINED_AT = "joinedAt";
+	public static final String ATTENDS_IS_VALID = "isValid";
 
 }
