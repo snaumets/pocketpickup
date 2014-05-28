@@ -92,7 +92,7 @@ public final class Translator {
 			throw new IllegalArgumentException("Game object must have non-null id field");
 		}
 		ParseQuery<ParseObject> gameQuery = ParseQuery.getQuery("Game");
-		gameQuery.whereEqualTo(LOG_TAG, game.id);
+		gameQuery.whereEqualTo("objectId", game.id);
 		List<ParseObject> result = null;
 		try {
 			result = gameQuery.find();
