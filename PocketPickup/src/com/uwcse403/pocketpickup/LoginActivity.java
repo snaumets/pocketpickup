@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -132,24 +133,13 @@ public class LoginActivity extends Activity {
 			    	String firstName = user.getFirstName();
 			    	String lastName = user.getLastName();
 			    	String email = ""; // when email permissions added :user.getInnerJSONObject().getString("email");
-			    	int age = -1; // default value for now, but "age_range" field should be suffiecient; need public_profile permissions
+			    	int age = -1; // default value for now, but "age_range" field should be sufficient; need public_profile permissions
 			    	String gender = "";
 			    	LoginActivity.user = new User(firstName, lastName, email, age, gender);
-			    	// TODO: call methods from GameHandler to fill sets inside of user
-			    	// (preferredSports)
-			    	/*
-			    	ArrayList<Game> createdGames = GameHandler.getGamesCreated();
-			    	LoginActivity.user.mCreatedGames.addAll(createdGames);
-			    	Log.v("LoginActivity", "Number games created by user: " + createdGames.size());
-			    	*/
-			    	GameHandler.setGamesCreatedBy();
-			    	
-			    	ArrayList<Game> attendingGames = GameHandler.getGamesAttending();
-			    	// temporary
-			    	LoginActivity.user.mAttendingGames = new HashSet<Game>();
-			    	LoginActivity.user.mAttendingGames.addAll(attendingGames);
-			    	Log.v("LoginActivity", "Number games user attending: " + attendingGames.size());
-
+			    	// Initialize the user's created games and attending games sets so they can be
+			    	// used and maintained on the device, so we dont have to reach out to database
+			    	// every time we need to know about user's games state
+			    	new InitUserSetsTask().execute(); // "" because we dont need any args
 			    	Log.d("LoginActivity", "facebookName: " + user.getName());
 			    	Toast.makeText(getApplicationContext(), "Welcome, " + firstName + "!", Toast.LENGTH_LONG).show();
 			    }
@@ -160,5 +150,36 @@ public class LoginActivity extends Activity {
 	private void showMainActivity() {
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
+	}
+	
+	// This task will initialize the user's create and attending games sets
+	private class InitUserSetsTask extends AsyncTask<String, Integer, String> {
+		@Override
+		protected String doInBackground(String... arg0) {
+			ArrayList<Game> createdGames = GameHandler.getGamesCreatedByCurrentUser();
+			if (createdGames != null) {
+				LoginActivity.user.initCreatedGames();
+				LoginActivity.user.mCreatedGames.addAll(createdGames);
+			}
+	    	Log.v("LoginActivity", "Number games created by user: " + (createdGames != null ? createdGames.size() : 0));
+
+	    	ArrayList<Game> attendingGames = GameHandler.getGamesCurrentUserIsAttending();
+	    	if (attendingGames != null) {
+	    		LoginActivity.user.initAttendingGames();
+	    		LoginActivity.user.mAttendingGames.addAll(attendingGames);
+	    	}
+	    	Log.v("LoginActivity", "Number games user attending: " + (attendingGames != null ? attendingGames.size() : 0));
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+		}
 	}
 }

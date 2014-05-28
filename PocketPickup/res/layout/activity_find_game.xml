@@ -12,7 +12,8 @@
     android:layout_gravity="top"
     android:orientation="vertical"
     tools:context=".FindGameActivity"
-    tools:ignore="MergeRootFrame" >
+    tools:ignore="MergeRootFrame" 
+    android:background="@color/green_theme">
     
     <TextView
         android:id="@+id/textViewLocation"
@@ -49,19 +50,19 @@
         android:orientation="horizontal" >
     
 	    <Button
-	        android:id="@+id/start_time_button"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:onClick="showTimePickerDialog"
-	        android:text="@string/select_time" 
-	        android:layout_weight="1"/>
-	
-	    <Button
 	        android:id="@+id/start_date_button"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:onClick="showDatePickerDialog"
 	        android:text="@string/select_date" 
+	        android:layout_weight="1"/>
+	    
+	    <Button
+	        android:id="@+id/start_time_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:onClick="showTimePickerDialog"
+	        android:text="@string/select_time" 
 	        android:layout_weight="1"/>
 	</LinearLayout>
 
@@ -79,19 +80,19 @@
         android:layout_gravity="top"
         android:orientation="horizontal" >
 	    <Button
-	        android:id="@+id/end_time_button"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:onClick="showTimePickerDialog"
-	        android:text="@string/select_time" 
-	        android:layout_weight="1"/>
-	
-	    <Button
 	        android:id="@+id/end_date_button"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:onClick="showDatePickerDialog"
 	        android:text="@string/select_date"
+	        android:layout_weight="1"/>
+	    
+	    <Button
+	        android:id="@+id/end_time_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:onClick="showTimePickerDialog"
+	        android:text="@string/select_time" 
 	        android:layout_weight="1"/>
 	</LinearLayout>
 

@@ -570,10 +570,15 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			mDisplayedGames.addAll(joinedGames);
 			onGameDisplayUpdate();
 			zoomToShowAllMarkers(mMapMarkers);
-		} else {
+		} else if (joinedGames == null) { // not finished initializing from database
+			Toast.makeText(this, "Loading, Try Again Shortly", Toast.LENGTH_LONG).show();
+		} else { // no games to show
 			Toast.makeText(this, "No Joined Games", Toast.LENGTH_LONG).show();
 		}
-		showClearButton();
+		
+		if (mMapMarkers.size() > 0) {
+			showClearButton();
+		}
 	}
 	
 	// This method will display the user's created games on the map
@@ -590,10 +595,15 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			mDisplayedGames.addAll(createdGames);
 			onGameDisplayUpdate();
 			zoomToShowAllMarkers(mMapMarkers);
-		} else {
+		} else if (createdGames == null) { // not finished initializing from database
+			Toast.makeText(this, "Loading, Try Again Shortly", Toast.LENGTH_LONG).show();
+		} else { // no games to show
 			Toast.makeText(this, "No Created Games", Toast.LENGTH_LONG).show();	
 		}
-		showClearButton();
+		
+		if (mMapMarkers.size() > 0) {
+			showClearButton();
+		}
 	}
 	
 	// Simply starts a log in activity

@@ -2,6 +2,7 @@ package com.uwcse403.pocketpickup;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -234,6 +235,15 @@ public class CreateGameActivity extends Activity
 	}
 	
 	public void submitCreate(View v) {
+		// Validate the create time
+		Date date = new Date();
+		long nowTime = date.getTime();
+		if (mDate.getTimeInMillis() < nowTime) { // User tried to create a game back in time (expired)
+			Toast.makeText(this, "Can't Create Game Starting In The Past, Please Fix The Create Time", Toast.LENGTH_LONG).show();
+			return;
+		}
+		
+		// Create time validated, it is in the future
 		final Calendar end = Calendar.getInstance();
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
 		EditText details = (EditText) findViewById(R.id.cg_details);

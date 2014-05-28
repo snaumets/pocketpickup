@@ -1,9 +1,7 @@
 package com.uwcse403.pocketpickup.ParseInteraction;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import android.util.Log;
 
@@ -16,7 +14,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.uwcse403.pocketpickup.JoinGameResult;
-import com.uwcse403.pocketpickup.LoginActivity;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
@@ -63,25 +60,17 @@ public final class GameHandler {
 	public static void createGame(Game g, SaveCallback cb) {
 		Log.v(LOG_TAG, "entering CreateGame(Game, SaveCallback)");
 		ParseObject game = Translator.appGameToNewParseGame(g);
-		ParseObject currentUser = ParseUser.getCurrentUser();
 		if (cb != null) {
 			game.saveInBackground(cb);	
 		} else {
 			try {
 				game.save();
-				joinGame(g, true);
+				joinGameJustCreatedByCurrentUser(g);
 			} catch (ParseException e) {
 				// Failed to save game with waiting
 				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode() + ": " + e.getMessage());
 				//Do not update User table if we failed to update the Games table
 				return;
-			}
-			try {
-				currentUser.add(DbColumns.USER_GAMES_ATTENDING, game.getObjectId());
-				//currentUser.add(DbColumns.USER_GAMES_CREATED, game.getObjectId());
-				currentUser.save();
-			} catch (ParseException e) {
-				Log.e(LOG_TAG, "error adding user created game to gamesAttending/Created");
 			}
 		}
 	}
@@ -283,6 +272,15 @@ public final class GameHandler {
 		return null;
 	}
 	
+	public static void joinGameJustCreatedByCurrentUser(Game g) {
+		ParseObject game = getGameCreatedByCurrentUser(g);
+		ParseObject attends = new ParseObject("Attends");
+		attends.put(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
+		attends.put(DbColumns.ATTENDS_GAME, game);
+		attends.put(DbColumns.ATTENDS_JOINED_AT, System.currentTimeMillis());
+		attends.saveInBackground();
+	}
+	
 	/**
 	 * Adds the current user to a game. 
 	 * @param g the Game to join
@@ -290,51 +288,47 @@ public final class GameHandler {
 	 */
 	public static JoinGameResult joinGame(Game g, boolean isCurrentUser) {
 		ParseObject game = null;
-		String currentUserObjectId = ParseUser.getCurrentUser().getObjectId();
 		if (isCurrentUser) {
 			game = getGameCreatedByCurrentUser(g);
 		} else {
 			game = getGameUsingId(g); 
 		}
-		@SuppressWarnings("unchecked")
-		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
-		boolean addToAttendees = true;
-		if (players == null) {
-			game.add(DbColumns.GAME_PLAYERS, currentUserObjectId);
+		// first check to see if they are already attending this game
+		ParseQuery<ParseObject> alreadyAttendingCheck = ParseQuery.getQuery("Attends");
+		alreadyAttendingCheck.whereEqualTo(DbColumns.ATTENDS_GAME, game);
+		alreadyAttendingCheck.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
+		List<ParseObject> results = null;
+		try {
+			results = alreadyAttendingCheck.find();
+		} catch (ParseException e1) {
+			// could not check to see if user has already joined
+			e1.printStackTrace();
+			return JoinGameResult.ERROR_JOINING;
+		}
+		if (results.size() == 0) {
+			// not attending this game yet, so add the user
+			ParseObject attends = new ParseObject("Attends");
+			attends.put(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
+			attends.put(DbColumns.ATTENDS_GAME, game);
+			attends.put(DbColumns.ATTENDS_JOINED_AT, System.currentTimeMillis());
+			try {
+				game.save();
+				return JoinGameResult.SUCCESS;
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return JoinGameResult.ERROR_JOINING;
+			}
+		} else if (results.size() == 1) {
+			// already attending this game
+			return JoinGameResult.ALREADY_ATTENDING;
 		} else {
-			// first check to make sure the user is not already an attendee
-			for (int i = 0; i < players.size(); i++) {
-				if (players.get(i).equals(currentUserObjectId)) {
-					addToAttendees = false;
-					break;
-				}
-			}
-			if (addToAttendees) {
-				players.add(currentUserObjectId);
-			}
+			// database is in an inconsistent state
+			Log.e(LOG_TAG, "database inconsistency: user is joined this game " + results.size() + " times.");
+			return JoinGameResult.ALREADY_ATTENDING;
 		}
-		try {
-			game.save();
-		} catch (ParseException e) {
-			e.printStackTrace();
-			Log.e(LOG_TAG, "Failed to join game");
-			return JoinGameResult.ERROR_JOINING;
-		}
-		ParseObject currentUser = ParseUser.getCurrentUser();
-		try {
-			currentUser.add(DbColumns.USER_GAMES_ATTENDING, game.getObjectId());
-			currentUser.save();
-		} catch (ParseException e) {
-			e.printStackTrace();
-			Log.e(LOG_TAG, "Failed to update join");
-			return JoinGameResult.ERROR_JOINING;
-		}
-		if (addToAttendees) {
-			return JoinGameResult.SUCCESS;
-		}
-		return JoinGameResult.ALREADY_ATTENDING;
 	}
-	
+
 	/**
 	 * Removes the current user from the game.
 	 * @param g the Game that the current user intends to leave
@@ -342,25 +336,32 @@ public final class GameHandler {
 	 * the game to begin with. Returns false if there was an error 
 	 */
 	public static boolean leaveGame(Game g) {
-		ParseObject game = null;
-		if (g.id == null) {
-			game = getGameCreatedByCurrentUser(g); 
-		} else {
-			game = getGameUsingId(g);
-		}
-		@SuppressWarnings("unchecked")
-		ArrayList<String> players = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
-		if (players != null) {
-			players.remove(ParseUser.getCurrentUser().getObjectId());
-		}
-		try {
-			game.save();
-		} catch (ParseException e) {
-			Log.e(LOG_TAG, "Failed to leave game");
-			e.printStackTrace();
-			return false;
-		}
-		return true;	
+		// just delete the Attends object
+		ParseQuery<ParseObject> gameToLeaveQuery = ParseQuery.getQuery("Attends");
+		gameToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
+		ParseObject gameToLeave = Translator.appGameToExistingParseGame(g);
+		gameToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_GAME, gameToLeave);
+		gameToLeaveQuery.findInBackground(new FindCallback<ParseObject>() {
+
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					int numResults = objects.size();
+					if (numResults == 1) {
+						ParseObject game = objects.get(0);
+						game.deleteInBackground();
+					} else {
+						Log.e(LOG_TAG, "expected exactly 1 result but got: " + numResults);
+					}
+				} else {
+					// error
+					e.printStackTrace();
+					Log.e(LOG_TAG, e.getMessage());
+				}
+			}
+		});
+		// bad bad bad
+		return true;
 	}
 	/**
 	 * Returns the number of players for a game
@@ -376,42 +377,17 @@ public final class GameHandler {
 		}
 		ParseObject game = getGameUsingId(g);
 		if (game != null) {
-			@SuppressWarnings("unchecked")
-			ArrayList<String> members = (ArrayList<String>) game.get(DbColumns.GAME_PLAYERS);
-			if (members == null) {
-				return 0;
+			ParseQuery<ParseObject> attendeesQuery = ParseQuery.getQuery("Attends"); 
+			attendeesQuery.whereEqualTo(DbColumns.ATTENDS_GAME, game);
+			try {
+				int count = attendeesQuery.count();
+				Log.v(LOG_TAG, "number of attendees for game with id " + g.id + ": " + count);
+				return count;
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
-			return members.size();
 		}
 		return 0;
-	}
-	
-	public static void setGamesCreatedBy() {
-		ParseQuery<ParseObject> games = ParseQuery.getQuery("Game");
-		games.whereEqualTo(DbColumns.GAME_CREATOR, ParseUser.getCurrentUser());
-		games.findInBackground(new FindCallback<ParseObject>() {
-
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					Log.v(LOG_TAG, "retreived " + objects.size()
-							+ " games created by current user");
-					Set<Game> results = new HashSet<Game>();
-					for (ParseObject game : objects) {
-						Game g = Translator.parseGameToAppGame(game);
-						Log.v(LOG_TAG, "game with id: " + g.id);
-						results.add(g);
-					}
-					LoginActivity.user.mCreatedGames = results;
-				} else {
-					Log.e(LOG_TAG, "unable to retreive games created by user");
-				}
-			}
-		});
-	}
-	
-	public static void setGamesAttending() {
-		ParseQuery<>
 	}
 	
 	/**
@@ -420,56 +396,49 @@ public final class GameHandler {
 	 * @param userId - ID of the user to query
 	 * @return List of Game objects
 	 */
-	public static ArrayList<Game> getGamesCreatedBy(String userId) {
-		ParseQuery<ParseUser> users = ParseUser.getQuery();
-		ParseObject currentUser = null;
+	public static ArrayList<Game> getGamesCreatedByCurrentUser() {
+		ParseQuery<ParseObject> gamesCreatedQuery = ParseQuery.getQuery("Game");
+		gamesCreatedQuery.whereEqualTo(DbColumns.GAME_CREATOR, ParseUser.getCurrentUser());
+		List<ParseObject> results = null;
 		try {
-			currentUser = users.get(userId);
+			results = gamesCreatedQuery.find();
+			ArrayList<Game> games = new ArrayList<Game>();
+			for (ParseObject game : results) {
+				Game g = Translator.parseGameToAppGame(game);
+				Log.v(LOG_TAG, "game with id: " + g.id);
+				games.add(g);
+			}
+			return games;
 		} catch (ParseException e) {
-			Log.e(LOG_TAG, "Failed to get user");
+			// TODO Auto-generated catch block
+			Log.e(LOG_TAG, "unable to retreive games created by user");
+			e.printStackTrace();
 			return null;
 		}
-		/*
-		@SuppressWarnings("unchecked")
-		ArrayList<String> parseGames = (ArrayList<String>) currentUser.get(DbColumns.USER_GAMES_CREATED);
-		return parseGameListToApp(parseGames);
-		*/
-		return null;
 	}
-	
-	/**
-	 * Returns games created by current user.
-	 * @return List of game objects
-	 */
-	public static ArrayList<Game> getGamesCreated() {
-		return getGamesCreatedBy(ParseUser.getCurrentUser().getObjectId());
-	}
-	
-	/**
-	 * Returns games created by the user.
-	 * @param userId - The User to query
-	 * @return a list of games attending by the user
-	 */
-	public static ArrayList<Game> getGamesAttendingBy(String userId) {
-		ParseQuery<ParseUser> users = ParseUser.getQuery();
-		ParseObject currentUser = null;
-		try {
-			currentUser = users.get(userId);
-		} catch (ParseException e) {
-			Log.e(LOG_TAG, "Failed to get attending games");
-			return null;
-		}
-		@SuppressWarnings("unchecked")
-		ArrayList<String> parseGames = (ArrayList<String>) currentUser.get(DbColumns.USER_GAMES_ATTENDING);
-		return parseGameListToApp(parseGames);
-	}
-	
+
 	/**
 	 * Gets  list of game the user current user is attending.
 	 * @return List of game objects representing what the games is user attending
 	 */
-	public static ArrayList<Game> getGamesAttending() {
-		return getGamesAttendingBy(ParseUser.getCurrentUser().getObjectId());
+	public static ArrayList<Game> getGamesCurrentUserIsAttending() {
+		ParseQuery<ParseObject> gamesAttendingQuery = ParseQuery.getQuery("Attends");
+		gamesAttendingQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
+		gamesAttendingQuery.include(DbColumns.ATTENDS_GAME);
+		try {
+			List<ParseObject> results = gamesAttendingQuery.find();
+			ArrayList<Game> games = new ArrayList<Game>();
+			for (ParseObject attends : results) {
+				ParseObject parseGame = attends.getParseObject(DbColumns.ATTENDS_GAME);
+				if (parseGame != null) {
+					games.add(Translator.parseGameToAppGame(parseGame));
+				}
+			}
+			return games;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	/**

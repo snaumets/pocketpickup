@@ -12,7 +12,8 @@
 	    android:layout_gravity="top"
 	    android:orientation="vertical"
 	    tools:context=".GameActivity"
-	    tools:ignore="MergeRootFrame" >    
+	    tools:ignore="MergeRootFrame" 
+	    android:background="@color/green_theme">    
 	    
 	    <TextView
 	        android:id="@+id/gameSportTextView"
