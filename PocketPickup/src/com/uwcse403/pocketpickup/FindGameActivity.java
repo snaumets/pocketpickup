@@ -38,6 +38,8 @@ import com.uwcse403.pocketpickup.game.Game;
 public class FindGameActivity extends Activity
 							  implements DatePickerDialog.OnDateSetListener, 
 							   		     TimePickerDialog.OnTimeSetListener {
+	private static final long HOUR = 60 * 60 * 1000L;
+	
 	// Argument IDs
 	public static final String FINDGAME_LOCATION  = "findgame_location";
 	public static final String FINDGAME_LATITUDE  = "findgame_latitude";
@@ -88,8 +90,8 @@ public class FindGameActivity extends Activity
 		// Initialize radius choices
 		Spinner radiusSpinner = (Spinner) findViewById(R.id.radius_spinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.radius_choices, 
-				android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				R.drawable.spinner_center_item);
+		adapter.setDropDownViewResource(R.drawable.spinner_center_item);
 		radiusSpinner.setAdapter(adapter);
 		radiusSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -289,11 +291,12 @@ public class FindGameActivity extends Activity
 	public void submitSearch(View v) {
 		/* TODO: validate */
 		Date date = new Date();
-		long nowTime = date.getTime();
-		if (mStartDate.getTimeInMillis() < nowTime) { // User tried to create a game back in time (expired)
+		long hourBeforeNowTime = date.getTime() - HOUR;
+		// null check
+		/*if (mStartDate.getTimeInMillis() < hourBeforeNowTime) { // User tried to create a game back in time (expired)
 			Toast.makeText(this, "Can't Find Games More Than An Hour In The Past, Please Fix The Starting Time", Toast.LENGTH_LONG).show();
 			return;
-		}
+		}*/
 		
 		/* Create FindGameCriteria object and send */
 		long msInDay = 1000 * 60 * 60 * 24; // 1000 ms/s * (60 s/min) * (60 min/hour) * (24 hr/day)

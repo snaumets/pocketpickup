@@ -76,8 +76,8 @@ public class CreateGameActivity extends Activity
 		// Initialize sports choices
 		Spinner sportsSpinner = (Spinner) findViewById(R.id.cg_sports_spinner);
 		ArrayList<String> sports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
-		ArrayAdapter<String> sportsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sports);
-		sportsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		ArrayAdapter<String> sportsAdapter = new ArrayAdapter<String>(this, R.drawable.spinner_center_item, sports);
+		sportsAdapter.setDropDownViewResource(R.drawable.spinner_center_item);
 		sportsSpinner.setAdapter(sportsAdapter);
 		sportsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -97,8 +97,8 @@ public class CreateGameActivity extends Activity
 		// Initialize duration choices
 		Spinner durationSpinner = (Spinner) findViewById(R.id.cg_duration_spinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.duration_choices, 
-				android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				R.drawable.spinner_center_item);
+		adapter.setDropDownViewResource(R.drawable.spinner_center_item);
 		durationSpinner.setAdapter(adapter);
 		durationSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 

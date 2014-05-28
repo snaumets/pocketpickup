@@ -9,7 +9,7 @@
         android:id="@+id/frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" 
-        android:background="@color/green_theme">
+        android:background="@color/gray_theme">
         
         <LinearLayout
             android:id="@+id/container"
@@ -43,7 +43,7 @@
 		            android:cursorVisible="false"
 		            android:focusable="false"
 		            android:focusableInTouchMode="false"
-		            android:ems="12"
+		            android:textAppearance="?android:attr/textAppearanceLarge"
 		            android:onClick="setLocation"
  		            android:gravity="center_horizontal" 
         			android:inputType="textPostalAddress" > 

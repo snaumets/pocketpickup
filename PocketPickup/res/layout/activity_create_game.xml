@@ -13,7 +13,7 @@
 	    android:orientation="vertical"
 	    tools:context="com.uwcse403.pocketpickup.CreateGameActivity"
 	    tools:ignore="MergeRootFrame" 
-	    android:background="@color/green_theme">
+	    android:background="@color/gray_theme">
 	
 	    <TextView
 	        android:id="@+id/textViewLocation"
@@ -54,7 +54,7 @@
 		        android:id="@+id/cg_sports_spinner"
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
-		        android:gravity="left"
+		        android:gravity="center"
 		        android:layout_weight=".5"/>
 		    <View android:layout_height="0dp" 
 		        android:layout_width="0dp"
@@ -82,6 +82,7 @@
 		        android:layout_height="wrap_content"
 		        android:text="@string/create_select_date"
 		        android:onClick="showDatePickerDialog"
+		        android:background="@drawable/button_form"
 		        android:layout_weight="1" />
 		
 		    <Button
@@ -90,6 +91,7 @@
 		        android:layout_height="wrap_content"
 		        android:text="@string/create_select_time"
 		        android:onClick="showTimePickerDialog"
+		        android:background="@drawable/button_form"
 		        android:layout_weight="1" />	    
 		</LinearLayout>
 	
@@ -156,6 +158,7 @@
 	            android:layout_height="wrap_content"
 	            android:layout_weight="0.35"
 	            android:onClick="resetCreate"
+	            android:background="@drawable/button_form"
 	            android:text="@string/reset" />
 	    </LinearLayout>
 	

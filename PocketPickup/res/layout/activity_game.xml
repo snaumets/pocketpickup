@@ -13,7 +13,7 @@
 	    android:orientation="vertical"
 	    tools:context=".GameActivity"
 	    tools:ignore="MergeRootFrame" 
-	    android:background="@color/green_theme">    
+	    android:background="@color/gray_theme">    
 	    
 	    <TextView
 	        android:id="@+id/gameSportTextView"

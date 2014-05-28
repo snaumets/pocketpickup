@@ -13,7 +13,7 @@
 	    android:orientation="vertical"
 	    tools:context=".FindGameActivity"
 	    tools:ignore="MergeRootFrame" 
-	    android:background="@color/green_theme">
+	    android:background="@color/gray_theme">
 	    
 	    <TextView
 	        android:id="@+id/textViewLocation"
@@ -56,7 +56,8 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:onClick="showDatePickerDialog"
-		        android:text="@string/select_date" 
+		        android:text="@string/select_date"
+		        android:background="@drawable/button_form"
 		        android:layout_weight="1"/>
 		    
 		    <Button
@@ -64,7 +65,8 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:onClick="showTimePickerDialog"
-		        android:text="@string/select_time" 
+		        android:text="@string/select_time"
+		        android:background="@drawable/button_form"
 		        android:layout_weight="1"/>
 		</LinearLayout>
 	
@@ -88,6 +90,7 @@
 		        android:layout_height="wrap_content"
 		        android:onClick="showDatePickerDialog"
 		        android:text="@string/select_date"
+		        android:background="@drawable/button_form"
 		        android:layout_weight="1"/>
 		    
 		    <Button
@@ -95,7 +98,8 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:onClick="showTimePickerDialog"
-		        android:text="@string/select_time" 
+		        android:text="@string/select_time"
+		        android:background="@drawable/button_form"
 		        android:layout_weight="1"/>
 		</LinearLayout>
 	
@@ -116,17 +120,17 @@
 	    
 		    <Spinner
 		        android:id="@+id/radius_spinner"
-		        android:layout_width="wrap_content"
+		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
-		        android:layout_weight="1"/>
+		        android:layout_weight=".5"/>
 		    
 		    <TextView
 		        android:id="@+id/textViewRadiusMiles"
-		        android:layout_width="wrap_content"
+		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
 		        android:text="@string/select_radius_miles"
 		        android:textAppearance="?android:attr/textAppearanceMedium"
-		        android:layout_weight="1"/>
+		        android:layout_weight=".5"/>
 		</LinearLayout>
 	
 	    <TextView
@@ -150,6 +154,7 @@
 		        android:layout_height="wrap_content"
 		        android:onClick="showSportsPreferencesDialog"
 		        android:text="@string/all_sports"
+		        android:background="@drawable/button_form"
 		        android:layout_weight=".65"/>
 	
 		    <Button
@@ -158,6 +163,7 @@
 		        android:layout_height="wrap_content"
 		        android:onClick="resetSearchForms"
 		        android:text="@string/reset"
+		        android:background="@drawable/button_form"
 		        android:layout_weight=".35"/>
 		    
 		</LinearLayout>
