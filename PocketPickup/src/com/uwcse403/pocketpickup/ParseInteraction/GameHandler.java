@@ -353,6 +353,7 @@ public final class GameHandler {
 			} else {
 				// set the flag to true to show they are attending now
 				attends.put(DbColumns.ATTENDS_IS_VALID, true);
+				attends.saveInBackground();
 				return JoinGameResult.SUCCESS;
 			}
 		} else {
@@ -402,14 +403,15 @@ public final class GameHandler {
 				ParseObject attendsRelation = objects.get(0);
 				attendsRelation.put(DbColumns.ATTENDS_IS_VALID, false);
 				attendsRelation.saveInBackground();
+				return true;
 			} else {
 				Log.e(LOG_TAG, "expected exactly 1 result but got: " + numResults);
+				return false;
 			}
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
-		return true;
 	}
 	/**
 	 * Returns the number of players for a game
