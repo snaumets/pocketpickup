@@ -190,20 +190,20 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	}
 	
 	public void testGetGamesAttending() {
-		ArrayList<Game> myGames = GameHandler.getGamesAttendingBy(SAMPLE_USER);
+		ArrayList<Game> myGames = GameHandler.getGamesCurrentUserIsAttending();
 		assertTrue(myGames.size() > 0);
 		assertTrue(myGames.contains(SAMPLE_GAME));
 	}
 	
 	public void testGamesCreated() {
-		ArrayList<Game> myGames = GameHandler.getGamesCreatedBy(SAMPLE_USER);
+		ArrayList<Game> myGames = GameHandler.getGamesCreatedByCurrentUser();
 		assertTrue(myGames.size() > 0);
 		assertTrue(myGames.contains(SAMPLE_GAME));
 	}
 	
 	public void testGamesCreatedAreAlsoAttended() {
-		ArrayList<Game> myGames = GameHandler.getGamesCreatedBy(SAMPLE_USER);
-		ArrayList<Game> attendingGames = GameHandler.getGamesAttendingBy(SAMPLE_USER);
+		ArrayList<Game> myGames = GameHandler.getGamesCreatedByCurrentUser();
+		ArrayList<Game> attendingGames = GameHandler.getGamesCurrentUserIsAttending();
 		for(Game g : myGames) {
 			assertTrue(attendingGames.contains(g));
 		}
