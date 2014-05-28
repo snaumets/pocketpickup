@@ -370,10 +370,11 @@ public final class GameHandler {
 	 */
 	public static boolean leaveGame(Game g) {
 		// just delete the Attends object
-		ParseQuery<ParseObject> gameToLeaveQuery = ParseQuery.getQuery("Attends");
-		gameToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
+		ParseQuery<ParseObject> attendsRelationToLeaveQuery = ParseQuery.getQuery("Attends");
+		attendsRelationToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
 		ParseObject gameToLeave = Translator.appGameToExistingParseGame(g);
-		gameToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_GAME, gameToLeave);
+		attendsRelationToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_GAME, gameToLeave);
+		/*
 		gameToLeaveQuery.findInBackground(new FindCallback<ParseObject>() {
 
 			@Override
@@ -393,7 +394,21 @@ public final class GameHandler {
 				}
 			}
 		});
-		// bad bad bad
+		*/
+		try {
+			List<ParseObject> objects = attendsRelationToLeaveQuery.find();
+			int numResults = objects.size();
+			if (numResults == 1) {
+				ParseObject attendsRelation = objects.get(0);
+				attendsRelation.put(DbColumns.ATTENDS_IS_VALID, false);
+				attendsRelation.saveInBackground();
+			} else {
+				Log.e(LOG_TAG, "expected exactly 1 result but got: " + numResults);
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return true;
 	}
 	/**
