@@ -49,10 +49,9 @@ public final class GameHandler {
 	} 
 
 	/**
-	 * Adds a game 
+	 * Creates a game 
 	 * 
-	 * A game is added to the database; the User becomes a member, and User is registered as
-	 * having created and joined the game. 
+	 * A game is added to the database and User is registered as having created and joined the game. 
 	 * @param g - game to create
 	 * @param cb - function to complete after saving (null for thread blocking, non-blocking
 	 * otherwise)
@@ -426,7 +425,8 @@ public final class GameHandler {
 	}
 	
 	/**
-	 * Gets a List of games that have been created by the user.
+	 * Gets a List of valid games that have been created by the user. Valid means they are not
+	 * over yet. 
 	 * 
 	 * @param userId - ID of the user to query
 	 * @return List of Game objects
@@ -454,7 +454,7 @@ public final class GameHandler {
 	}
 
 	/**
-	 * Gets  list of game the user current user is attending.
+	 * Gets list of game the user current user is attending.
 	 * @return List of game objects representing what the games is user attending
 	 */
 	public static ArrayList<Game> getGamesCurrentUserIsAttending() {
