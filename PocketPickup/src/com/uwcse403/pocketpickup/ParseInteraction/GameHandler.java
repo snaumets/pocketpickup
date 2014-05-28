@@ -309,9 +309,9 @@ public final class GameHandler {
 	 * @param g the Game to join
 	 * @return true if the user was added to the game, false otherwise
 	 */
-	public static JoinGameResult joinGame(Game g, boolean isCurrentUser) {
+	public static JoinGameResult joinGame(Game g, boolean currentUserIsGameCreator) {
 		ParseObject game = null;
-		if (isCurrentUser) {
+		if (currentUserIsGameCreator) {
 			game = getGameCreatedByCurrentUser(g);
 		} else {
 			game = getGameUsingId(g); 
@@ -336,7 +336,7 @@ public final class GameHandler {
 			attends.put(DbColumns.ATTENDS_JOINED_AT, System.currentTimeMillis());
 			attends.put(DbColumns.ATTENDS_IS_VALID, true);
 			try {
-				game.save();
+				attends.save();
 				return JoinGameResult.SUCCESS;
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
