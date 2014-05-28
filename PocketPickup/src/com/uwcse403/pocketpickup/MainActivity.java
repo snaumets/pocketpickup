@@ -718,6 +718,15 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				onGameDisplayUpdate(0, null);
 				Toast.makeText(this, "Your game was created!", Toast.LENGTH_LONG).show();
 				showClearButton();
+				
+				// Ensure that the static sets have been initialized
+				if (LoginActivity.user.mCreatedGames == null) { // safety check
+					LoginActivity.user.initCreatedGames();
+				}
+				if (LoginActivity.user.mAttendingGames == null) { // safety check
+					LoginActivity.user.initAttendingGames();
+				}
+				
 				LoginActivity.user.mCreatedGames.add(mDisplayedGames.get(0)); // there will be only one game
 				LoginActivity.user.mAttendingGames.add(mDisplayedGames.get(0)); // there will be only one game
 			}

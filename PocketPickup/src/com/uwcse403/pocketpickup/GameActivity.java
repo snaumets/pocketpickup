@@ -87,7 +87,8 @@ public class GameActivity extends Activity {
 		if (!LoginActivity.user.mAttendingGames.contains(game)) { // user can join this game
 			Button joinButton = (Button) findViewById(R.id.gameJoinButton);
 			joinButton.setVisibility(View.VISIBLE);
-		} else if (LoginActivity.user.mCreatedGames.contains(game) && countAttendees == 1) { // delete game
+		} else if ((LoginActivity.user.mCreatedGames.contains(game) || LoginActivity.user.mAttendingGames.contains(game))
+				&& countAttendees == 1) { // delete game
 			Button deleteButton = (Button) findViewById(R.id.gameDeleteButton);
 			deleteButton.setVisibility(View.VISIBLE);
 		} else if (LoginActivity.user.mAttendingGames.contains(game) && countAttendees > 1) { // leave game
