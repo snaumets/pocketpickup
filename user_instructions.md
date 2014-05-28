@@ -1,3 +1,6 @@
+---
+title: Document Center
+---
 Installation Instructions (physical Android devices only):
     - Download (TODO: dead) the .apk file onto your computer
     - move the file to your Android device by copying the file onto a memory card or via a USB cable
