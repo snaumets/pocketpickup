@@ -168,18 +168,15 @@ public final class GameHandler {
 	
 	/** 
 	 * Removes the App game object g from the Parse database. 
-	 * only works if the current user created the game being deleted, but this only makes sense
-	 * because only the creator of a game should be allowed to delete it. 
 	 * Also deletes the associated Attends relations. 
 	 * @param g - target game to be deleted
 	 */
 	public static void removeGame(Game g) {
-		ParseObject game = getGameCreatedByCurrentUser(g);
-		// now mark the game as invalid
-				game.put(DbColumns.GAME_IS_VALID, false);
-				Log.v(LOG_TAG, "marked game as invalid");
-				game.saveInBackground();
-
+		ParseObject game = getGameUsingId(g); 
+		// mark the game as invalid
+		game.put(DbColumns.GAME_IS_VALID, false);
+		Log.v(LOG_TAG, "marked game as invalid");
+		game.saveInBackground();
 		// set the attends relation to invalid. There should be just one
 		ParseQuery<ParseObject> attendsQuery = ParseQuery.getQuery("Attends");
 		attendsQuery.whereEqualTo(DbColumns.ATTENDS_GAME, game);
@@ -339,7 +336,6 @@ public final class GameHandler {
 				attends.save();
 				return JoinGameResult.SUCCESS;
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return JoinGameResult.ERROR_JOINING;
 			}
