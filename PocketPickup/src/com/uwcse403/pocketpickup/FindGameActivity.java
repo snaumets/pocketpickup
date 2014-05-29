@@ -210,9 +210,8 @@ public class FindGameActivity extends Activity
 		mEndTime.set(Calendar.HOUR_OF_DAY, 23);
 		mEndTime.set(Calendar.MINUTE, 59);
 		
-		
-		Date date = new Date();
-		long nowDate = date.getTime() / MS_IN_DAY * MS_IN_DAY;
+		Calendar c = Calendar.getInstance();
+		long nowDate = c.getTimeInMillis();
 		mStartDate = initDate(nowDate);
 		mEndDate = null;
 	}
@@ -274,6 +273,8 @@ public class FindGameActivity extends Activity
 	    Calendar initDate = (v.getId() == R.id.start_date_button) ? mStartDate : mEndDate;
 	    if (initDate != null) {
 	    	args.putLong(DatePickerFragment.STATE_DATE_INIT, initDate.getTimeInMillis());
+	    	// The minimum will be set to the current day, and overwritten if necessary
+	    	args.putLong(DatePickerFragment.STATE_DATE_MIN, Calendar.getInstance().getTimeInMillis());
 	    }
 	    
 	    if (v.getId() == R.id.start_date_button && mEndDate != null) {
@@ -364,7 +365,7 @@ public class FindGameActivity extends Activity
 	}
 
 	public void setLocation(View v) {
-		Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
+		//Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
 	}
 	
 	@Override
