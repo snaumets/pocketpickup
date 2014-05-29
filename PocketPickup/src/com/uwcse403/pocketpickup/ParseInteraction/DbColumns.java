@@ -34,6 +34,8 @@ public class DbColumns {
 	public static final String GAME_END_DATE = "endDate";
 	public static final String GAME_DETAILS = "details";
 	public static final String GAME_IS_VALID = "isValid";
+	public static final String GAME_START_TIME = "startTime";
+	public static final String GAME_END_TIME = "endTime";
 
 	
 	// column names of the User class

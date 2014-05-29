@@ -227,15 +227,24 @@ public final class GameHandler {
 		// limit to games within the specified radius
 		query.whereWithinMiles(DbColumns.GAME_LOCATION, center, criteria.mRadius);
 		// limit games to those that fall within the times entered
-		// if the user did not specify any date/time constraints, show all games
-		// that will be happening in the future
+		// there are two cases: one when the end date IS specified and one where the
+		// end date IS NOT specified
+		if (criteria.mEndDate == -1L) {
+			// this means we are looking for all games starting after 
+			query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
+			
+		} else {
+			
+		}
+		/*
 		if (criteria.mEndDate == 0 && criteria.mEndTime == 0) {
-			// TODO criteria validation
 			query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
 		} else {
 			query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
 			query.whereLessThan(DbColumns.GAME_END_DATE, criteria.mEndDate + criteria.mEndTime);
 		}
+		*/
+
 		// only look for valid games
 		query.whereEqualTo(DbColumns.GAME_IS_VALID, true);
 		List<ParseObject> results = null;

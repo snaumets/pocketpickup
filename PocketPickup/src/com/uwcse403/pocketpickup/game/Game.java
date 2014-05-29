@@ -36,6 +36,12 @@ public final class Game implements Parcelable {
 	/** Date and time for the end of the game. **/
 	public final Long mGameEndDate;
 	/** Type of game. **/
+	
+	// unix time in miliseconds mod the number of miliseconds in a day
+	public Long startTime = 0L;
+	// unix time in miliseconds mod the number of miliseconds in a day
+	public Long endTime = 0L;
+	
 	public final String mGameType;
 	/** Ideal game size. **/
 	public final int mIdealGameSize;
@@ -63,14 +69,29 @@ public final class Game implements Parcelable {
 		id = null;
 	}
 	
+	public Game(String creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
+			Long startTime, Long endTime, String gameType, int idealGameSize, String details) {
+		this.mCreator = creator;
+		this.mGameLocation = gameLocation;
+		this.mGameStartDate = gameStartDate;
+		this.mGameEndDate = gameEndDate;
+		this.mGameType = gameType;
+		this.mIdealGameSize = idealGameSize;
+		this.mDetails = details;
+		id = null;
+		this.startTime = startTime;
+		this.endTime = endTime;
+	}
+	
 	/**
 	 * Default constructor for returning a game that represents a game that is already in the
 	 * database. Should be used when returning game objects from a query. 
 	 * 
 	 * @requires no arguments are null
 	 */
-	public Game(String creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
-			String gameType, int idealGameSize, String details, String objectId) {
+	public Game(String creator, LatLng gameLocation, Long gameStartDate,
+			Long gameEndDate, String gameType, int idealGameSize,
+			String details, String objectId) {
 		this.mCreator = creator;
 		this.mGameLocation = gameLocation;
 		this.mGameStartDate = gameStartDate;
@@ -81,6 +102,26 @@ public final class Game implements Parcelable {
 		id = objectId;
 	}
 	
+	/**
+	 * Default constructor for returning a game that represents a game that is already in the
+	 * database. Should be used when returning game objects from a query. 
+	 * 
+	 * @requires no arguments are null
+	 */
+	public Game(String creator, LatLng gameLocation, Long gameStartDate,
+			Long gameEndDate, Long startTime, Long endTime, String gameType,
+			int idealGameSize, String details, String objectId) {
+		this.mCreator = creator;
+		this.mGameLocation = gameLocation;
+		this.mGameStartDate = gameStartDate;
+		this.mGameEndDate = gameEndDate;
+		this.mGameType = gameType;
+		this.mIdealGameSize = idealGameSize;
+		this.mDetails = details;
+		id = objectId;
+		this.startTime = startTime;
+		this.endTime = endTime;
+	}
 	
 	/**
 	 * Creates a game with only an idealSie field.
@@ -131,6 +172,9 @@ public final class Game implements Parcelable {
 		mGameType = in.readString();
 		mDetails = in.readString();
 		id = in.readString();
+		
+		startTime = in.readLong();
+		endTime = in.readLong();
 	}
 
 	@Override
@@ -150,6 +194,8 @@ public final class Game implements Parcelable {
 		out.writeString(mGameType);
 		out.writeString(mDetails);
 		out.writeString(id);
+		out.writeLong(startTime);
+		out.writeLong(endTime);
 	}
 
 	@Override

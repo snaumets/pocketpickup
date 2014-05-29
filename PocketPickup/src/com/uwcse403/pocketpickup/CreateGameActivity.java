@@ -46,6 +46,7 @@ public class CreateGameActivity extends Activity
 	
 	private static final long FIVE_MIN = 5 * 60 * 1000L;
 	private static final long HOUR = 60 * 60 * 1000L;
+	private static final long MILLIS_IN_DAY = 60 * 60 *24 * 1000L;
 
 	// Bundle IDs for persistent button names
 	private static final String STATE_GAME_TIME = "cg_time";
@@ -244,13 +245,44 @@ public class CreateGameActivity extends Activity
 		}
 		
 		// Create time validated, it is in the future
+		/*
 		final Calendar end = Calendar.getInstance();
 		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
 		EditText details = (EditText) findViewById(R.id.cg_details);
 		String detailsText = details.getText().toString();
 		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), 
 				mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), 
-				mSport, 2 /* TODO: default game size */, detailsText);
+				mSport, 2, detailsText);
+				*/
+		long startDateAndTime = mDate.getTimeInMillis();
+
+		// the time of day in milliseconds from midnight
+		long startTime = startDateAndTime % MILLIS_IN_DAY; 
+		
+		// in case the game goes into the next day, mod by the number of milliseconds
+		// in one day
+		long endTime = (startTime + mDuration * HOUR) % MILLIS_IN_DAY;
+
+		// the date represented as unix time milliseconds from 1970 to 12:00AM
+		// on the selected start date
+		long startDate = startDateAndTime  - startTime; 
+		long endDate;
+		// if the game spans two days, set the end date to the next day.
+		// The only time this happens is if the previous calculations show that
+		// the endTime is less than the startTime.
+		//if ( startTime + (mDuration * HOUR) > MILLIS_IN_DAY) {
+		if (endTime < startTime) {
+			endDate = startDate + MILLIS_IN_DAY;
+		} else {
+			endDate = startDate;
+		}
+		
+		EditText details = (EditText) findViewById(R.id.cg_details);
+		String detailsText = details.getText().toString();
+		
+		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), 
+				mLatLng, startDate, endDate, startTime, endTime, 
+				mSport, 2, detailsText);
 		final ArrayList<Game> games = new ArrayList<Game>(); // will store only created game
 		games.add(createGame);
 		
