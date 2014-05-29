@@ -80,8 +80,8 @@ public class GameActivity extends Activity {
 		
 		TextView attendees = (TextView) findViewById(R.id.gameAttendeesTextView);
 		int countAttendees = GameHandler.getCurrentNumberOfGameAttendees(game);
-		String attendeesUnit = countAttendees == 1 ? " User" : " Users"; 
-		attendees.setText(countAttendees + attendeesUnit + " Joined This Game");
+		String attendeesUnit = countAttendees == 1 ? " user" : " users"; 
+		attendees.setText(countAttendees + attendeesUnit + " joined this game");
 		
 		// Show the correct button
 		if (!LoginActivity.user.mAttendingGames.contains(game)) { // user can join this game
