@@ -324,10 +324,9 @@ public class FindGameActivity extends Activity
 		*/
 		long startDate = mStartDate != null ? mStartDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : 0;
 		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : -1; // -1 means unset
-		long startTime = mStartTime != null ? mStartTime.getTime().getHours() * HOUR + mStartTime.getTime().getMinutes() * 60 * 1000: 0;
-		long endTime = mEndTime != null ? mEndTime.getTime().getHours() * HOUR + mEndTime.getTime().getMinutes() * 60 * 1000 : 0;	
+		long startTime = mStartTime != null ? (mStartTime.getTime().getHours())* HOUR + mStartTime.getTime().getMinutes() * 60 * 1000: 0;
+		long endTime = mEndTime != null ? (mEndTime.getTime().getHours()) * HOUR + mEndTime.getTime().getMinutes() * 60 * 1000 : 0;	
 		ArrayList<String> gameTypes = new ArrayList<String>();
-		
 		
 		// Add all of the sports that the user selected to search for.
 		// If the set is empty, then the user didnt use the dialog so

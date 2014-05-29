@@ -65,11 +65,14 @@ public class GameActivity extends Activity {
 		
 		TextView sport = (TextView) findViewById(R.id.gameSportTextView);
 		sport.setText(gameType);
-		
+		/*
 		Date startDate = new Date(gameStartDate);
 		SimpleDateFormat formatter = new SimpleDateFormat(
                 "hh:mm a EE, MMM d, yyyy", Locale.getDefault());
+
 		String dateString = formatter.format(startDate);
+		*/
+		String dateString = new Date(game.startTime + game.mGameStartDate).toLocaleString();
 		TextView start = (TextView) findViewById(R.id.gameStartTextView);
 		start.setText(dateString);
 		
