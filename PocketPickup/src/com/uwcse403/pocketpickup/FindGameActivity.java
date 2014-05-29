@@ -39,6 +39,7 @@ public class FindGameActivity extends Activity
 							  implements DatePickerDialog.OnDateSetListener, 
 							   		     TimePickerDialog.OnTimeSetListener {
 	private static final long HOUR = 60 * 60 * 1000L;
+	private static final long MS_IN_DAY = 1000 * 60 * 60 * 24; // 1000 ms/s * (60 s/min) * (60 min/hour) * (24 hr/day)
 	
 	// Argument IDs
 	public static final String FINDGAME_LOCATION  = "findgame_location";
@@ -84,6 +85,8 @@ public class FindGameActivity extends Activity
 			mEndTime = initDate(savedInstanceState.getLong(STATE_END_TIME));
 			mStartDate = initDate(savedInstanceState.getLong(STATE_START_DATE));
 			mEndDate = initDate(savedInstanceState.getLong(STATE_END_DATE));
+		} else {
+			setStartState();
 		}
 		setButtonLabels();
 		
@@ -169,7 +172,7 @@ public class FindGameActivity extends Activity
 	
 	private Calendar initDate(long time) {
 		Calendar c = Calendar.getInstance();
-		if (time != 0L) {
+		if (time != -1L) {
 			c.setTimeInMillis(time);
 		} else {
 			c = null;
@@ -187,7 +190,7 @@ public class FindGameActivity extends Activity
 			savedInstanceState.putLong(STATE_START_TIME, (mStartTime == null) ? 0L : mStartTime.getTimeInMillis());
 			savedInstanceState.putLong(STATE_END_TIME,   (mEndTime == null)   ? 0L : mEndTime.getTimeInMillis());
 			savedInstanceState.putLong(STATE_START_DATE, (mStartDate == null) ? 0L : mStartDate.getTimeInMillis());
-			savedInstanceState.putLong(STATE_END_DATE,   (mEndDate == null)   ? 0L : mEndDate.getTimeInMillis());
+			savedInstanceState.putLong(STATE_END_DATE,   (mEndDate == null)   ? -1L : mEndDate.getTimeInMillis());
 		}
 	}
 	
@@ -196,6 +199,22 @@ public class FindGameActivity extends Activity
 		((Button) findViewById(R.id.end_time_button)).setText(getTimeButtonString(mEndTime));
 		((Button) findViewById(R.id.start_date_button)).setText(getDateButtonString(mStartDate));
 		((Button) findViewById(R.id.end_date_button)).setText(getDateButtonString(mEndDate));
+	}
+	
+	private void setStartState() {
+		mStartTime = Calendar.getInstance();
+		mStartTime.set(Calendar.HOUR_OF_DAY, 0);
+		mStartTime.set(Calendar.MINUTE, 0);
+		
+		mEndTime = Calendar.getInstance();
+		mEndTime.set(Calendar.HOUR_OF_DAY, 23);
+		mEndTime.set(Calendar.MINUTE, 59);
+		
+		
+		Date date = new Date();
+		long nowDate = date.getTime() / MS_IN_DAY * MS_IN_DAY;
+		mStartDate = initDate(nowDate);
+		mEndDate = null;
 	}
 
 	/*
@@ -272,10 +291,7 @@ public class FindGameActivity extends Activity
 	 * @param v		The view from which the button was called
 	 */
 	public void resetSearchForms(View v) {
-		mStartDate = null;
-		mStartTime = null;
-		mEndDate = null;
-		mEndTime = null;
+		setStartState();
 		
 		Spinner spinner = (Spinner) findViewById(R.id.radius_spinner);
 		spinner.setSelection(0);
@@ -299,12 +315,11 @@ public class FindGameActivity extends Activity
 		}*/
 		
 		/* Create FindGameCriteria object and send */
-		long msInDay = 1000 * 60 * 60 * 24; // 1000 ms/s * (60 s/min) * (60 min/hour) * (24 hr/day)
 		// create a long representing the date or time only by doing some simple arithmetic
-		long startDate = mStartDate != null ? mStartDate.getTimeInMillis() / msInDay * msInDay : 0;
-		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / msInDay * msInDay : 0;
-		long startTime = mStartTime != null ? mStartTime.getTimeInMillis() % msInDay : 0;
-		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % msInDay : 0;
+		long startDate = mStartDate != null ? mStartDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : 0;
+		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : -1; // -1 means unset
+		long startTime = mStartTime != null ? mStartTime.getTimeInMillis() % MS_IN_DAY : 0;
+		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % MS_IN_DAY : 0;
 		ArrayList<String> gameTypes = new ArrayList<String>();
 		
 		// Add all of the sports that the user selected to search for.
@@ -389,7 +404,7 @@ public class FindGameActivity extends Activity
 	
 	private String getDateButtonString(final Calendar date) {
 		if (date == null) {
-			return getResources().getString(R.string.select_date);
+			return getResources().getString(R.string.select_end_date);
 		} else {
 			return DateFormat.getDateFormat(this).format(date.getTime());
 		}
