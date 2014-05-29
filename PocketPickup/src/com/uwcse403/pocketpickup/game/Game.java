@@ -57,6 +57,7 @@ public final class Game implements Parcelable {
 	 * 
 	 * @requires no arguments are null
 	 */
+	/*
 	public Game(String creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
 			String gameType, int idealGameSize, String details) {
 		this.mCreator = creator;
@@ -68,6 +69,7 @@ public final class Game implements Parcelable {
 		this.mDetails = details;
 		id = null;
 	}
+	*/
 	
 	public Game(String creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
 			Long startTime, Long endTime, String gameType, int idealGameSize, String details) {
@@ -89,6 +91,7 @@ public final class Game implements Parcelable {
 	 * 
 	 * @requires no arguments are null
 	 */
+	/*
 	public Game(String creator, LatLng gameLocation, Long gameStartDate,
 			Long gameEndDate, String gameType, int idealGameSize,
 			String details, String objectId) {
@@ -101,6 +104,7 @@ public final class Game implements Parcelable {
 		this.mDetails = details;
 		id = objectId;
 	}
+	*/
 	
 	/**
 	 * Default constructor for returning a game that represents a game that is already in the

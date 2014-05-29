@@ -229,22 +229,12 @@ public final class GameHandler {
 		// limit games to those that fall within the times entered
 		// there are two cases: one when the end date IS specified and one where the
 		// end date IS NOT specified
-		if (criteria.mEndDate == -1L) {
-			// this means we are looking for all games starting after 
-			query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
-			
-		} else {
-			
-		}
-		/*
-		if (criteria.mEndDate == 0 && criteria.mEndTime == 0) {
-			query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
-		} else {
-			query.whereGreaterThan(DbColumns.GAME_START_DATE, criteria.mStartDate + criteria.mStartTime);
-			query.whereLessThan(DbColumns.GAME_END_DATE, criteria.mEndDate + criteria.mEndTime);
-		}
-		*/
-
+		query.whereGreaterThanOrEqualTo(DbColumns.GAME_START_DATE, criteria.mStartDate);
+		query.whereGreaterThanOrEqualTo(DbColumns.GAME_START_TIME, criteria.mStartTime);
+		query.whereLessThanOrEqualTo(DbColumns.GAME_START_TIME, criteria.mEndTime);
+		if (criteria.mEndDate != -1L) {
+			query.whereLessThanOrEqualTo(DbColumns.GAME_END_DATE, criteria.mEndDate);
+		} 
 		// only look for valid games
 		query.whereEqualTo(DbColumns.GAME_IS_VALID, true);
 		List<ParseObject> results = null;

@@ -38,6 +38,9 @@ public class GameActivity extends Activity {
 	public static final int GAME_RESULT_LEFT_FAILED = 4;
 	public static final int GAME_RESULT_DELETED = 5;
 	
+	
+	public static final int HOUR_IN_MILLIS = 60 * 60 * 1000;
+	
 	private Game game;
 		
 	@Override
@@ -53,7 +56,8 @@ public class GameActivity extends Activity {
 		long gameStartDate = game.mGameStartDate;
 		
 		// Convert millisecond difference to hours, ms / (1000 ms/s) / (60 s/min) / (60 min/hr)
-		int durationInHours = (int) (game.mGameEndDate - game.mGameStartDate) / 1000 / 60 / 60;
+		//int durationInHours = (int) (game.mGameEndDate - game.mGameStartDate) / 1000 / 60 / 60;
+		int durationInHours = (int) ((game.endTime - game.startTime) / HOUR_IN_MILLIS);
 		int gameDuration = durationInHours;
 		String gameCreator = game.mCreator;
 		int gameMinPlayers = game.mIdealGameSize;
