@@ -317,23 +317,42 @@ public class FindGameActivity extends Activity
 		
 		/* Create FindGameCriteria object and send */
 		// create a long representing the date or time only by doing some simple arithmetic
-		/*
-		long startDate = mStartDate != null ? mStartDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : 0;
+		long startDate = mStartDate != null ? mStartTime.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : 0;
 		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : -1; // -1 means unset
 		long startTime = mStartTime != null ? mStartTime.getTimeInMillis() % MS_IN_DAY : 0;
 		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % MS_IN_DAY : 0;
+		
+		long startDateAndTime = mStartTime.getTimeInMillis();
+		
+		startTime = (startDateAndTime + 17*HOUR)% MS_IN_DAY; 
+		
+		endTime = startTime + (mEndTime.getTimeInMillis() - startDateAndTime);
+		
+		startDate = ((mStartDate.getTimeInMillis() / MS_IN_DAY) + 1)* MS_IN_DAY;
+		
+		startDate -= 17*HOUR;
+		/*
+		if (endTime < startTime) {
+			endDate = startDate + MS_IN_DAY;
+		} else {
+			endDate = startDate;
+		}
 		*/
+		
 		/*
 		long startDate = mStartDate != null ? mStartDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : 0;
 		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : -1; // -1 means unset
 		long startTime = mStartTime != null ? (mStartTime.getTime().getHours())* HOUR + mStartTime.getTime().getMinutes() * 60 * 1000: 0;
 		long endTime = mEndTime != null ? (mEndTime.getTime().getHours()) * HOUR + mEndTime.getTime().getMinutes() * 60 * 1000 : 0;	
 		*/
+		/*
 		long startDate = mStartDate != null ? mStartDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : 0;
 		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : -1; // -1 means unset
-		long startTime = mStartTime != null ? 7 * HOUR + (mStartTime.getTime().getHours())* HOUR + mStartTime.getTime().getMinutes() * 60 * 1000: 0;
-		long endTime = mEndTime != null ? 7 * HOUR + (mEndTime.getTime().getHours()) * HOUR + mEndTime.getTime().getMinutes() * 60 * 1000 : 0;	
+		long startTime = mStartTime != null ? (7 * HOUR + (mStartTime.getTime().getHours())* HOUR + mStartTime.getTime().getMinutes() * 60 * 1000) : 0;
+		long endTime = mEndTime != null ? (7 * HOUR + (mEndTime.getTime().getHours()) * HOUR + mEndTime.getTime().getMinutes() * 60 * 1000) : 0;	
+		*/
 		ArrayList<String> gameTypes = new ArrayList<String>();
+
 		
 		// Add all of the sports that the user selected to search for.
 		// If the set is empty, then the user didnt use the dialog so

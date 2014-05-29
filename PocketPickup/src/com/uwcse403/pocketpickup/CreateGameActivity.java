@@ -258,7 +258,9 @@ public class CreateGameActivity extends Activity
 		long startDateAndTime = mDate.getTimeInMillis();
 
 		// the time of day in milliseconds from midnight
-		long startTime = startDateAndTime % MILLIS_IN_DAY; 
+		long startTime = (startDateAndTime + 17 * HOUR)% MILLIS_IN_DAY; 
+		
+		//startTime += 17 * HOUR;
 		
 		// in case the game goes into the next day, mod by the number of milliseconds
 		// in one day
