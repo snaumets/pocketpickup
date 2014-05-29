@@ -76,7 +76,6 @@ public class GameActivity extends Activity {
 		TextView start = (TextView) findViewById(R.id.gameStartTextView);
 		start.setText(dateString);
 		
-		
 		String durationUnit = gameDuration > 1 ? " Hours" : " Hour";
 		TextView duration = (TextView) findViewById(R.id.gameDurationTextView);
 		duration.setText(gameDuration + durationUnit);

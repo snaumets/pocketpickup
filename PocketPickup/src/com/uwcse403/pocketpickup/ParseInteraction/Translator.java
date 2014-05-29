@@ -38,6 +38,7 @@ public final class Translator {
 		Long gameEndDate = game.getLong(DbColumns.GAME_END_DATE);
 		Long startTime = game.getLong(DbColumns.GAME_START_TIME);
 		Long endTime = game.getLong(DbColumns.GAME_END_TIME);
+		
 		//String gameType = PocketPickupApplication.objIdAndObjs.get(game.getString(DbColumns.GAME_SPORT)).getString(DbColumns.SPORT_NAME);
 		ParseObject parseSportObj = game.getParseObject(DbColumns.GAME_SPORT);
 		Log.v(LOG_TAG, "objectid: " + parseSportObj.getObjectId());
