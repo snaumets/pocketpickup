@@ -148,8 +148,10 @@
 			    android:layout_width="0dp"
 			    android:layout_height="wrap_content"
 			    android:hint="@string/cg_details_hint"
-			    android:inputType="textMultiLine"
+			    android:inputType="text"
 			    android:ems="10"
+			    android:imeOptions="actionDone"
+			    android:singleLine="true"
 			    android:layout_weight="0.65" />
 	
 	        <Button

@@ -3,6 +3,7 @@ package com.uwcse403.pocketpickup;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -46,6 +48,8 @@ public class CreateGameActivity extends Activity
 	
 	private static final long FIVE_MIN = 5 * 60 * 1000L;
 	private static final long HOUR = 60 * 60 * 1000L;
+	private static final long MILLIS_IN_DAY = 60 * 60 *24 * 1000L;
+	private static final long MIN_IN_MILLIS = 60 * 1000;
 
 	// Bundle IDs for persistent button names
 	private static final String STATE_GAME_TIME = "cg_time";
@@ -242,15 +246,41 @@ public class CreateGameActivity extends Activity
 			Toast.makeText(this, "Can't Create Game Starting In The Past, Please Fix The Create Time", Toast.LENGTH_LONG).show();
 			return;
 		}
+		long startDateAndTime = mDate.getTimeInMillis();
+
+		// the time of day in milliseconds from midnight
+		long startTime = (startDateAndTime + PocketPickupApplication.GMT_OFFSET * HOUR)% MILLIS_IN_DAY; 
+		// chop off anything after minutes
+		startTime = (startTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
 		
-		// Create time validated, it is in the future
-		final Calendar end = Calendar.getInstance();
-		end.setTimeInMillis(mDate.getTimeInMillis() + (mDuration * HOUR));
+		// in case the game goes into the next day, mod by the number of milliseconds
+		// in one day
+		long endTime = (startTime + mDuration * HOUR) % MILLIS_IN_DAY;
+		// chop off anything after minutes
+		endTime = (endTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
+
+		// the date represented as unix time milliseconds from 1970 to 12:00AM
+		// on the selected start date
+		long startDate = startDateAndTime  - startTime; 
+		long endDate;
+		// if the game spans two days, set the end date to the next day.
+		// The only time this happens is if the previous calculations show that
+		// the endTime is less than the startTime.
+		//if ( startTime + (mDuration * HOUR) > MILLIS_IN_DAY) {
+		if (endTime < startTime) {
+			endDate = startDate + MILLIS_IN_DAY;
+		} else {
+			endDate = startDate;
+		}
+		
 		EditText details = (EditText) findViewById(R.id.cg_details);
 		String detailsText = details.getText().toString();
+		details.setImeOptions(EditorInfo.IME_ACTION_DONE);
+		details.setSingleLine();
+		
 		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), 
-				mLatLng, mDate.getTimeInMillis(), end.getTimeInMillis(), 
-				mSport, 2 /* TODO: default game size */, detailsText);
+				mLatLng, startDate, endDate, startTime, endTime, 
+				mSport, 2, detailsText);
 		final ArrayList<Game> games = new ArrayList<Game>(); // will store only created game
 		games.add(createGame);
 		

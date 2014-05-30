@@ -37,6 +37,9 @@ public final class Translator {
 		LatLng location = new LatLng(parseLocation.getLatitude(), parseLocation.getLongitude());
 		Long gameStartDate = game.getLong(DbColumns.GAME_START_DATE);
 		Long gameEndDate = game.getLong(DbColumns.GAME_END_DATE);
+		Long startTime = game.getLong(DbColumns.GAME_START_TIME);
+		Long endTime = game.getLong(DbColumns.GAME_END_TIME);
+		
 		//String gameType = PocketPickupApplication.objIdAndObjs.get(game.getString(DbColumns.GAME_SPORT)).getString(DbColumns.SPORT_NAME);
 		ParseObject parseSportObj = game.getParseObject(DbColumns.GAME_SPORT);
 		Log.v(LOG_TAG, "objectid: " + parseSportObj.getObjectId());
@@ -46,8 +49,12 @@ public final class Translator {
 		int idealGameSize = game.getInt(DbColumns.GAME_IDEAL_SIZE);
 		String gameDetails = game.getString(DbColumns.GAME_DETAILS);
 		String objectId = game.getObjectId();
+		/*
 		return new Game(creatorId, location, gameStartDate, gameEndDate, 
 				gameType, idealGameSize, gameDetails, objectId);
+				*/
+		return new Game(creatorId, location, gameStartDate, gameEndDate, 
+				startTime, endTime, gameType, idealGameSize, gameDetails, objectId);
 	}
 	
 	/**
@@ -79,6 +86,8 @@ public final class Translator {
 		g.put(DbColumns.GAME_IDEAL_SIZE, game.mIdealGameSize);
 		g.put(DbColumns.GAME_SPORT, PocketPickupApplication.sportsAndObjs.get(game.mGameType));
 		g.put(DbColumns.GAME_DETAILS, game.mDetails);
+		g.put(DbColumns.GAME_START_TIME, game.startTime);
+		g.put(DbColumns.GAME_END_TIME, game.endTime);
 		return g;
 	}
 	

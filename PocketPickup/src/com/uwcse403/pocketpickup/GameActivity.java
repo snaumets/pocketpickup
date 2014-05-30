@@ -38,6 +38,9 @@ public class GameActivity extends Activity {
 	public static final int GAME_RESULT_LEFT_FAILED = 4;
 	public static final int GAME_RESULT_DELETED = 5;
 	
+	
+	public static final int HOUR_IN_MILLIS = 60 * 60 * 1000;
+	
 	private Game game;
 		
 	@Override
@@ -50,10 +53,12 @@ public class GameActivity extends Activity {
 		game = (Game) args.get(GAME);
 		String gameType = game.mGameType;
 		String gameDetails = game.mDetails;
-		long gameStartDate = game.mGameStartDate;
+		long gameStart = game.startTime + game.mGameStartDate;
+		long gameEnd = game.endTime + game.mGameEndDate;
 		
 		// Convert millisecond difference to hours, ms / (1000 ms/s) / (60 s/min) / (60 min/hr)
-		int durationInHours = (int) (game.mGameEndDate - game.mGameStartDate) / 1000 / 60 / 60;
+		long durationInMillis = gameEnd - gameStart;
+		int durationInHours = (int) (durationInMillis / HOUR_IN_MILLIS);
 		int gameDuration = durationInHours;
 		String gameCreator = game.mCreator;
 		int gameMinPlayers = game.mIdealGameSize;
@@ -62,13 +67,14 @@ public class GameActivity extends Activity {
 		TextView sport = (TextView) findViewById(R.id.gameSportTextView);
 		sport.setText(gameType);
 		
-		Date startDate = new Date(gameStartDate);
+		Date startDate = new Date(gameStart);
 		SimpleDateFormat formatter = new SimpleDateFormat(
-                "hh:mm a EE, MMM d, yyyy", Locale.getDefault());
+                "EEEE MMM d, yyyy hh:mm a", Locale.getDefault());
 		String dateString = formatter.format(startDate);
+		
+		//String dateString = new Date(game.startTime + game.mGameStartDate).toLocaleString();
 		TextView start = (TextView) findViewById(R.id.gameStartTextView);
 		start.setText(dateString);
-		
 		
 		String durationUnit = gameDuration > 1 ? " Hours" : " Hour";
 		TextView duration = (TextView) findViewById(R.id.gameDurationTextView);
@@ -81,7 +87,7 @@ public class GameActivity extends Activity {
 		TextView attendees = (TextView) findViewById(R.id.gameAttendeesTextView);
 		int countAttendees = GameHandler.getCurrentNumberOfGameAttendees(game);
 		String attendeesUnit = countAttendees == 1 ? " User" : " Users"; 
-		attendees.setText(countAttendees + attendeesUnit + " Joined This Game");
+		attendees.setText(countAttendees + attendeesUnit + " Joined");
 		
 		// Show the correct button
 		if (!LoginActivity.user.mAttendingGames.contains(game)) { // user can join this game

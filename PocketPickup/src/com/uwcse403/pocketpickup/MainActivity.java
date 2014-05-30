@@ -962,8 +962,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		// Intent intent = new Intent(this, SetLocationActivity.class);
 		// startActivity(intent);
 		updateLocationTextField();
-		Toast.makeText(this, "TODO: Location Activity", Toast.LENGTH_LONG)
-				.show();
+		//Toast.makeText(this, "TODO: Location Activity", Toast.LENGTH_LONG)
+				//.show();
 	}
 	
 	// causes back button to function like home button, as there's nothing 

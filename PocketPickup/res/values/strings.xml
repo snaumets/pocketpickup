@@ -49,6 +49,7 @@
     <string name="select_radius_miles">Mile(s)</string>
     <string name="select_time">Any Time</string>
     <string name="select_date">Any Date</string>
+    <string name="select_end_date">Any End Date</string>
     <string name="select_range_from">Starting After:</string>
     <string name="select_range_to">Ending Before:</string>
     <string name="change_pref">Change Sport Preferences</string>
@@ -56,6 +57,8 @@
     <string name="selected_sports">Selected Sports</string>
     <string name="select_sports">Sports:</string>
     <string name="reset">Reset All</string>
+    <string name="between_times">Starting Between These Times:</string>
+    <string name="between_dates">And Between These Dates:</string>
     <string name="clear_results">Clear Map</string>
     
     <string-array name="radius_choices">
@@ -87,7 +90,7 @@
     <string name="cg_sport">Sport:</string>
     <string name="cg_duration">Duration:</string>
     <string name="cg_duration_hours">Hour(s)</string>
-    <string name="cg_details_hint">Add optional details</string>
+    <string name="cg_details_hint">Any additional info?</string>
     <string name="cg_details">Details:</string>
 
     <string-array name="sport_choices">
