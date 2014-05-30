@@ -52,25 +52,6 @@ public final class Game implements Parcelable {
 	 */
 	public final String id;
 
-	/**
-	 * Default constructor for creating a new game, i.e., one that does not exist in the database.
-	 * 
-	 * @requires no arguments are null
-	 */
-	/*
-	public Game(String creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
-			String gameType, int idealGameSize, String details) {
-		this.mCreator = creator;
-		this.mGameLocation = gameLocation;
-		this.mGameStartDate = gameStartDate;
-		this.mGameEndDate = gameEndDate;
-		this.mGameType = gameType;
-		this.mIdealGameSize = idealGameSize;
-		this.mDetails = details;
-		id = null;
-	}
-	*/
-	
 	public Game(String creator, LatLng gameLocation, Long gameStartDate, Long gameEndDate, 
 			Long startTime, Long endTime, String gameType, int idealGameSize, String details) {
 		this.mCreator = creator;
@@ -84,27 +65,6 @@ public final class Game implements Parcelable {
 		this.startTime = startTime;
 		this.endTime = endTime;
 	}
-	
-	/**
-	 * Default constructor for returning a game that represents a game that is already in the
-	 * database. Should be used when returning game objects from a query. 
-	 * 
-	 * @requires no arguments are null
-	 */
-	/*
-	public Game(String creator, LatLng gameLocation, Long gameStartDate,
-			Long gameEndDate, String gameType, int idealGameSize,
-			String details, String objectId) {
-		this.mCreator = creator;
-		this.mGameLocation = gameLocation;
-		this.mGameStartDate = gameStartDate;
-		this.mGameEndDate = gameEndDate;
-		this.mGameType = gameType;
-		this.mIdealGameSize = idealGameSize;
-		this.mDetails = details;
-		id = objectId;
-	}
-	*/
 	
 	/**
 	 * Default constructor for returning a game that represents a game that is already in the

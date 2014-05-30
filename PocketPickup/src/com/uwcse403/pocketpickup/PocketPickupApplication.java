@@ -28,7 +28,6 @@ public class PocketPickupApplication extends Application {
 	public static final String LOG_TAG = "PocketPickupApplication";
 	public List<ParseObject> allowedSports;
 	public static BiMap<String, ParseObject> sportsAndObjs;
-	//public static BiMap<String,ParseObject> objIdAndObjs;
 	public final String SPORTS_CACHE_LABEL = "sports";
 	public static String userObjectId;
 	
@@ -77,7 +76,6 @@ public class PocketPickupApplication extends Application {
 
 	private void getSports() {
 		sportsAndObjs = HashBiMap.create();
-		//objIdAndObjs = HashBiMap.create();
 		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Sport");
 		// looks in the cache first
 		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
@@ -89,7 +87,6 @@ public class PocketPickupApplication extends Application {
 					Log.v(LOG_TAG, "successfully retreived sports from cache or network");
 					for (int i = 0; i < sports.size(); i++) {
 						sportsAndObjs.put(sports.get(i).getString(DbColumns.SPORT_NAME), sports.get(i));
-						//objIdAndObjs.put(sports.get(i).getString(DbColumns.OBJECT_ID), sports.get(i));
 						Log.v(LOG_TAG, sports.get(i).getString("name"));
 					}
 				} else {
@@ -110,7 +107,6 @@ public class PocketPickupApplication extends Application {
 		sportsAndObjs = HashBiMap.create();
 		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Sport");
 		// Can't look in the cache first
-		//query.setCachePolicy(ParseQuery.CachePolicy.CACHE_THEN_NETWORK);
 		List<ParseObject> sports = null;
 		try {
 			sports = query.find();

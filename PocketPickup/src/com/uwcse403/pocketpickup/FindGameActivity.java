@@ -2,7 +2,6 @@ package com.uwcse403.pocketpickup;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +14,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -314,40 +312,23 @@ public class FindGameActivity extends Activity
 	 * @param v
 	 */
 	public void submitSearch(View v) {
-		/* TODO: validate */
-		Date date = new Date();
-		long hourBeforeNowTime = date.getTime() - HOUR;
-		// null check
-		/*if (mStartDate.getTimeInMillis() < hourBeforeNowTime) { // User tried to create a game back in time (expired)
-			Toast.makeText(this, "Can't Find Games More Than An Hour In The Past, Please Fix The Starting Time", Toast.LENGTH_LONG).show();
-			return;
-		}*/
-		
-		/* Create FindGameCriteria object and send */
+		// Create FindGameCriteria object and send
 		// create a long representing the date or time only by doing some simple arithmetic
-		
 		long startDateAndTime = mStartTime.getTimeInMillis();
-		
 		long startTime = (startDateAndTime + PocketPickupApplication.GMT_OFFSET*HOUR)% MS_IN_DAY; 
-
 		// chop off anything after minutes
 		startTime = (startTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
-		
 		long endTime = startTime + (mEndTime.getTimeInMillis() - startDateAndTime);
 		// chop off anything after minutes
 		endTime = (endTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
-		
 		long startDate = ((mStartDate.getTimeInMillis() / MS_IN_DAY) )* MS_IN_DAY;
-		
 		startDate -= PocketPickupApplication.GMT_OFFSET*HOUR;
-		
 		long endDate = -1;
 		if (mEndDate != null) {
 			endDate = ((mEndDate.getTimeInMillis() / MS_IN_DAY) )* MS_IN_DAY;
 			endDate -= PocketPickupApplication.GMT_OFFSET*HOUR;	
 		}
 		ArrayList<String> gameTypes = new ArrayList<String>();
-
 		// Add all of the sports that the user selected to search for.
 		// If the set is empty, then the user didnt use the dialog so
 		// add all available sports so they can be search for.
@@ -362,10 +343,8 @@ public class FindGameActivity extends Activity
 				mSports.add(availableSports.get(selectedIndex));
 			}
 		}
-		
 		gameTypes.addAll(mSports);
 		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, gameTypes);
-		
 		final ArrayList<Game> searchResults = new ArrayList<Game>();
 		searchResults.addAll(GameHandler.findGame(criteria));
 		Intent returnIntent = new Intent();
@@ -373,7 +352,6 @@ public class FindGameActivity extends Activity
 		returnIntent.putExtra(FINDGAME_LATITUDE, mLatLng.latitude);
 		returnIntent.putExtra(FINDGAME_LONGITUDE, mLatLng.longitude);
 		returnIntent.putParcelableArrayListExtra(FINDGAME_RESULTS, searchResults);
-		
 		setResult(Activity.RESULT_OK, returnIntent);
 		finish();
 	}
