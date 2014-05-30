@@ -233,7 +233,7 @@ public final class GameHandler {
 		query.whereGreaterThanOrEqualTo(DbColumns.GAME_START_TIME, criteria.mStartTime);
 		query.whereLessThanOrEqualTo(DbColumns.GAME_START_TIME, criteria.mEndTime);
 		if (criteria.mEndDate != -1L) {
-			query.whereLessThanOrEqualTo(DbColumns.GAME_END_DATE, criteria.mEndDate);
+			query.whereLessThanOrEqualTo(DbColumns.GAME_START_DATE, criteria.mEndDate);
 		} 
 		// only look for valid games
 		query.whereEqualTo(DbColumns.GAME_IS_VALID, true);

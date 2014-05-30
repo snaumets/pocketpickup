@@ -2,8 +2,10 @@ package com.uwcse403.pocketpickup;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.TimeZone;
 
 import android.app.Application;
 import android.content.res.AssetManager;
@@ -29,6 +31,8 @@ public class PocketPickupApplication extends Application {
 	//public static BiMap<String,ParseObject> objIdAndObjs;
 	public final String SPORTS_CACHE_LABEL = "sports";
 	public static String userObjectId;
+	
+	public static int GMT_OFFSET;
 
 	@Override
 	public void onCreate() {
@@ -65,6 +69,10 @@ public class PocketPickupApplication extends Application {
 		} else {
 			userObjectId = null;
 		}
+		
+		// initialize the timezone variable for game creation
+		TimeZone tz = TimeZone.getDefault();
+		GMT_OFFSET = tz.getOffset(new Date().getTime()) / 1000 / 60	/ 60;
 	}
 
 	private void getSports() {

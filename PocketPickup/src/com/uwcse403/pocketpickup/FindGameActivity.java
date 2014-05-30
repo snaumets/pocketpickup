@@ -40,6 +40,7 @@ public class FindGameActivity extends Activity
 							   		     TimePickerDialog.OnTimeSetListener {
 	private static final long HOUR = 60 * 60 * 1000L;
 	private static final long MS_IN_DAY = 1000 * 60 * 60 * 24; // 1000 ms/s * (60 s/min) * (60 min/hour) * (24 hr/day)
+	private static final long MIN_IN_MILLIS = 60 * 1000;
 	
 	// Argument IDs
 	public static final String FINDGAME_LOCATION  = "findgame_location";
@@ -317,36 +318,29 @@ public class FindGameActivity extends Activity
 		
 		/* Create FindGameCriteria object and send */
 		// create a long representing the date or time only by doing some simple arithmetic
-		/*
-		long startDate = mStartDate != null ? mStartTime.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : 0;
-		long endDate = mEndDate != null ? mEndDate.getTimeInMillis() / MS_IN_DAY * MS_IN_DAY : -1; // -1 means unset
-		long startTime = mStartTime != null ? mStartTime.getTimeInMillis() % MS_IN_DAY : 0;
-		long endTime = mEndTime != null ? mEndTime.getTimeInMillis() % MS_IN_DAY : 0;
-		*/
 		
 		long startDateAndTime = mStartTime.getTimeInMillis();
 		
-		long startTime = (startDateAndTime + 17*HOUR)% MS_IN_DAY; 
+		long startTime = (startDateAndTime + PocketPickupApplication.GMT_OFFSET*HOUR)% MS_IN_DAY; 
+
+		// chop off anything after minutes
+		startTime = (startTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
 		
 		long endTime = startTime + (mEndTime.getTimeInMillis() - startDateAndTime);
+		// chop off anything after minutes
+		endTime = (endTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
 		
-		long startDate = ((mStartDate.getTimeInMillis() / MS_IN_DAY) + 1)* MS_IN_DAY;
+		long startDate = ((mStartDate.getTimeInMillis() / MS_IN_DAY) )* MS_IN_DAY;
 		
-		startDate -= 17*HOUR;
+		startDate -= PocketPickupApplication.GMT_OFFSET*HOUR;
 		
 		long endDate = -1;
 		if (mEndDate != null) {
-			endDate = ((mEndDate.getTimeInMillis() / MS_IN_DAY) + 1)* MS_IN_DAY;
-			endDate -= 17*HOUR;	
+			endDate = ((mEndDate.getTimeInMillis() / MS_IN_DAY) )* MS_IN_DAY;
+			endDate -= PocketPickupApplication.GMT_OFFSET*HOUR;	
 		}
-		
-		if (endTime < startTime) {
-			endDate += MS_IN_DAY;
-		}
-		
 		ArrayList<String> gameTypes = new ArrayList<String>();
 
-		
 		// Add all of the sports that the user selected to search for.
 		// If the set is empty, then the user didnt use the dialog so
 		// add all available sports so they can be search for.
