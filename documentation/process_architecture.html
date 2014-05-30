@@ -1,0 +1,254 @@
+<p>
+Team Poseidon<br />
+Pocket Pickup</p>
+
+<p>Serge Naumets snaumets@cs &amp; @uw<br />
+Jacob Gile jjgile@cs &amp; @uw<br />
+Isaiah Mathieu imathieu@cs &amp; @uw<br />
+Patrick Larson palarson@cs &amp; @uw<br />
+Viktor Farkas vfarkas@cs &amp; @uw<br />
+Kane Swanson kane@cs &amp; kdswan@uw</p>
+
+<h2>Process</h2>
+
+<h3>Risk Assessment</h3>
+
+<p><strong>1 .Not enough user feedback on application user interface</strong><br />
+ 1.1. Likelihood of occurring: low. As long as we regularly check in with our customers and run<br />
+ usability tests, we should be able to avoid this.<br />
+ 1.2 Impact if this occurs: high. An app with a buggy/non-intuitive UI is very annoying to use<br />
+ and will result in customers abandoning our product and giving it poor ratings on the Google<br />
+ Play Store.<br />
+ 1.3 We know this is an issue because we all dislike the experience of a poorly made app.<br />
+ 1.4 As we mentioned, we will run usability tests regularly to continue to update our user<br />
+ interface based on the results.<br />
+ 1.5 We will carefully schedule these usability tests to run between iterations of the design cycle,<br />
+ so that we can receive the best feedback at the optimal time.<br />
+ 1.6 Should we end up with a buggy UI we will have to decide if we should eliminate certain<br />
+ bug-prone features.</p>
+
+<p><strong>2. Difficulty of testing UI elements</strong><br />
+ 2.1 Likelihood of occurring: high. There are not many UI testing tools. The ones that<br />
+ do exists are not very intuitive or powerful.<br />
+ 2.2 Impact if this occurs: medium.<br />
+ 2.3 Researching UI testing tools has shown that there are few. UI elements have always been more<br />
+ difficult to test.<br />
+ 2.4 We will use the provided Android testing tools to the best of our abilities. The code which<br />
+ we cannot test will be subject to especially careful code review.<br />
+ 2.5 We will use code coverage measurement suites to see where this untested UI code is.<br />
+ 2.6If our testing plans fail, we will make up for it with extra usability tests.</p>
+
+<p><strong>3. Data limits on our backend management accounts</strong><br />
+ 3.1 Likelihood of occurring: low. We have a lot of space for free.<br />
+ 3.2 Impact if this occurs: medium. If this occurs our application will lock up, unless we purchase<br />
+ premium accounts<br />
+ 3.3 Parse gives 1 million push notifications a month, and 1 gb of backend storage. Because most of<br />
+ the initial usage will be from testing and development we can delete unnecessary storage and will<br />
+ not likely reach 1 million push notifications.<br />
+ 3.4 We will make sure that we are on track throughout the month, so we don?t run out of space/uses at<br />
+ critical times. We will also make sure that our testing suite isn?t sending spurious push<br />
+ notifications to our backend.<br />
+ 3.5 This will be detected if Parse sends us a notification that we?ve run out of requests. We will<br />
+ also detect the problem if our projected usage is over the allocated limit.<br />
+ 3.6 If we hit the limits at a critical time of development, we will either make a new account or<br />
+ temporarily purchase a premium account.</p>
+
+<p><strong>4. Integration of various libraries</strong><br />
+ 4.1 Likelihood of occurring: medium. None of our team members have built a product from end to end<br />
+ that made use of this many different libraries and services.<br />
+ 4.2 Impact if this occurs: high. Clearly our product will suffer if the major pieces don?t interact well.<br />
+ 4.3 Based on what we have learned about system architecture and modular design we know just how important<br />
+ it is for different parts of the system to fit together nicely.<br />
+ 4.4 To avoid this issue we spent a lot of time discussing our system?s architecture. We intend to<br />
+ modularize our design as much as possible and and follow Test Driven Development (TDD) to reduce<br />
+ the life and scope of any bug.<br />
+ 4.5 We will write tests before we implement our services so that we can discover bugs as soon as possible.<br />
+ 4.6 We will conduct extensive tests on all of our features, but If we have any problems with integration,<br />
+ hopefully they will only affect our stretch features. If this occurs, we will be forced to remove<br />
+ the troubled features from our app.</p>
+
+<p><strong>5. Poor documentation</strong><br />
+ 5.1 Likelihood of occurring: medium. Our team is aware of programmers? tendency to slack off on this<br />
+ important aspect of writing code.<br />
+ 5.2 Impact if this occurs: Low. Because we need to ship our product in less than two months and will<br />
+ not be spending any time on maintenance, we believe that incurring a little bit of ?code debt?<br />
+ will not be too detrimental to our product at launch time. However, if we continue developing our<br />
+ product we will need to go back and fully document our code right after the initial release so that<br />
+ further development and maintenance can happen smoothly.<br />
+ 5.3 We have all worked with poorly documented code and are aware of the problems that it causes.<br />
+ 5.4 Isaiah will police the team to make sure they are documenting all methods and classes and<br />
+ commenting any unclear line of code.<br />
+ 5.5 Detecting the lack of documentation is trivial: if it?s not there, we have a problem.<br />
+ 5.6 To mitigate poor or nonexistent documentation, team members will remind each other to document<br />
+ code thoroughly throughout the development process.</p>
+
+<p><strong>6. Malicious use or attacks</strong><br />
+ 6.1 Likelihood of occurring: low.<br />
+ 6.2 Impact if this occurs: High. If our system is compromised or goes down, this is a major problem<br />
+ for our users.<br />
+ 6.3 We do not use or store any sensitive customer data so we do not anticipate an attacker trying<br />
+ to steal information. However, there is not much preventing a malicious user from creating spurious<br />
+ events to confuse other users, but this also seems unlikely to actually happen.<br />
+ 6.4 The Parse platform assures us that if we follow their security guidelines we will be safe from data<br />
+ breaches and service disruptions, so we intend to follow their guidelines very carefully.<br />
+ 6.5 To detect malicious use we will investigate anomalous user behavior and take necessary action to<br />
+ protect our users and the system.<br />
+ 6.6 Should there be a data breach, we will respond quickly and apologize to our users and ask them<br />
+ to change their passwords if necessary. We do not want to lose our customers? trust so it is<br />
+ important that we handle the situation quickly and with integrity. If our service is disrupted<br />
+ due to malicious behavior, we will make use of the scalability of the Parse platform by purchasing<br />
+ more server instances so that users will not be affected while we sort out the problem.</p>
+
+<p><h3>Project Schedule</h3><br />
+-May 2: Zero-feature release (effort estimate: <= 3 person-weeks). For this, the Android UI team can start<br />
+ building a skeletal implementation of the main screens. The other sub-groups can work on some basic<br />
+ documentation in parallel, such as the description of the project, how users are to obtain, install,<br />
+ and run the software, how to actually use the software, and how to report bugs. During this time,<br />
+ the Parse Logic team can also get more familiar with the Parse documentation and tutorials and start<br />
+ getting comfortable with how ParseObjects and queries work. The Library team can do the same with<br />
+ various libraries that will be essential.<br />
+-May 9: Usability testing (effort estimate: <= 1-2 person-weeks). We will ask several users, most likely<br />
+ just our customers, to follow the installation procedure, and to open and view zero-feature release<br />
+ of Pocket Pickup. We will monitor the process, and take any feedback from the users to see what will<br />
+ need to be changed and simplified.<br />
+-May 16: Beta release (effort estimate: <= 6-10 person-weeks). Once this design is complete and we have<br />
+ some feedback from customers, the teams can separate to complete each tier independently for a<br />
+ beta release. We expect to complete the major features by the beta release. We will first implement<br />
+ the find/join/create/cancel functionality, followed by creating and managing user profiles and groups.<br />
+ The work will be divided as evenly as possible according to the expert groups.<br />
+-May 23: Feature-complete release (effort estimate: <= 6-10 person-weeks). Any of the core features that<br />
+ weren?t implemented in the beta release will be completed by this time. If the core features were<br />
+ already implemented, we will aim to implement one or two feasible stretch features during this<br />
+ period. We will also make sure that the documentation of the product is complete or nearly complete.<br />
+ The work will be divided as evenly as possible according to the expert groups.<br />
+-May 30: Usability testing (effort estimate: <= 1-2 person-weeks). We will ask several users, most likely<br />
+ just our customers, to test the feature-complete version of Pocket Pickup. We will monitor the<br />
+ process, and take any feedback from the users to see what will need to be changed and simplified.<br />
+-June 4: 1.0 release (effort estimate: <= 6-10 person-weeks). Finishing touches and stretch features,<br />
+ if time permits, will be worked during this time. Potential stretch features include Facebook<br />
+ integration and user reliability ratings. We will attempt to incorporate the feedback gathered<br />
+ during the previous and final usability testing stage. The work will be divided as evenly as<br />
+ possible according to the expert groups.</p>
+
+<p><h3>Team Structure</h3><br />
+ Our team is organized in a rather simple way. Every member will take on roles as both a developer and<br />
+a tester, as well as one other role. Sergey will act as the product manager, and will therefore be<br />
+responsible for leading user research, listening to and evaluating the received feedback, and finding<br />
+a way to integrate the extra features into the product if possible, while making sure that they are within<br />
+the original vision of the application. Sergey will also be responsible for defining what the end product<br />
+should be, creating a game plan for how that end product is to be reached, and making sure that the team is<br />
+focused and constantly making progress towards the end goal.<br />
+ Viktor and Isaiah will share the role of the project manager, and will take care of the administrative<br />
+side of things. They will assure that all team members are involved, that they stay on track, and that<br />
+they deliver their share of the workload.<br />
+ Patrick will take on the role of the technical lead, or sometimes called the lead developer. He must<br />
+have an understanding of the system as a whole, and see how various parts fit together. He will also<br />
+be responsible for understanding different technologies, their pros and cons, and why our system is to<br />
+be implemented in a specific way.<br />
+ Kane?s additional role will be the website manager. He will provide weekly updates to the team?s public<br />
+website to allow customers to track our progress. Any documentation, releases of the application, and any<br />
+other deliverables or details will be kept up to date on the site.<br />
+ Finally, Jacob will be our public relations manager and customer service representative. He will be the<br />
+point of contact for our multiple customers and will be responsible for keeping them informed and satisfied.<br />
+ To aid with the task of development, we will also divide our six person team into three expert sub-groups.<br />
+By modularizing the teams, disagreements and issues will be more easily resolved, as any design decisions<br />
+should affect at most two of the three teams. Communication should also become easier as a result. The teams<br />
+of two will be able to communicate with one another on a more detailed level, and three sub-groups will do<br />
+the same at a higher level. This supports the ideas of strong cohesion and loose coupling, which are necessary<br />
+in order to achieve modularity. This modularity will allow some flexibility in how work is done within each<br />
+sub-group. For example, the team can choose to pair-program, or they can divide and conquer the various<br />
+components within the tier.<br />
+ We will refer to Kane and Viktor for any library specific questions and details. Kane is responsible for<br />
+Facebook integration, and the libraries that come with it. Viktor will remain mostly undesignated, providing<br />
+extra muscle when the others have to dig deeper into new libraries. Sergey and Patrick will be held<br />
+accountable for the Android integration and interface implementation. Finally, Isaiah and Jacob will<br />
+become experts on the Parse platform, and will be responsible for the backend solutions in our system.<br />
+ This division of labor allows our team to follow a three tier architecture, with Kane and Viktor roles<br />
+falling under business logic tier, Sergey and Patrick controlling the presentation tier, and Isaiah and Jacob<br />
+being accountable for the data tier.<br />
+ For team communication, we have decided to meet on Monday and Friday afternoons at 2:30 to discuss and<br />
+work on deliverables for the coming week and weekend, respectively. In-person communication is convenient<br />
+because we have class together every day. We are currently also meeting on Tuesday mornings in order to deliver<br />
+a team status report, brainstorm in general, and do any portions of work that require a meeting. Most of the<br />
+communication outside of physical meetings goes through a private Facebook group. This is the most convenient<br />
+method for communication with the entire group because of how quick and simple it is. However, every member also<br />
+has every other member?s personal email and telephone number. This will allow for better one on one communication,<br />
+and may be useful further along in the timeline, like when we begin to work in our expert groups.<br />
+ Both individual and team weekly status reports can be viewed and followed at<br />
+https://groups.google.com/forum/#!forum/cse-403-team-poseidon.</p>
+
+<p>The team wiki site is located at https://sites.google.com/site/cse403teamposeidon/, and will be updated with<br />
+information and deliverables are progress is made. The team can be contacted via email at<br />
+cse-403-team-poseidon@googlegroups.com.</p>
+
+<p><h3>Test Plan</h3><br />
+ We will write unit tests for the API described in our UML documents before we begin to implement it.<br />
+Further along in the development process, for each new feature that one of our developers implements, he<br />
+will first write tests for the feature then implement code to make the tests pass. Because the entire product<br />
+is written in Java, we will use the JUnit framework with Mockito mocking and stubbing library for running the<br />
+test suite that we will design. We will aim to constantly be testing the application, and will require that<br />
+all tests are passed before code is pushed to the central repository.<br />
+ We already conducted one round of UI mockup testing and got valuable feedback, which we will incorporate<br />
+into our initial UI. We will conduct usability tests by asking people to try out our app and then make use<br />
+of our observations and their feedback. The goal will be to perform such tests at least once every other week.<br />
+ Each team member has access to an android device, so we will all be responsible for stress testing the UI by<br />
+installing the app on our phones and trying to lead it into an inconsistent state through erratic use and<br />
+invalid input. Bugs will be tracked with Github?s built-in bug-tracking tool, which will be convenient to<br />
+use because we will be placing our code under version control in a github repository.</p>
+
+<p><h3>Documentation Plan</h3><br />
+ Developers will write Javadocs as described in Bloch?s Effective Java to document their code. For users,<br />
+when the app is opened for the first time he or she will see a few pages with simple instructions about<br />
+how to use the app, which is a documentation method that many apps make use of today. They will swipe<br />
+through these pages or sometimes mimic on screen tutorials, and then proceed to the app?s main page.<br />
+A user can view these help pages at any time by tapping the hamburger (the button with three horizontal<br />
+lines that opens the menu for user setting) and then selecting help.</p>
+
+<p><h3>Coding Style Guidelines</h3><br />
+ We will follow the style guidelines outlined in Bloch?s Effective Java. Additionally, for the Java code<br />
+that runs on the device, we will follow the code style guidelines for contributions to the Android<br />
+operating system outlined here:<br />
+https://source.android.com/source/code-style.html.<br />
+The developers will enforce these standards with the CheckStyle plugin before committing any code.<br />
+When development starts, we will create a CheckStyle preference that encodes these aforementioned<br />
+style guides, and send it out to all developers. This will enforce that all our code follows the<br />
+same guidelines.</p>
+
+<p><h3>System Architecture</h3><br />
+ From the perspective of our customer (the company who is paying us to develop this app) our system<br />
+is a Android app powered by an easy-to-use backend system called Parse. From the viewpoint of the developers<br />
+and administrators of this company?who will eventually assume responsibility for maintenance and further<br />
+development?our system is an Android app written in Java that uses a backend cloud service called Parse to<br />
+handle data storage, push notifications, app-to-cloud communication, and business logic. Parse makes it easy<br />
+to focus attention on the app itself and the business logic behind it instead of worrying about server code,<br />
+scalability, or database details. Parse is built using AWS and its data is stored using MongoDB, which is a<br />
+NoSQL database.</p>
+
+<p><h3>Data Storage</h3><br />
+ We are using Parse?s provided data storage framework. This consists of Parse Objects that are<br />
+dictionaries mapping to the columns in our database. We use a translator class to convert these Parse<br />
+Objects into local memory, storing them as java objects.</p>
+
+<p><h3>Alternatives Considered</h3><br />
+ We first considered a much more involved approach in which we were going to write lots of server<br />
+code to handle communication and data processing between a PostgreSQL database and our app. We were<br />
+going to use Google Cloud Messaging (GCM) to send data and notifications to the app. This required<br />
+writing a GCM client that communicates to Google?s GCM servers, which send data to the app. The pros<br />
+of this architecture is that it gives us complete control of almost every aspect of our backend.<br />
+The cons are that it is much more difficult, requires much more expertise than any of us currently<br />
+possess, and it just seems like overkill for a simple app like Pocket Pickup.<br />
+ We also considered having locations automatically suggest common locations near the user. Doing this<br />
+ourselves complicates our structure significantly. If the Google API can manage a lot of this functionality,<br />
+we are still considering it as a stretch feature.</p>
+
+<p><h3>Design Assumptions</h3><br />
+ We are assuming that the Parse platform will always make our data available to us and that by following<br />
+their security guidelines we will not have to worry about breaches of any data stored by them.</p>
+
+<p><h3>Class Diagrams</h3><br />
+UML diagram can be viewed here.<br />
+Object diagram can be viewed here.</p>
+
+<p><h3>Sequence Diagrams</h3><br />
+Sequence Diagram for the Create Game use case can be viewed here.<br />
+Sequence Diagram for the Find Game use case can be viewed here.</p>
