@@ -11,7 +11,7 @@ import com.uwcse403.pocketpickup.FindGameActivity;
 import com.uwcse403.pocketpickup.HelpActivity;
 import com.uwcse403.pocketpickup.LoginActivity;
 import com.uwcse403.pocketpickup.MainActivity;
-import com.uwcse403.pocketpickup.SettingsActivity;
+import com.uwcse403.pocketpickup.R;
 import com.uwcse403.pocketpickup.info.androidhive.slidingmenu.adapter.NavDrawerListAdapter;
 
 /**
@@ -26,6 +26,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	private MainActivity mActivity;
 	private Button mFindGameButton;
 	private Button mCreateGameButton;
+	
+	// Used to restore logout test to previous state
+	private Button mLoginButton;
 
 	private Instrumentation mInstrumentation;
 	
@@ -54,29 +57,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		assertNotNull(mFindGameButton);
 		
 		assertNotNull(ParseUser.getCurrentUser());
-	}
-	
-	/** 
-	 * Tests that Google map is zoomed to user locations on start
-	 */
-	public void testMapZoomsOnStart() {
-		// TODO this
-	}
-	
-	/**
-	 * Tests that Google map is not zoomed on screen orientation change,
-	 * on return from any other activity, or on screen sleep and wake-up.
-	 */
-	public void testMapOnlyZoomsOnStart() {
-		// TODO this
-	}
-	
-	/**
-	 * Tests that the address field updates when the map moves,
-	 * and that during load the address field displays an updating message.
-	 */
-	public void testAddressFieldUpdates() {
-		// TODO UI automator
 	}
 	
 	/**
@@ -109,20 +89,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	}
 	
 	/**
-	 * Tests that a single result is drawn from Find Game Activity.
-	 */
-	public void testFindGameButtonOneResult() {
-		
-	}
-	
-	/**
-	 * Tests that all results are drawn when Find Game returns multiple games
-	 */
-	public void testFindGameButtonManyResults() {
-		
-	}
-	
-	/**
 	 * Tests that Create Game button launches CreateGameActivity
 	 * 
 	 * Note this also asserts than the Find Game button is only enabled when
@@ -152,51 +118,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	}
 	
 	/**
-	 * Tests that Create Game paints a pin on the map.
-	 */
-	public void testCreateGameButtonResult() {
-	
-	}
-	
-	/**
-	 * Tests that the application closes when back is pressed
-	 * from Main Activity
-	 */
-	public void testBackButtonSuspendsApp() {
-
-	}
-	
-	/**
-	 * Tests that the sliding menu 'Settings' option launches 
-	 * the settings activity
-	 */
-	public void testSettingSlideMenuOption() {
-	    Instrumentation.ActivityMonitor activityMonitor = 
-	    		mInstrumentation.addMonitor(SettingsActivity.class.getName(), 
-	    				null , false);
-		
-	    mActivity.runOnUiThread(new Runnable() {
-	        public void run() {
-	    		ListView drawerList = (ListView) mActivity.findViewById(
-	    				com.uwcse403.pocketpickup.R.id.list_slidermenu);
-	    		NavDrawerListAdapter adapter = (NavDrawerListAdapter) drawerList.getAdapter();
-	    		int pos = 0;
-	    		drawerList.performItemClick(
-	    				adapter.getView(pos, null, null), pos, adapter.getItemId(pos));
-	        }
-	      });
-	    mInstrumentation.waitForIdleSync();
-	    
-	    SettingsActivity settingActivity = (SettingsActivity) 
-	    		mInstrumentation.waitForMonitorWithTimeout(activityMonitor, 5);
-	    
-	    assertNotNull(settingActivity);
-	    settingActivity.finish();
-	    
-	    mInstrumentation.waitForIdleSync();
-	}
-	
-	/**
 	 * Tests that the sliding menu 'Help' option launches 
 	 * the help activity
 	 */
@@ -210,7 +131,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	    		ListView drawerList = (ListView) mActivity.findViewById(
 	    				com.uwcse403.pocketpickup.R.id.list_slidermenu);
 	    		NavDrawerListAdapter adapter = (NavDrawerListAdapter) drawerList.getAdapter();
-	    		int pos = 1;
+	    		int pos = 2;
 	    		drawerList.performItemClick(
 	    				adapter.getView(pos, null, null), pos, adapter.getItemId(pos));
 	        }
@@ -226,7 +147,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	    mInstrumentation.waitForIdleSync();
 	}
 	
-	
 	/**
 	 * Tests that the sliding menu 'Logout' option logs out from
 	 * Facebook and launches the login activity
@@ -241,7 +161,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	    		ListView drawerList = (ListView) mActivity.findViewById(
 	    				com.uwcse403.pocketpickup.R.id.list_slidermenu);
 	    		NavDrawerListAdapter adapter = (NavDrawerListAdapter) drawerList.getAdapter();
-	    		int pos = 2;
+	    		int pos = 3;
 	    		drawerList.performItemClick(
 	    				adapter.getView(pos, null, null), pos, adapter.getItemId(pos));
 	        }
@@ -251,8 +171,16 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	    LoginActivity loginActivity = (LoginActivity) 
 	    		mInstrumentation.waitForMonitorWithTimeout(activityMonitor, 5);
 	    
+	    mLoginButton = (Button)loginActivity.findViewById(R.id.loginButton);
+	    
 	    assertNull(ParseUser.getCurrentUser());
-	    loginActivity.finish();
+	    assertNotNull(loginActivity);
+	    
+	    mActivity.runOnUiThread(new Runnable() {
+	        public void run() {
+	    		mLoginButton.performClick();
+	        }
+	      });
 	    
 	    mInstrumentation.waitForIdleSync();
 	}

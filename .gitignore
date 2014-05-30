@@ -31,3 +31,5 @@ appcompat_v7/.classpath
 .metadata
 .DS_Store
 Random/*
+
+PocketPickup/AndroidManifest.xml

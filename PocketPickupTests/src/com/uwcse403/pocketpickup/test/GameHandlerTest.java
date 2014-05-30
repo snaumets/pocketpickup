@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import junit.framework.TestCase;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,23 +19,69 @@ import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.ParseInteraction.DbColumns;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
+import com.uwcse403.pocketpickup.ParseInteraction.Translator;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
 
 public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication>{
 	public static final String LOG_TAG = "GameHandlerTest";
 	
-	private static Game game;
-	private static int randomIdealSize;
-	private static String SAMPLE_USER = "wHpws114Eo";
+	private static LatLng SAMPLE_LOCATION = new LatLng(0, 0);
+	private static long SAMPLE_START_DATE = 0L;
+	private static long SAMPLE_END_DATE = 0L;
+	private static long SAMPLE_START_TIME = 0L;
+	private static long SAMPLE_END_TIME = 0L;
+	private static int SAMPLE_IDEAL_SIZE = 2;
+	private static String SAMPLE_DESCRIPTION = "GameHandlerTest";
+	private static String SAMPLE_USER = null;
 	private static String SAMPLE_SPORT = "Basketball";
-	private static Game SAMPLE_GAME = new Game("pXBpH4exWI");
+	private static Game SAMPLE_GAME = null;
 	
 	public GameHandlerTest() {
 		super(PocketPickupApplication.class);
-		Random r = new Random();
-		randomIdealSize =  r.nextInt();
-		game = new Game(SAMPLE_USER, new LatLng(0, 0), 0L, 1L, SAMPLE_SPORT, randomIdealSize, "");
+	}
+	
+	private Game getSampleGame() {
+		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
+				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, SAMPLE_DESCRIPTION);
+	}
+	
+	private Game getGameWithLocation(LatLng loc) {
+		return new Game(SAMPLE_USER, loc, SAMPLE_START_DATE, SAMPLE_END_DATE,
+				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, SAMPLE_DESCRIPTION);
+	}
+	
+	@SuppressWarnings("unused")
+	private Game getGameWithStartEnd(long start, long end) {
+		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
+				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, SAMPLE_DESCRIPTION);
+	}
+	
+	@SuppressWarnings("unused")
+	private Game getGameWithSport(String sport) {
+		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
+				SAMPLE_START_TIME, SAMPLE_END_TIME, sport, SAMPLE_IDEAL_SIZE, SAMPLE_DESCRIPTION);
+	}
+	
+	@SuppressWarnings("unused")
+	private Game getGameWithIdealSize(int n) {
+		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
+				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, n, SAMPLE_DESCRIPTION);
+	}
+	
+	private Game getGameWithDescription(String s) {
+		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
+				null, null, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, s);
+	}
+	
+	private void assertGamesAreEqual(Game g1, Game g2) {
+		assertTrue(g2.mCreator.equals(g2.mCreator));
+		assertTrue(g2.mDetails + " == " + g2.mDetails, g1.mDetails.equals(g2.mDetails));
+		assertTrue(g1.mGameType.equals(g2.mGameType));
+		assertTrue(g1.mGameLocation.equals(g2.mGameLocation));
+		assertTrue(g1.mGameEndDate.equals(g2.mGameEndDate));
+		assertTrue(g1.mGameStartDate.equals(g2.mGameStartDate));
+		assertTrue(g1.mIdealGameSize == g2.mIdealGameSize);
 	}
 	
 	@Override
@@ -42,12 +89,13 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		super.setUp();
 		createApplication();
 		assertTrue(isNetworkConnected());
-		if (!isNetworkConnected()) {
-			fail();
-		}
+		
 		//Force sports to load so that the sports bimap guaranteed to be initialized
 		getApplication().forceSportsLoading();
 		Log.v(LOG_TAG, PocketPickupApplication.sportsAndObjs.keySet().toString());
+		
+		SAMPLE_GAME = getSampleGame();
+		SAMPLE_USER = ParseUser.getCurrentUser().getObjectId();
 	}
 	/**
 	 * Checks to see if there is a network connection 
@@ -69,25 +117,35 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	 * of type Game then queries the Parse database to see if the game was stored 
 	 */
 	public void testCreateGame() {
-		GameHandler.createGame(game, null);
-		ParseQuery<ParseObject> q = ParseQuery.getQuery("Game"); 
-		q.whereEqualTo("idealGameSize", randomIdealSize);
+		Game gameToCreate = getSampleGame();
+		GameHandler.createGame(gameToCreate, null);
+		ParseQuery<ParseObject> q = ParseQuery.getQuery(DbColumns.GAME); 
+		q.include(DbColumns.GAME_CREATOR);
+		q.whereEqualTo(DbColumns.GAME_IDEAL_SIZE, SAMPLE_IDEAL_SIZE);
+		q.whereEqualTo(DbColumns.GAME_DETAILS, SAMPLE_DESCRIPTION);
+		q.whereEqualTo(DbColumns.GAME_START_DATE, SAMPLE_START_DATE);
+		q.whereEqualTo(DbColumns.GAME_END_DATE, SAMPLE_END_DATE);
 		List<ParseObject> results = null;
 		try {
 			results = q.find();
 		} catch (ParseException e) {
 			Log.e(LOG_TAG, e.getMessage());
+			fail("Query failed in testCreateGame");
 		}
 		int numResults = (results == null) ? 0 : results.size();
+		assertEquals(numResults, 1);
+		Game gameFound = Translator.parseGameToAppGame(results.get(0));
+		this.assertGamesAreEqual(gameToCreate, gameFound);
+		
 		// now delete the object
 		for (int i = 0; i < numResults; i++) {
 			try {
 				results.get(i).delete();
 			} catch (ParseException e) {
+				fail("Deletion failed in testCreateGame");
 				Log.e(LOG_TAG, e.getMessage());
 			}
 		}
-		assertEquals(1, numResults);
 	}
 	
 	/**
@@ -97,51 +155,56 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	 * The query should return only the game that is right at the current user's location
 	 */
 	public void testFindGameLocation() {
+		// Ensure that the sports bimap is available
 		Log.d(LOG_TAG, "sportsAndObjs is null: " + (PocketPickupApplication.sportsAndObjs == null));
+		
 		//ParseGeoPoint currentLocation = ParseGeoPoint. ask serge
-		Game closeGame = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(1,1), 
-				1L, 2L, "Basketball", 2, "shirts vs skins");
-		Game farGame =  new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(10,10), 
-				1L, 2L, "Basketball", 2, "thugs shooting hoops");
+		Game closeGame = getSampleGame();
+		Game farGame =  this.getGameWithLocation(new LatLng(0.001, 0.001));
 		GameHandler.createGame(closeGame, null);
 		GameHandler.createGame(farGame, null);
+		
 		ArrayList<String> gameTypes = new ArrayList<String>();
-		gameTypes.add("Basketball");
-		FindGameCriteria criteria = new FindGameCriteria(5L, new LatLng(1,1), 0L, Long.MAX_VALUE, 0L, 0L, gameTypes);
+		gameTypes.add(SAMPLE_SPORT);
+		FindGameCriteria criteria = new FindGameCriteria(50000L, SAMPLE_LOCATION, 0L, Long.MAX_VALUE, 0L, Long.MAX_VALUE, gameTypes);
 		List<Game> results = GameHandler.findGame(criteria);
+		assertTrue(results.size() > 0);
+		assertEquals(closeGame.mGameLocation, results.get(0).mGameLocation);
+
+		
 		GameHandler.removeGame(farGame);
 		GameHandler.removeGame(closeGame);
-		//assertTrue(results.size() == 1);
-		assertEquals(closeGame.mGameLocation, results.get(0).mGameLocation);
+		
 	}
 	/**
 	 * Adds a user to a game and tests to see if the user was indeed added to the Game object
 	 * stored in the database.
 	 */
+	@SuppressWarnings("unchecked")
 	public void testJoinAndLeaveGame() {
-		// create a game
-		Random r = new Random();
-		long l = r.nextLong();
+		// create a game description
+		Random r = new Random(0);
+		Long l = r.nextLong();
 		// create a random description string to act as a lookup key for retrieving the object
 		// directly from Parse instead of going through the app layer
 		String randomDescription = Long.toString(l);
-		Game game = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(1,1), 
-				1L, 2L, "Basketball", 2, randomDescription);
+		Game game = getGameWithDescription(randomDescription);	
 		GameHandler.createGame(game, null);
 		// now add the current user to the game.
 		GameHandler.joinGame(game, true);
+		
 		// now search for the game in the database and see if the current user's Parse objectId
 		// is in the array in the 'players' column
-		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Game");
+		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(DbColumns.GAME);
 		query.whereEqualTo(DbColumns.GAME_DETAILS, randomDescription);
 		List<ParseObject> result = null;
 		try {
 			result = query.find();
 		} catch (ParseException e) {
 			Log.e(LOG_TAG, e.getMessage());
+			fail("Failed to get query results in testJoinAndLeaveGame");
 		}
 		ParseObject justCreatedGame = result.get(0);
-		@SuppressWarnings("unchecked")
 		ArrayList<String> players = (ArrayList<String>) justCreatedGame.get(DbColumns.GAME_PLAYERS);
 		// fail if the players object is null, i.e., nothing to do with adding players to games
 		// has been implemented
@@ -151,7 +214,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		String id = null;
 		id = players.get(0);
 		// make sure the only member of the game is the current member
-		assertEquals(ParseUser.getCurrentUser().getObjectId(), id);
+		assertEquals(SAMPLE_USER, id);
 		// now leave the game
 		GameHandler.leaveGame(game);
 		// retrieve the game now that the user has left it 
@@ -169,24 +232,6 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		assertEquals(0, players.size());
 		// cleanup, delete the game from the database now that we are done testing
 		GameHandler.removeGame(game);
-	}
-	
-	/**
-	 * Uploads a game
-	 */
-	public void testDate() {
-		ParseObject user = GameHandler.getAUser();
-		ParseObject sport = GameHandler.getASport();
-		if(user == null || sport == null) {
-			Log.e("GameHandlerTest", "Failed to get a sample user or sport");
-			fail();
-		}
-		Game gameDate = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(0, 0), 0L, 1L, SAMPLE_SPORT, randomIdealSize, "");
-		GameHandler.createGame(gameDate, null);
-		//List<ParseObject> uploaded = GameHandler.getGame(gameDate);
-		//assertTrue(uploaded.size() != 0);
-		ParseObject game = GameHandler.getGameCreatedByCurrentUser(gameDate);
-		assertTrue(game != null);
 	}
 	
 	public void testGetGamesAttending() {
@@ -211,7 +256,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	}
 	
 	public void testGameCreatedInUserTable() {
-		
+		TestCase.assertTrue(true);
 	}
 	
 	@Override

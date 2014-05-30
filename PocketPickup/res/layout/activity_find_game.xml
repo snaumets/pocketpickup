@@ -56,7 +56,6 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:onClick="showTimePickerDialog"
-		        android:text="@string/select_time"
 		        android:background="@drawable/button_form"
 		        android:layout_weight="1"/>
 		    
@@ -65,7 +64,6 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:onClick="showTimePickerDialog"
-		        android:text="@string/select_time"
 		        android:background="@drawable/button_form"
 		        android:layout_weight="1"/>
 		</LinearLayout>
@@ -89,7 +87,6 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:onClick="showDatePickerDialog"
-		        android:text="@string/select_date"
 		        android:background="@drawable/button_form"
 		        android:layout_weight="1"/>
 		    
@@ -98,7 +95,6 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:onClick="showDatePickerDialog"
-		        android:text="@string/select_date"
 		        android:background="@drawable/button_form"
 		        android:layout_weight="1"/>
 		</LinearLayout>

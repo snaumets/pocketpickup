@@ -7,6 +7,7 @@ import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.test.ActivityInstrumentationTestCase2;
+import android.text.format.DateFormat;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -94,17 +95,14 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 		assertNotNull(mSubmitButton);
 		
 		assertEquals(mDefLocationText, mLocationText.getText().toString());
-		assertEquals(mActivity.getResources()
-				.getString(com.uwcse403.pocketpickup.R.string.select_time),
+		assertEquals("12:00 AM",
 				     mStartTimeButton.getText());
-		assertEquals(mActivity.getResources()
-				.getString(com.uwcse403.pocketpickup.R.string.select_time),
+		assertEquals("11:59 PM",
 	                 mEndTimeButton.getText());
-		assertEquals(mActivity.getResources()
-				.getString(com.uwcse403.pocketpickup.R.string.select_date),
+		assertEquals(DateFormat.getDateFormat(mActivity).format(Calendar.getInstance().getTime()),
 					 mStartDateButton.getText());
 		assertEquals(mActivity.getResources()
-				.getString(com.uwcse403.pocketpickup.R.string.select_date),
+				.getString(com.uwcse403.pocketpickup.R.string.select_end_date),
 					 mEndDateButton.getText());
 		
 		assertEquals(0, mRadiusSpinner.getSelectedItemPosition());
@@ -224,14 +222,11 @@ extends ActivityInstrumentationTestCase2<FindGameActivity> {
 	    mInstrumentation.waitForIdleSync();
 	    
 	    assertEquals(0, mRadiusSpinner.getSelectedItemPosition());
-		assertTrue(mStartTimeButton.getText().equals(
-				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_time)));
-		assertTrue(mEndTimeButton.getText().equals(
-				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_time)));
-		assertTrue(mStartDateButton.getText().equals(
-				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_date)));
+		assertTrue(mStartTimeButton.getText().equals("12:00 AM"));
+		assertTrue(mEndTimeButton.getText().equals("11:59 PM"));
+		assertTrue(mStartDateButton.getText().equals(DateFormat.getDateFormat(mActivity).format(Calendar.getInstance().getTime())));
 		assertTrue(mEndDateButton.getText().equals(
-				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_date)));
+				mActivity.getResources().getString(com.uwcse403.pocketpickup.R.string.select_end_date)));
 	}
 	
 	private void setTimeDateButtons(Solo solo) {
