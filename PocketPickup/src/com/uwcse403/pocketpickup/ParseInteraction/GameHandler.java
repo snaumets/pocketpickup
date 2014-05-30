@@ -157,6 +157,12 @@ public final class GameHandler {
 	public static ParseObject getGameUsingId(String id) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery(DbColumns.GAME);
 		ParseObject game = null;
+		if(id == null) {
+			String error = "Tried to find game with game object"
+					+ " that has a null id";
+			Log.e(LOG_TAG, error);
+			throw new IllegalArgumentException(error);
+		}
 		try {
 			game = query.get(id);
 		} catch (ParseException e) {
@@ -172,7 +178,9 @@ public final class GameHandler {
 	 * @param g - target game to be deleted
 	 */
 	public static void removeGame(Game g) {
-		ParseObject game = getGameUsingId(g); 
+		ParseObject game = null;
+		if(g.id != null) game = getGameUsingId(g);
+		else game = getGameCreatedByCurrentUser(g);
 		// mark the game as invalid
 		game.put(DbColumns.GAME_IS_VALID, false);
 		Log.v(LOG_TAG, "marked game as invalid");
@@ -184,15 +192,17 @@ public final class GameHandler {
 
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
-				int numAttendsRelations = objects.size();
-				if (numAttendsRelations != 1) {
-					Log.w(LOG_TAG, "expected exactly one Attends relation to mark as invalid but found " + numAttendsRelations);
-				}
-				for (int i = 0; i < objects.size(); i++) {
-					ParseObject toMarkInvalid = objects.get(i);
-					Log.v(LOG_TAG, "marking invalid the Attends relationship with objectId: " + toMarkInvalid.getObjectId());
-					toMarkInvalid.put(DbColumns.ATTENDS_IS_VALID, false);
-					toMarkInvalid.saveInBackground();
+				if(objects != null) {
+					int numAttendsRelations = objects.size();
+					if (numAttendsRelations != 1) {
+						Log.w(LOG_TAG, "expected exactly one Attends relation to mark as invalid but found " + numAttendsRelations);
+					}
+					for (int i = 0; i < objects.size(); i++) {
+						ParseObject toMarkInvalid = objects.get(i);
+						Log.v(LOG_TAG, "marking invalid the Attends relationship with objectId: " + toMarkInvalid.getObjectId());
+						toMarkInvalid.put(DbColumns.ATTENDS_IS_VALID, false);
+						toMarkInvalid.saveInBackground();
+					}
 				}
 			}
 		});

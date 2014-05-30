@@ -26,19 +26,20 @@ import com.uwcse403.pocketpickup.game.Game;
 public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication>{
 	public static final String LOG_TAG = "GameHandlerTest";
 	
-	private static LatLng SAMPLE_LOCATION = new LatLng(0, 0);
-	private static long SAMPLE_START_DATE = 0L;
-	private static long SAMPLE_END_DATE = 0L;
-	private static long SAMPLE_START_TIME = 0L;
-	private static long SAMPLE_END_TIME = 0L;
-	private static int SAMPLE_IDEAL_SIZE = 2;
-	private static String SAMPLE_DESCRIPTION = "GameHandlerTest";
-	private static String SAMPLE_USER = null;
-	private static String SAMPLE_SPORT = "Basketball";
-	private static Game SAMPLE_GAME = null;
+	private LatLng SAMPLE_LOCATION = new LatLng(0, 0);
+	private long SAMPLE_START_DATE = 0L;
+	private long SAMPLE_END_DATE = 0L;
+	private long SAMPLE_START_TIME = 0L;
+	private long SAMPLE_END_TIME = 0L;
+	private int SAMPLE_IDEAL_SIZE = 2;
+	private String SAMPLE_DESCRIPTION = "GameHandlerTest ";
+	private String SAMPLE_USER = null;
+	private String SAMPLE_SPORT = "Basketball";
 	
 	public GameHandlerTest() {
 		super(PocketPickupApplication.class);
+		Random r = new Random();
+		this.SAMPLE_DESCRIPTION += r.nextLong();
 	}
 	
 	private Game getSampleGame() {
@@ -71,7 +72,12 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	
 	private Game getGameWithDescription(String s) {
 		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
-				null, null, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, s);
+				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, s);
+	}
+	
+	private Game getRandomGame() {
+		Random r = new Random();
+		return getGameWithDescription(Long.toString(r.nextLong()));
 	}
 	
 	private void assertGamesAreEqual(Game g1, Game g2) {
@@ -94,7 +100,6 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		getApplication().forceSportsLoading();
 		Log.v(LOG_TAG, PocketPickupApplication.sportsAndObjs.keySet().toString());
 		
-		SAMPLE_GAME = getSampleGame();
 		SAMPLE_USER = ParseUser.getCurrentUser().getObjectId();
 	}
 	/**
@@ -177,84 +182,47 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		GameHandler.removeGame(closeGame);
 		
 	}
-	/**
-	 * Adds a user to a game and tests to see if the user was indeed added to the Game object
-	 * stored in the database.
-	 */
-	@SuppressWarnings("unchecked")
-	public void testJoinAndLeaveGame() {
-		// create a game description
-		Random r = new Random(0);
-		Long l = r.nextLong();
-		// create a random description string to act as a lookup key for retrieving the object
-		// directly from Parse instead of going through the app layer
-		String randomDescription = Long.toString(l);
-		Game game = getGameWithDescription(randomDescription);
-		
-		GameHandler.createGame(game, null);
-		// now add the current user to the game.
-		GameHandler.joinGame(game, true);
-		
-		// now search for the game in the database and see if the current user's Parse objectId
-		// is in the array in the 'players' column
-		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(DbColumns.GAME);
-		query.whereEqualTo(DbColumns.GAME_DETAILS, randomDescription);
-		List<ParseObject> result = null;
-		try {
-			result = query.find();
-		} catch (ParseException e) {
-			Log.e(LOG_TAG, e.getMessage());
-			fail("Failed to get query results in testJoinAndLeaveGame");
-		}
-		ParseObject justCreatedGame = result.get(0);
-		ArrayList<String> players = (ArrayList<String>) justCreatedGame.get(DbColumns.GAME_PLAYERS);
-		// fail if the players object is null, i.e., nothing to do with adding players to games
-		// has been implemented
-		assertTrue(players != null);
-		// fail if no players were added to the game. 
-		assertTrue(players.size() > 0);
-		String id = null;
-		id = players.get(0);
-		// make sure the only member of the game is the current member
-		assertEquals(SAMPLE_USER, id);
-		// now leave the game
-		GameHandler.leaveGame(game);
-		// retrieve the game now that the user has left it 
-		query = new ParseQuery<ParseObject>("Game");
-		query.whereEqualTo(DbColumns.GAME_DETAILS, randomDescription);
-		result = null;
-		try {
-			result = query.find();
-		} catch (ParseException e) {
-			Log.e(LOG_TAG, e.getMessage());
-		}
-		justCreatedGame = result.get(0);
-		players = (ArrayList<String>) justCreatedGame.get(DbColumns.GAME_PLAYERS);
-		// Verify that the current user left the game
-		assertEquals(0, players.size());
-		// cleanup, delete the game from the database now that we are done testing
-		GameHandler.removeGame(game);
-	}
 	
 	public void testGetGamesAttending() {
+		Game toCreate = getSampleGame();
+		GameHandler.createGame(toCreate, null);
 		ArrayList<Game> myGames = GameHandler.getGamesCurrentUserIsAttending();
 		assertTrue(myGames.size() > 0);
-		assertTrue(myGames.contains(SAMPLE_GAME));
+		assertTrue(contains(myGames, toCreate));
+	}
+	private boolean contains(List<Game> list, Game g) {
+		for(Game l : list) {
+			if(l.mDetails.equals(g.mDetails)) return true;
+		}
+		return false;
 	}
 	
 	public void testGamesCreated() {
+		Game toCreate = getRandomGame();
+		GameHandler.createGame(toCreate, null);
 		ArrayList<Game> myGames = GameHandler.getGamesCreatedByCurrentUser();
 		assertTrue(myGames.size() > 0);
-		assertTrue(myGames.contains(SAMPLE_GAME));
+		assertTrue(contains(myGames, toCreate));
 	}
 	
 	public void testGamesCreatedAreAlsoAttended() {
+		Random r = new Random();
+		Game toCreate = getGameWithDescription(Long.toString(r.nextLong()));
+		GameHandler.createGame(toCreate, null);
 		ArrayList<Game> myGames = GameHandler.getGamesCreatedByCurrentUser();
 		ArrayList<Game> attendingGames = GameHandler.getGamesCurrentUserIsAttending();
+		boolean foundInGamesCreated = false;
+		boolean foundInGamesAttending = false;
 		for(Game g : myGames) {
-			assertTrue(attendingGames.contains(g));
+			if(g.mDetails.equals(toCreate.mDetails)) foundInGamesCreated = true;
 		}
-		assertTrue(myGames.contains(SAMPLE_GAME));
+		for(Game g : attendingGames) {
+			if(g.mDetails.equals(toCreate.mDetails)) foundInGamesAttending = true;
+		}
+		GameHandler.removeGame(toCreate);
+
+		assertTrue(foundInGamesCreated);
+		assertTrue(foundInGamesAttending);
 	}
 	
 	public void testGameCreatedInUserTable() {
