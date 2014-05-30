@@ -202,8 +202,6 @@ extends ActivityInstrumentationTestCase2<CreateGameActivity> {
 	      });
 	    mInstrumentation.waitForIdleSync();
 	    
-	    // TODO: Currently, the sports spinner is not reset with reset button. Is this a bug?
-	    // assertEquals(0, mSportsSpinner.getSelectedItemPosition());
 	    assertFalse(solo.searchText("" + Calendar.getInstance().get(Calendar.YEAR)+ 1));
 	    assertFalse(solo.searchText(Calendar.getInstance().get(Calendar.HOUR) + ":00 AM"));
 	    assertEquals(0, mDurationSpinner.getSelectedItemPosition());

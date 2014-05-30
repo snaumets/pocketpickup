@@ -1,13 +1,10 @@
 package com.uwcse403.pocketpickup;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -88,6 +85,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	
 	// Layout Fields
 	private GoogleMap             mGoogleMap;
+	
+	@SuppressWarnings("unused") // this may be important later if we allow different map types
 	private int                   mMapType;
 	private LocationClient        mLocationClient;
 	private CharSequence          mTitle;          // stores app title
@@ -153,9 +152,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		// My Created Games
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[1], mNavMenuIcons
 				.getResourceId(1, -1)));
-		// Settings: Not yet implemented, placeholder for now
-		/*mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[2], mNavMenuIcons
-				.getResourceId(2, -1)));*/
 		// Help
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[2], mNavMenuIcons
 				.getResourceId(2, -1)));
@@ -227,11 +223,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		/*
-		MenuItem settings = menu.findItem(R.menu.settings);
-		settings.setVisible(false);
-		super.onPrepareOptionsMenu(menu);
-		*/
 		return true;
 	}
 
@@ -250,7 +241,8 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	}
 
 	/*
-	 * Called when invalidateOptionsMenu() is triggered
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
 	 */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -270,10 +262,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		case 1:
 			myCreatedGames();
 			break;
-		/*case 2:
-			settings(null); // View supposed to be passed in, but it is not
-							// used, therefore null is fine
-			break;*/
 		case 2:
 			help(null); // View supposed to be passed in, but it is not used,
 						// therefore null is fine
@@ -288,7 +276,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		// update selected item and title, then close the drawer
 		mDrawerList.setItemChecked(position, true);
 		mDrawerList.setSelection(position);
-		//setTitle(mNavMenuTitles[position]);
 		mDrawerLayout.closeDrawer(mDrawerList);
 		mDrawerList.clearChoices();
 	}
@@ -308,6 +295,10 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	 * onPostCreate() and onConfigurationChanged()...
 	 */
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onPostCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
@@ -315,6 +306,10 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		mDrawerToggle.syncState();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onConfigurationChanged(android.content.res.Configuration)
+	 */
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
@@ -391,17 +386,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					mLocationClient.connect(); // upon success, onConnected() is
 											// called
 				}
-				//mGoogleMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 				mGoogleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 					@Override
-					//public void onInfoWindowClick(Marker marker) {
 					public boolean onMarkerClick(Marker marker) {
 						Game game = null;
 						if (mMarkerToGame.containsKey(marker)) {
 							game = mMarkerToGame.get(marker);
 							Intent intent = new Intent(MainActivity.this, GameActivity.class);
-							// Convert millisecond difference to hours, ms / (1000 ms/s) / (60 s/min) / (60 min/hr)
-							int durationInHours = (int) (game.mGameEndDate - game.mGameStartDate) / 1000 / 60 / 60;
 							
 							// Attach the details
 							Bundle args = new Bundle();
@@ -506,7 +497,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	public void onConnected(Bundle arg0) {
-		// Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
 		if (mFirstLaunch) {
 			// When the app is launched, we want to zoom into the users location if possible
 			Location loc = mLocationClient.getLastLocation();
@@ -805,9 +795,12 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	}
 	
 	/**
+	 * NOTE: This is not currently used, but may be important later
+	 * 
 	 * This method will try to set the map zoom the map, not changing the location.
 	 * @param zoomLevel	The zoom level.
 	 */
+	@SuppressWarnings("unused")
 	private void zoomMapToLocation(int zoomLevel) {
 		if (zoomLevel > 0 && mGoogleMap != null) {			
 			mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
@@ -817,6 +810,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	/**
 	 * This method will zoom the map to a level so that the entire circle
 	 * is shown.
+	 * 
 	 * @param circle	The circle that must be shown
 	 */
 	private void zoomToShowCircle(Circle circle) { 
@@ -846,6 +840,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	/**
 	 * This method will zoom the map out/in enough to show all of the markers
 	 * that are in the given set.
+	 * 
 	 * @param mapMarkers	The set which contains all markers which need to be shown
 	 */
 	private void zoomToShowAllMarkers(Set<Marker> mapMarkers) {
@@ -863,6 +858,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	/**
 	 * This will display the games in the global arraylist mDisplayedGames and 
 	 * will draw a circle with the given radius and at the given location.
+	 * 
 	 * @param radius The radius of the search in miles
 	 * @param loc The location of the center of the search
 	 */
@@ -885,24 +881,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				for (Game game : mDisplayedGames) {
 					// You can customize the marker image using images bundled with
 					// your app, or dynamically generated bitmaps.
-					String gameType = game.mGameType;
-					Log.v(LOG_TAG, "gameType: " + gameType);
-					
-					String details = (game.mDetails == null || game.mDetails.equals("")) ? "None" : game.mDetails;
-					
-					Date startDate = new Date(game.mGameStartDate);
-					SimpleDateFormat formatter = new SimpleDateFormat(
-		                    "hh:mm a EE, MMM d, yyyy", Locale.getDefault());
-					String dateString = formatter.format(startDate);
-					
-					// Convert millisecond difference to hours, ms / (1000 ms/s) / (60 s/min) / (60 min/hr)
-					int durationInHours = (int) (game.mGameEndDate - game.mGameStartDate) / 1000 / 60 / 60;
-					String durationUnit = durationInHours > 1 ? " Hours" : " Hour"; 
-					
-					
-					String gameData = "Event starts: " + dateString + "\n"
-					+ "Duration: " + durationInHours + durationUnit + "\n"
-					+ "Details: " + details;
+					String gameType = game.mGameType;					
 					
 					int markerResource = Sports.getResourceIdForSport(gameType);
 					
@@ -910,8 +889,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					.icon(BitmapDescriptorFactory.fromResource(markerResource))
 					.anchor(0.5f, 1.0f) // Anchors the marker on the bottom left
 					.position(game.mGameLocation));
-					//.title(game.mGameType)
-					//.snippet(gameData));
 					mMapMarkers.add(marker);
 					
 					if (radius == 0 && loc == null) {
@@ -957,28 +934,33 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		}
 	}
 
-	// Simply starts a log in activity
+	/**
+	 * Updates the location text field based on the new 
+	 * center pin location.
+	 * 
+	 * @param view		unused
+	 */
 	public void setLocation(View view) {
-		// Intent intent = new Intent(this, SetLocationActivity.class);
-		// startActivity(intent);
 		updateLocationTextField();
-		//Toast.makeText(this, "TODO: Location Activity", Toast.LENGTH_LONG)
-				//.show();
+
 	}
 	
-	// causes back button to function like home button, as there's nothing 
-	// we want to go back to from the main activity
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
 	@Override
 	public void onBackPressed() {
 	    moveTaskToBack(true);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onDestroy()
+	 */
 	@Override
 	public void onDestroy() {
-		Log.v(LOG_TAG, "onDestroy()");
 		super.onDestroy();
-		//Log.v("MainActivity", "in onDestroy()");
-		//Toast.makeText(this, "destroying", Toast.LENGTH_LONG).show();
 		if (mGoogleMap != null) {
 			CameraPosition map = mGoogleMap.getCameraPosition();
 			double latitude = map.target.latitude;
