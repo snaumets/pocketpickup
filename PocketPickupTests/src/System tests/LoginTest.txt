@@ -1,9 +1,0 @@
-1. Start PocketPickup.
-2. A window with the PocketPickup logo and Facebook login button shows up.
-3. Click Log In.
-4. If you are not logged into Facebook through Facebook app a window shows up where you need to provide your log in information and click login.
-5. If you have not used PocketPickup app before, a window saying you have already authorized PocketPickup shows up. If you are using PocketPickup for the first time, you have to authorize PocketPickup to access your public profile.
-6. Click OK.
-7. A window showing the map shows up.
-8. Verify that the map zooms into your last know location and that a message showing welcome and your first name is displayed.
-
