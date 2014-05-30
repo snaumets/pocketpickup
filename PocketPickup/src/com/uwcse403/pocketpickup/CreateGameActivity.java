@@ -269,17 +269,17 @@ public class CreateGameActivity extends Activity implements
 		// the date represented as unix time milliseconds from 1970 to 12:00AM
 		// on the selected start date
 		long startDate = startDateAndTime - startTime;
+		// chop off any time information of finer granularity than minutes
+		startDate = (startDate / MIN_IN_MILLIS) * MIN_IN_MILLIS;
 		long endDate;
 		// if the game spans two days, set the end date to the next day.
 		// The only time this happens is if the previous calculations show that
 		// the endTime is less than the startTime.
-		// if ( startTime + (mDuration * HOUR) > MILLIS_IN_DAY) {
 		if (endTime < startTime) {
 			endDate = startDate + MILLIS_IN_DAY;
 		} else {
 			endDate = startDate;
 		}
-
 		EditText details = (EditText) findViewById(R.id.cg_details);
 		String detailsText = details.getText().toString();
 		details.setImeOptions(EditorInfo.IME_ACTION_DONE);
