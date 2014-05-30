@@ -90,7 +90,7 @@
     <string name="cg_sport">Sport:</string>
     <string name="cg_duration">Duration:</string>
     <string name="cg_duration_hours">Hour(s)</string>
-    <string name="cg_details_hint">Add optional details</string>
+    <string name="cg_details_hint">Any additional info?</string>
     <string name="cg_details">Details:</string>
 
     <string-array name="sport_choices">
