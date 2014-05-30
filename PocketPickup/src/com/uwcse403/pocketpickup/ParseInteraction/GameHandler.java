@@ -176,9 +176,9 @@ public final class GameHandler {
 	public static void removeGame(Game g) {
 		ParseObject game = getGameCreatedByCurrentUser(g);
 		// now mark the game as invalid
-				game.put(DbColumns.GAME_IS_VALID, false);
-				Log.v(LOG_TAG, "marked game as invalid");
-				game.saveInBackground();
+		game.put(DbColumns.GAME_IS_VALID, false);
+		Log.v(LOG_TAG, "marked game as invalid");
+		game.saveInBackground();
 
 		// set the attends relation to invalid. There should be just one
 		ParseQuery<ParseObject> attendsQuery = ParseQuery.getQuery("Attends");

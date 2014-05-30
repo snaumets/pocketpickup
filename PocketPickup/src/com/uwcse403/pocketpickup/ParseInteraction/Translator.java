@@ -31,7 +31,8 @@ public final class Translator {
 	 * @return Game object corresponding to the Game object stored in the Parse database
 	 */
 	public static Game parseGameToAppGame(ParseObject game) {
-		String creatorId = game.getObjectId();
+		ParseObject parseUserObj = game.getParseObject(DbColumns.GAME_CREATOR);
+		String creatorId = parseUserObj.getObjectId();
 		ParseGeoPoint parseLocation = (ParseGeoPoint) game.get(DbColumns.GAME_LOCATION);
 		LatLng location = new LatLng(parseLocation.getLatitude(), parseLocation.getLongitude());
 		Long gameStartDate = game.getLong(DbColumns.GAME_START_DATE);
