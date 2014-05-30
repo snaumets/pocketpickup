@@ -34,7 +34,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		super(PocketPickupApplication.class);
 		Random r = new Random();
 		randomIdealSize =  r.nextInt();
-		game = new Game(SAMPLE_USER, new LatLng(0, 0), 0L, 1L, SAMPLE_SPORT, randomIdealSize, "");
+		game = new Game(SAMPLE_USER, new LatLng(0, 0), 0L, 1L, 0L, 1L, SAMPLE_SPORT, randomIdealSize, "");
 	}
 	
 	@Override
@@ -100,9 +100,9 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		Log.d(LOG_TAG, "sportsAndObjs is null: " + (PocketPickupApplication.sportsAndObjs == null));
 		//ParseGeoPoint currentLocation = ParseGeoPoint. ask serge
 		Game closeGame = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(1,1), 
-				1L, 2L, "Basketball", 2, "shirts vs skins");
+				1L, 2L, 1L, 2L, "Basketball", 2, "shirts vs skins");
 		Game farGame =  new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(10,10), 
-				1L, 2L, "Basketball", 2, "thugs shooting hoops");
+				1L, 2L, 1L, 2L, "Basketball", 2, "thugs shooting hoops");
 		GameHandler.createGame(closeGame, null);
 		GameHandler.createGame(farGame, null);
 		ArrayList<String> gameTypes = new ArrayList<String>();
@@ -126,7 +126,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		// directly from Parse instead of going through the app layer
 		String randomDescription = Long.toString(l);
 		Game game = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(1,1), 
-				1L, 2L, "Basketball", 2, randomDescription);
+				1L, 2L, 1L, 2L, "Basketball", 2, randomDescription);
 		GameHandler.createGame(game, null);
 		// now add the current user to the game.
 		GameHandler.joinGame(game, true);
@@ -181,7 +181,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 			Log.e("GameHandlerTest", "Failed to get a sample user or sport");
 			fail();
 		}
-		Game gameDate = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(0, 0), 0L, 1L, SAMPLE_SPORT, randomIdealSize, "");
+		Game gameDate = new Game(ParseUser.getCurrentUser().getObjectId(), new LatLng(0, 0), 0L, 1L, 0L, 1L, SAMPLE_SPORT, randomIdealSize, "");
 		GameHandler.createGame(gameDate, null);
 		//List<ParseObject> uploaded = GameHandler.getGame(gameDate);
 		//assertTrue(uploaded.size() != 0);
