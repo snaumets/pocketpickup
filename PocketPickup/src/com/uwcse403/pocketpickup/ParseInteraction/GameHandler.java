@@ -17,16 +17,16 @@ import com.uwcse403.pocketpickup.JoinGameResult;
 import com.uwcse403.pocketpickup.PocketPickupApplication;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
-
 /**
  * Interfaces between local application storage and cloud storage.
+ * 
  * This implementation is dependent on the Parse library
  */
 public final class GameHandler {
 	/** Label for debugging tag label. **/
 	public static final String LOG_TAG = "GameHandler";
-
 	/** Default callback for saving in background. **/
+
 	private static final SaveCallback DEFAULT_SAVE_CALLBACK = new SaveCallback() {
 		public void done(ParseException e) {
 			if (e == null) {
@@ -34,67 +34,62 @@ public final class GameHandler {
 				Log.v(LOG_TAG, "Successfully saved game");
 			} else {
 				// unable to create the game, alert user
-				Log.e(LOG_TAG,
-						"error saving game: " + e.getCode() + ": "
-								+ e.getMessage());
+				Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
 			}
 		}
 	};
-
+	
 	/**
 	 * Adds a game to the database of available games.
-	 * @param g containing user settings for the game
+	 * 
+	 * @param g - contains user settings for the game
 	 */
 	public static void createGame(Game g) {
 		createGame(g, DEFAULT_SAVE_CALLBACK);
-	}
+	} 
 
 	/**
-	 * Creates a game.
+	 * Creates a game 
 	 * 
-	 * A game is added to the database and User is registered as having created
-	 * and joined the game.
-	 * 
-	 * @param g game to create
-	 * @param cb function to complete after saving (null for thread blocking,
-	 *            non-blocking otherwise)
+	 * A game is added to the database and User is registered as having created and joined the game. 
+	 * @param g - game to create
+	 * @param cb - function to complete after saving (null for thread blocking, non-blocking
+	 * otherwise)
 	 */
 	public static void createGame(Game g, SaveCallback cb) {
 		Log.v(LOG_TAG, "entering CreateGame(Game, SaveCallback)");
 		ParseObject game = Translator.appGameToNewParseGame(g);
 		game.put(DbColumns.GAME_IS_VALID, true);
 		if (cb != null) {
-			game.saveInBackground(cb);
+			game.saveInBackground(cb);	
 		} else {
 			try {
 				game.save();
 				joinGameJustCreatedByCurrentUser(g);
 			} catch (ParseException e) {
 				// Failed to save game with waiting
-				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode()
-						+ ": " + e.getMessage());
-				// Do not update User table if we failed to update the Games
-				// table
+				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode() + ": " + e.getMessage());
+				//Do not update User table if we failed to update the Games table
 				return;
 			}
 		}
 	}
-
+	
 	/**
-	 * Adds a game to the database of available games Unlike {@link createGame},
-	 * this creates a game with default preferences, except for the ideal game
-	 * size provided by the {@link Game} argument.
+	 * Adds a game to the database of available games
+	 * Unlike {@link createGame}, this creates a game with default preferences, except
+	 * for the ideal game size provided by the {@link Game} argument.
 	 * 
 	 * Used for debugging purposes
 	 * 
-	 * @param g supplies the ideal game size
+	 * @param g - supplies the ideal game size
 	 */
 	public static void createDummyGame(Game g) {
 		Log.v(LOG_TAG, "entering createDummyGame()");
 		ParseObject game = new ParseObject("Game");
-		// fill in all the setter
+		// fill in all the setter	
 		game.put(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
-
+		
 		game.saveInBackground(new SaveCallback() {
 			public void done(ParseException e) {
 				if (e == null) {
@@ -102,25 +97,21 @@ public final class GameHandler {
 					Log.v(LOG_TAG, "Successfully saved game");
 				} else {
 					// unable to create the game, alert user
-					Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": "
-							+ e.getMessage());
+					Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
 				}
 			}
 		});
 	}
-
+	
 	/**
-	 * Gets a game that meets the provided criteria. Only works for games the
-	 * user has created because the query uses the current ParseUser's objectId
-	 * to find the corresponding game.
+	 * Gets a game that meets the provided criteria. Only works for games the user has created
+	 * because the query uses the current ParseUser's objectId to find the corresponding game.
 	 * 
-	 * @param g
-	 *            - target game to get
-	 * @return the Parse Game object corresponding to the app Game object passed
-	 *         as a parameter
+	 * @param g - target game to get
+	 * @return the Parse Game object corresponding to the app Game object passed as a 
+	 * parameter
 	 * @requires the game already exist in the database
-	 * @throws IllegalStateException
-	 *             if the game does not already exist in the database
+	 * @throws IllegalStateException if the game does not already exist in the database
 	 */
 	public static ParseObject getGameCreatedByCurrentUser(Game g) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
@@ -128,71 +119,68 @@ public final class GameHandler {
 		query.whereEqualTo(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
 		query.whereEqualTo(DbColumns.GAME_START_DATE, g.mGameStartDate);
 		query.whereEqualTo(DbColumns.GAME_END_DATE, g.mGameEndDate);
-		ParseGeoPoint location = new ParseGeoPoint(g.mGameLocation.latitude,
-				g.mGameLocation.longitude);
-		// it seems as though ParseGeoPoints need to be compared like doubles,
-		// as in
-		// two ParseGeoPoints are equal if they are within a very small distance
-		// from each other
+		ParseGeoPoint location = new ParseGeoPoint(g.mGameLocation.latitude, g.mGameLocation.longitude);
+		// it seems as though ParseGeoPoints need to be compared like doubles, as in
+		// two ParseGeoPoints are equal if they are within a very small distance from each other
 		query.whereWithinMiles(DbColumns.GAME_LOCATION, location, .0001);
 		query.whereEqualTo(DbColumns.GAME_DETAILS, g.mDetails);
 		List<ParseObject> objects = null;
 		try {
 			objects = query.find();
 		} catch (ParseException e) {
-			// Failed to see results of the query
+			//Failed to see results of the query
 			Log.e(LOG_TAG, "failed to collect query results in removeGame()");
 		}
 		if (objects == null) {
-			// Failed to find the game to delete
-			// This is an error because the user should only be able to delete
-			// games that exist
+			//Failed to find the game to delete
+			//This is an error because the user should only be able to delete
+			//games that exist
 			Log.e(LOG_TAG, "no objects found to delete");
 		}
 		if (objects.size() != 1) {
-			String errorString = "found "
-					+ objects.size()
-					+ " games that met"
+			String errorString = "found " + objects.size()  + " games that met" 
 					+ " the description of the input game but there should be exactly one";
 			Log.e(LOG_TAG, errorString);
 			throw new IllegalStateException(errorString);
 		}
 		return objects.get(0);
 	}
-
+	
 	/**
-	 * @param app
-	 *            Game object
-	 * @return the Parse Game object that the app Game object passed as a
-	 *         parameter represents.
+	 * @param app Game object 
+	 * @return the Parse Game object that the app Game object passed as a parameter represents. 
 	 */
 	public static ParseObject getGameUsingId(Game g) {
 		return getGameUsingId(g.id);
 	}
-
+	
 	public static ParseObject getGameUsingId(String id) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery(DbColumns.GAME);
 		ParseObject game = null;
+		if(id == null) {
+			String error = "Tried to find game with game object"
+					+ " that has a null id";
+			Log.e(LOG_TAG, error);
+			throw new IllegalArgumentException(error);
+		}
 		try {
 			game = query.get(id);
 		} catch (ParseException e) {
 			e.printStackTrace();
-			Log.e(LOG_TAG,
-					"error retreiving game with id " + id + ": " + e.getCode()
-							+ " : " + e.getMessage());
+			Log.e(LOG_TAG, "error retreiving game with id " + id + ": " + e.getCode() + " : " + e.getMessage());
 		}
 		return game;
 	}
-
-	/**
-	 * Removes the App game object g from the Parse database. Also deletes the
-	 * associated Attends relations.
-	 * 
-	 * @param g
-	 *            - target game to be deleted
+	
+	/** 
+	 * Removes the App game object g from the Parse database. 
+	 * Also deletes the associated Attends relations. 
+	 * @param g - target game to be deleted
 	 */
 	public static void removeGame(Game g) {
-		ParseObject game = getGameUsingId(g);
+		ParseObject game = null;
+		if(g.id != null) game = getGameUsingId(g);
+		else game = getGameCreatedByCurrentUser(g);
 		// mark the game as invalid
 		game.put(DbColumns.GAME_IS_VALID, false);
 		Log.v(LOG_TAG, "marked game as invalid");
@@ -204,19 +192,17 @@ public final class GameHandler {
 
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
-				int numAttendsRelations = objects.size();
-				if (numAttendsRelations != 1) {
-					Log.w(LOG_TAG,
-							"expected exactly one Attends relation to mark as invalid but found "
-									+ numAttendsRelations);
-				}
-				for (int i = 0; i < objects.size(); i++) {
-					ParseObject toMarkInvalid = objects.get(i);
-					Log.v(LOG_TAG,
-							"marking invalid the Attends relationship with objectId: "
-									+ toMarkInvalid.getObjectId());
-					toMarkInvalid.put(DbColumns.ATTENDS_IS_VALID, false);
-					toMarkInvalid.saveInBackground();
+				if(objects != null) {
+					int numAttendsRelations = objects.size();
+					if (numAttendsRelations != 1) {
+						Log.w(LOG_TAG, "expected exactly one Attends relation to mark as invalid but found " + numAttendsRelations);
+					}
+					for (int i = 0; i < objects.size(); i++) {
+						ParseObject toMarkInvalid = objects.get(i);
+						Log.v(LOG_TAG, "marking invalid the Attends relationship with objectId: " + toMarkInvalid.getObjectId());
+						toMarkInvalid.put(DbColumns.ATTENDS_IS_VALID, false);
+						toMarkInvalid.saveInBackground();
+					}
 				}
 			}
 		});
@@ -227,19 +213,16 @@ public final class GameHandler {
 	 * 
 	 * The return type has to be an ArrayList because of how parcelling works.
 	 * 
-	 * @param criteria
-	 *            : FindGameCriteria object containing search criteria
+	 * @param criteria: FindGameCriteria object containing search criteria
 	 */
 	public static ArrayList<Game> findGame(FindGameCriteria criteria) {
 		ArrayList<String> sports = criteria.mGameTypes;
 		if (sports.size() == 0) {
-			throw new IllegalArgumentException(
-					"must include a non-empty list of sport types to findGame()");
+			throw new IllegalArgumentException("must include a non-empty list of sport types to findGame()");
 		}
 		ArrayList<ParseQuery<ParseObject>> sportTypes = new ArrayList<ParseQuery<ParseObject>>();
 		for (int i = 0; i < sports.size(); i++) {
-			ParseObject sport = PocketPickupApplication.sportsAndObjs
-					.get(sports.get(i));
+			ParseObject sport = PocketPickupApplication.sportsAndObjs.get(sports.get(i));
 			ParseQuery<ParseObject> q = new ParseQuery<ParseObject>("Game");
 			q.whereEqualTo(DbColumns.GAME_SPORT, sport);
 			sportTypes.add(q);
@@ -252,22 +235,16 @@ public final class GameHandler {
 		ParseGeoPoint center = new ParseGeoPoint(loc.latitude, loc.longitude);
 
 		// limit to games within the specified radius
-		query.whereWithinMiles(DbColumns.GAME_LOCATION, center,
-				criteria.mRadius);
+		query.whereWithinMiles(DbColumns.GAME_LOCATION, center, criteria.mRadius);
 		// limit games to those that fall within the times entered
-		// there are two cases: one when the end date IS specified and one where
-		// the
+		// there are two cases: one when the end date IS specified and one where the
 		// end date IS NOT specified
-		query.whereGreaterThanOrEqualTo(DbColumns.GAME_START_DATE,
-				criteria.mStartDate);
-		query.whereGreaterThanOrEqualTo(DbColumns.GAME_START_TIME,
-				criteria.mStartTime);
-		query.whereLessThanOrEqualTo(DbColumns.GAME_START_TIME,
-				criteria.mEndTime);
+		query.whereGreaterThanOrEqualTo(DbColumns.GAME_START_DATE, criteria.mStartDate);
+		query.whereGreaterThanOrEqualTo(DbColumns.GAME_START_TIME, criteria.mStartTime);
+		query.whereLessThanOrEqualTo(DbColumns.GAME_START_TIME, criteria.mEndTime);
 		if (criteria.mEndDate != -1L) {
-			query.whereLessThanOrEqualTo(DbColumns.GAME_START_DATE,
-					criteria.mEndDate);
-		}
+			query.whereLessThanOrEqualTo(DbColumns.GAME_START_DATE, criteria.mEndDate);
+		} 
 		// only look for valid games
 		query.whereEqualTo(DbColumns.GAME_IS_VALID, true);
 		List<ParseObject> results = null;
@@ -277,8 +254,7 @@ public final class GameHandler {
 			// Failed to get search results
 			Log.e(LOG_TAG, "Failed to get search results in findGame()");
 		}
-		Log.v(LOG_TAG, "number of Games that match query: "
-				+ (results != null ? results.size() : 0));
+		Log.v(LOG_TAG, "number of Games that match query: " + (results != null ? results.size() : 0));
 		ArrayList<Game> matchingGames = new ArrayList<Game>();
 		for (int i = 0; i < results.size(); i++) {
 			ParseObject result = results.get(i);
@@ -287,10 +263,10 @@ public final class GameHandler {
 		}
 		return matchingGames;
 	}
+	
 
 	/**
 	 * Gets the first User in the User table. For debugging purposes
-	 * 
 	 * @return ParseObject representing the first user in the User table
 	 */
 	public static ParseObject getAUser() {
@@ -300,15 +276,13 @@ public final class GameHandler {
 			return users.get(0);
 		} catch (ParseException e) {
 			// Failed to get any entry from the _User table
-			Log.e(LOG_TAG,
-					"Failed to get any row from the _User table in getAUser()");
+			Log.e(LOG_TAG, "Failed to get any row from the _User table in getAUser()");
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Gets the first sport in the Sort table. For debugging purposes.
-	 * 
 	 * @return a ParseObject representing the first Sport in the Sport table
 	 */
 	public static ParseObject getASport() {
@@ -318,17 +292,13 @@ public final class GameHandler {
 			return sports.get(0);
 		} catch (ParseException e) {
 			// Failed to get any entry in the Sport table
-			Log.e(LOG_TAG,
-					"Failed to get any row from the Sport table in getASport()");
+			Log.e(LOG_TAG, "Failed to get any row from the Sport table in getASport()");
 		}
 		return null;
 	}
-
 	/**
-	 * Makes the user who just created a game a member of the game
-	 * @param g
-	 *            the game to join. Must be the game that the current user just
-	 *            created
+	 * 
+	 * @param g the game to join. Must be the game that the current user just created
 	 */
 	public static void joinGameJustCreatedByCurrentUser(Game g) {
 		ParseObject game = getGameCreatedByCurrentUser(g);
@@ -339,28 +309,23 @@ public final class GameHandler {
 		attends.put(DbColumns.ATTENDS_IS_VALID, true);
 		attends.saveInBackground();
 	}
-
+	
 	/**
-	 * Adds the current user to a game.
-	 * 
-	 * @param g
-	 *            the Game to join
+	 * Adds the current user to a game. 
+	 * @param g the Game to join
 	 * @return true if the user was added to the game, false otherwise
 	 */
-	public static JoinGameResult joinGame(Game g,
-			boolean currentUserIsGameCreator) {
+	public static JoinGameResult joinGame(Game g, boolean currentUserIsGameCreator) {
 		ParseObject game = null;
 		if (currentUserIsGameCreator) {
 			game = getGameCreatedByCurrentUser(g);
 		} else {
-			game = getGameUsingId(g);
+			game = getGameUsingId(g); 
 		}
 		// first check to see if they are already attending this game
-		ParseQuery<ParseObject> alreadyAttendingCheck = ParseQuery
-				.getQuery("Attends");
+		ParseQuery<ParseObject> alreadyAttendingCheck = ParseQuery.getQuery("Attends");
 		alreadyAttendingCheck.whereEqualTo(DbColumns.ATTENDS_GAME, game);
-		alreadyAttendingCheck.whereEqualTo(DbColumns.ATTENDS_ATTENDEE,
-				ParseUser.getCurrentUser());
+		alreadyAttendingCheck.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
 		List<ParseObject> results = null;
 		try {
 			results = alreadyAttendingCheck.find();
@@ -384,12 +349,10 @@ public final class GameHandler {
 				return JoinGameResult.ERROR_JOINING;
 			}
 		} else if (results.size() == 1) {
-			// there are two cases here: they once were joining but they left,
-			// or they have already
+			// there are two cases here: they once were joining but they left, or they have already
 			// joined the game
 			ParseObject attends = results.get(0);
-			boolean alreadyJoined = attends
-					.getBoolean(DbColumns.ATTENDS_IS_VALID);
+			boolean alreadyJoined = attends.getBoolean(DbColumns.ATTENDS_IS_VALID);
 			if (alreadyJoined) {
 				return JoinGameResult.ALREADY_ATTENDING;
 			} else {
@@ -400,30 +363,44 @@ public final class GameHandler {
 			}
 		} else {
 			// database is in an inconsistent state
-			Log.e(LOG_TAG, "database inconsistency: user is joined this game "
-					+ results.size() + " times.");
+			Log.e(LOG_TAG, "database inconsistency: user is joined this game " + results.size() + " times.");
 			return JoinGameResult.ALREADY_ATTENDING;
 		}
 	}
 
 	/**
 	 * Removes the current user from the game.
-	 * 
-	 * @param g
-	 *            the Game that the current user intends to leave
-	 * @return true if the user was successfully removed or if the user was
-	 *         never a member of the game to begin with. Returns false if there
-	 *         was an error
+	 * @param g the Game that the current user intends to leave
+	 * @return true if the user was successfully removed or if the user was never a member of
+	 * the game to begin with. Returns false if there was an error 
 	 */
 	public static boolean leaveGame(Game g) {
 		// just delete the Attends object
-		ParseQuery<ParseObject> attendsRelationToLeaveQuery = ParseQuery
-				.getQuery("Attends");
-		attendsRelationToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE,
-				ParseUser.getCurrentUser());
+		ParseQuery<ParseObject> attendsRelationToLeaveQuery = ParseQuery.getQuery("Attends");
+		attendsRelationToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
 		ParseObject gameToLeave = Translator.appGameToExistingParseGame(g);
-		attendsRelationToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_GAME,
-				gameToLeave);
+		attendsRelationToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_GAME, gameToLeave);
+		/*
+		gameToLeaveQuery.findInBackground(new FindCallback<ParseObject>() {
+
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					int numResults = objects.size();
+					if (numResults == 1) {
+						ParseObject game = objects.get(0);
+						game.deleteInBackground();
+					} else {
+						Log.e(LOG_TAG, "expected exactly 1 result but got: " + numResults);
+					}
+				} else {
+					// error
+					e.printStackTrace();
+					Log.e(LOG_TAG, e.getMessage());
+				}
+			}
+		});
+		*/
 		try {
 			List<ParseObject> objects = attendsRelationToLeaveQuery.find();
 			int numResults = objects.size();
@@ -433,8 +410,7 @@ public final class GameHandler {
 				attendsRelation.saveInBackground();
 				return true;
 			} else {
-				Log.e(LOG_TAG, "expected exactly 1 result but got: "
-						+ numResults);
+				Log.e(LOG_TAG, "expected exactly 1 result but got: " + numResults);
 				return false;
 			}
 		} catch (ParseException e) {
@@ -442,32 +418,26 @@ public final class GameHandler {
 			return false;
 		}
 	}
-
 	/**
 	 * Returns the number of players for a game
 	 * 
-	 * @param app
-	 *            Game object
+	 * @param app Game object 
 	 * @return number of attendees for this game.
 	 * @requires the Game object have a non-null id
-	 * @throws IllegalArgumentException
-	 *             if the Game object has a null id
+	 * @throws IllegalArgumentException if the Game object has a null id
 	 */
 	public static int getCurrentNumberOfGameAttendees(Game g) {
 		if (g.id == null) {
-			throw new IllegalArgumentException(
-					"Game object must have and id that is not null");
+			throw new IllegalArgumentException("Game object must have and id that is not null");
 		}
 		ParseObject game = getGameUsingId(g);
 		if (game != null) {
-			ParseQuery<ParseObject> attendeesQuery = ParseQuery
-					.getQuery("Attends");
+			ParseQuery<ParseObject> attendeesQuery = ParseQuery.getQuery("Attends"); 
 			attendeesQuery.whereEqualTo(DbColumns.ATTENDS_GAME, game);
 			attendeesQuery.whereEqualTo(DbColumns.ATTENDS_IS_VALID, true);
 			try {
 				int count = attendeesQuery.count();
-				Log.v(LOG_TAG, "number of attendees for game with id " + g.id
-						+ ": " + count);
+				Log.v(LOG_TAG, "number of attendees for game with id " + g.id + ": " + count);
 				return count;
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -475,19 +445,17 @@ public final class GameHandler {
 		}
 		return 0;
 	}
-
+	
 	/**
-	 * Gets a List of valid games that have been created by the user. Valid
-	 * means they are not over yet.
+	 * Gets a List of valid games that have been created by the user. Valid means they are not
+	 * over yet. 
 	 * 
-	 * @param userId
-	 *            - ID of the user to query
+	 * @param userId - ID of the user to query
 	 * @return List of Game objects
 	 */
 	public static ArrayList<Game> getGamesCreatedByCurrentUser() {
 		ParseQuery<ParseObject> gamesCreatedQuery = ParseQuery.getQuery("Game");
-		gamesCreatedQuery.whereEqualTo(DbColumns.GAME_CREATOR,
-				ParseUser.getCurrentUser());
+		gamesCreatedQuery.whereEqualTo(DbColumns.GAME_CREATOR, ParseUser.getCurrentUser());
 		gamesCreatedQuery.whereEqualTo(DbColumns.GAME_IS_VALID, true);
 		List<ParseObject> results = null;
 		try {
@@ -500,6 +468,7 @@ public final class GameHandler {
 			}
 			return games;
 		} catch (ParseException e) {
+			// TODO Auto-generated catch block
 			Log.e(LOG_TAG, "unable to retreive games created by user");
 			e.printStackTrace();
 			return null;
@@ -508,31 +477,24 @@ public final class GameHandler {
 
 	/**
 	 * Gets list of game the user current user is attending.
-	 * 
-	 * @return List of game objects representing what the games is user
-	 *         attending
+	 * @return List of game objects representing what the games is user attending
 	 */
 	public static ArrayList<Game> getGamesCurrentUserIsAttending() {
-		ParseQuery<ParseObject> gamesAttendingQuery = ParseQuery
-				.getQuery("Attends");
-		gamesAttendingQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE,
-				ParseUser.getCurrentUser());
+		ParseQuery<ParseObject> gamesAttendingQuery = ParseQuery.getQuery("Attends");
+		gamesAttendingQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
 		gamesAttendingQuery.include(DbColumns.ATTENDS_GAME);
 		gamesAttendingQuery.whereEqualTo(DbColumns.ATTENDS_IS_VALID, true);
 		try {
 			List<ParseObject> results = gamesAttendingQuery.find();
 			ArrayList<Game> games = new ArrayList<Game>();
 			for (ParseObject attends : results) {
-				ParseObject parseGame = attends
-						.getParseObject(DbColumns.ATTENDS_GAME);
+				ParseObject parseGame = attends.getParseObject(DbColumns.ATTENDS_GAME);
 				if (parseGame != null) {
 					games.add(Translator.parseGameToAppGame(parseGame));
 				} else {
 					// this means there is an inconsistency in the database
-					Log.w(LOG_TAG,
-							"An Attends relation refers to a nonexistent Game object."
-									+ " Attends relation objectId: "
-									+ attends.getObjectId());
+					Log.w(LOG_TAG, "An Attends relation refers to a nonexistent Game object." +
+								" Attends relation objectId: " + attends.getObjectId());
 				}
 			}
 			return games;
@@ -541,4 +503,26 @@ public final class GameHandler {
 			return null;
 		}
 	}
+	
+	/**
+	 * Helper function to return a list of Game objects instead of Parse Objects.
+	 * @param pgames
+	 * @return list of corresponding Games
+	 */
+	/*
+	public static ArrayList<Game> parseGameListToApp(ArrayList<String> pgames) {
+		ArrayList<Game> games = new ArrayList<Game>();
+		if (pgames == null) return games;
+		for (String pg : pgames) {
+			Log.e(LOG_TAG + "ptog", "Game id: " + pg);
+			ParseObject parseGame = getGameUsingId(pg);
+			if(parseGame != null) {
+				Game g = Translator.parseGameToAppGame(getGameUsingId(pg));
+				games.add(g);
+			}
+		}
+		return games;
+	}
+	*/
 }
+
