@@ -227,7 +227,6 @@ public class CreateGameActivity extends Activity implements
 	}
 
 	private String getDateButtonString(final Calendar date) {
-
 		return DateFormat.getDateFormat(this).format(date.getTime());
 	}
 
