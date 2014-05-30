@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,9 +25,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
@@ -298,6 +299,12 @@ public class FindGameActivity extends Activity
 		Spinner spinner = (Spinner) findViewById(R.id.radius_spinner);
 		spinner.setSelection(0);
 		
+		ListView choices = sportsDialog.getListView();
+		for (int i = 0; i < choices.getCount(); ++i) {
+			choices.setItemChecked(i, false);
+		}
+
+		selectedSports.clear();
 		setButtonLabels();
 	}
 	

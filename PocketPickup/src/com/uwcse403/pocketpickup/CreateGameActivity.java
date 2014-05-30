@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -274,6 +275,8 @@ public class CreateGameActivity extends Activity
 		
 		EditText details = (EditText) findViewById(R.id.cg_details);
 		String detailsText = details.getText().toString();
+		details.setImeOptions(EditorInfo.IME_ACTION_DONE);
+		details.setSingleLine();
 		
 		final Game createGame = new Game(ParseUser.getCurrentUser().getObjectId(), 
 				mLatLng, startDate, endDate, startTime, endTime, 
