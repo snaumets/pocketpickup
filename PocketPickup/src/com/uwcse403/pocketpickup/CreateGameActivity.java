@@ -227,19 +227,12 @@ public class CreateGameActivity extends Activity implements
 	}
 
 	private String getDateButtonString(final Calendar date) {
-		if (date == null) {
-			return getResources().getString(R.string.select_date);
-		} else {
-			return DateFormat.getDateFormat(this).format(date.getTime());
-		}
+
+		return DateFormat.getDateFormat(this).format(date.getTime());
 	}
 
 	private String getTimeButtonString(final Calendar date) {
-		if (date == null) {
-			return getResources().getString(R.string.select_time);
-		} else {
-			return DateFormat.getTimeFormat(this).format(date.getTime());
-		}
+		return DateFormat.getTimeFormat(this).format(date.getTime());
 	}
 
 	public void setLocation(View v) {

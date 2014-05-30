@@ -415,10 +415,6 @@ public class FindGameActivity extends Activity
 	}
 	
 	private String getTimeButtonString(final Calendar date) {
-		if (date == null) {
-			return getResources().getString(R.string.select_time);
-		} else {
-			return DateFormat.getTimeFormat(this).format(date.getTime());
-		}
+		return DateFormat.getTimeFormat(this).format(date.getTime());
 	}
 }
