@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android" 
-          android:exitFadeDuration="@android:integer/config_shortAnimTime">
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- Can add this if we want some transition time (between button color) after clicking:
+    android:exitFadeDuration="@android:integer/config_shortAnimTime" -->
 	<item android:state_pressed="true">
 		<shape android:shape="rectangle">
 			<stroke 
