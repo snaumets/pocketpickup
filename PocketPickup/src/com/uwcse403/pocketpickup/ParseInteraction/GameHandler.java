@@ -155,7 +155,7 @@ public final class GameHandler {
 	}
 	
 	public static ParseObject getGameUsingId(String id) {
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Game");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery(DbColumns.GAME);
 		ParseObject game = null;
 		try {
 			game = query.get(id);
