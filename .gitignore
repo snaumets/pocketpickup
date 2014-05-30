@@ -25,9 +25,12 @@ proguard/
 PocketPickup/assets/credentials.txt
 PocketPickup/.settings*
 PocketPickup/.classpath
+PocketPickup/AndroidManifest.xml
 
 appcompat_v7/.settings*
 appcompat_v7/.classpath
 .metadata
 .DS_Store
 Random/*
+
+PocketPickup/AndroidManifest.xml
