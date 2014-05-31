@@ -70,6 +70,9 @@ import com.uwcse403.pocketpickup.mapwrapper.TouchableMapFragment;
  */
 public class MainActivity extends Activity implements ConnectionCallbacks,
 													  OnConnectionFailedListener {
+	private static final double EARTH_MEAN_RADIUS = 6371000.0; // in meters
+	private static final int MARKER_PADDING_PIXELS = 200;
+	private static final int CIRCLE_PADDING_PIXELS = 25;
 	
 	// Unique return codes to be used by activities started by this activity for result.
 	private static final int CREATE_GAME_CODE = 1111;
@@ -338,7 +341,12 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			TouchableMapFragment tmf = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
 			mGoogleMap = tmf.getMap();
 			
-			// This listener is simply used to 
+			// This listener is simply used to detect touch events on the map that were
+			// undetectable without the use of a wrapper around the fragment. This will
+			// allow for much more efficient updating of the location text field (as
+			// compared with the google map on change listener that fires an event on
+			// every change and little movement), and disabling of the create and find
+			// game buttons that will prevent potential bugs with location not being loaded yet.
 			new MapStateListener(mGoogleMap, tmf, this) {
 				@Override
 				public void onMapTouched() {
@@ -513,16 +521,12 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0) {
-		// Below Toast is useful for testing
-		// Toast.makeText(this, "Connection Failed to Location Client",
-		// Toast.LENGTH_LONG).show();
+		// Do nothing
 	}
 
 	@Override
 	public void onDisconnected() {
-		// Below Toast is useful for testing
-		// Toast.makeText(this, "Disconnected from Location Client",
-		// Toast.LENGTH_LONG).show();
+		// Do nothing
 	}
 
 	@Override
@@ -814,8 +818,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	 * @param circle	The circle that must be shown
 	 */
 	private void zoomToShowCircle(Circle circle) { 
-	    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-	    double earthMeanRadius = 6371000.0; // in meters  
+	    LatLngBounds.Builder builder = new LatLngBounds.Builder(); 
 	    LatLng center = circle.getCenter();
 	    double radius = circle.getRadius();
 	    
@@ -825,16 +828,15 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	    
 	    // Determine some points that are to be included as bounds
 	    for (double t = 0; t <= Math.PI * 2; t += 1.0) { // we dont need very many points
-		    double latPoint = lat + (radius / earthMeanRadius) * Math.sin(t); // y
-		    double lngPoint = lon + (radius / earthMeanRadius) * Math.cos(t) / Math.cos(lat); // x
+		    double latPoint = lat + (radius / EARTH_MEAN_RADIUS) * Math.sin(t); // y
+		    double lngPoint = lon + (radius / EARTH_MEAN_RADIUS) * Math.cos(t) / Math.cos(lat); // x
 		
 		    // saving the location on circle as a LatLng point
 		    LatLng point = new LatLng(latPoint * 180.0 / Math.PI, lngPoint * 180.0 / Math.PI);
 		    builder.include(point);
 		}
 	    LatLngBounds bounds = builder.build();
-	    int paddingPixels = 25;
-	    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, paddingPixels));
+	    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, CIRCLE_PADDING_PIXELS));
     }
 	
 	/**
@@ -851,8 +853,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		}
 		
 		LatLngBounds bounds = builder.build();
-	    int paddingPixels = 200;
-	    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, paddingPixels));
+	    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MARKER_PADDING_PIXELS));
 	}
 	
 	/**
