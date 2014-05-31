@@ -14,86 +14,86 @@ Kane Swanson kane@cs &amp; kdswan@uw<br/></p>
 <h3>Risk Assessment</h3>
 
 <p><strong>1. Not enough user feedback on application user interface</strong>
- 1.1. Likelihood of occurring: low. As long as we regularly check in with our customers and run
+ <br/>1.1. Likelihood of occurring: low. As long as we regularly check in with our customers and run
  usability tests, we should be able to avoid this.
- 1.2 Impact if this occurs: high. An app with a buggy/non-intuitive UI is very annoying to use
+ <br/>1.2 Impact if this occurs: high. An app with a buggy/non-intuitive UI is very annoying to use
  and will result in customers abandoning our product and giving it poor ratings on the Google
  Play Store.
- 1.3 We know this is an issue because we all dislike the experience of a poorly made app.
- 1.4 As we mentioned, we will run usability tests regularly to continue to update our user
+ <br/>1.3 We know this is an issue because we all dislike the experience of a poorly made app.
+ <br/>1.4 As we mentioned, we will run usability tests regularly to continue to update our user
  interface based on the results.
- 1.5 We will carefully schedule these usability tests to run between iterations of the design cycle,
+ <br/>1.5 We will carefully schedule these usability tests to run between iterations of the design cycle,
  so that we can receive the best feedback at the optimal time.
- 1.6 Should we end up with a buggy UI we will have to decide if we should eliminate certain
+ <br/>1.6 Should we end up with a buggy UI we will have to decide if we should eliminate certain
  bug-prone features.</p>
 
 <p><strong>2. Difficulty of testing UI elements</strong>
- 2.1 Likelihood of occurring: high. There are not many UI testing tools. The ones that
+ <br/>2.1 Likelihood of occurring: high. There are not many UI testing tools. The ones that
  do exists are not very intuitive or powerful.
- 2.2 Impact if this occurs: medium.
- 2.3 Researching UI testing tools has shown that there are few. UI elements have always been more
+ <br/>2.2 Impact if this occurs: medium.
+ <br/>2.3 Researching UI testing tools has shown that there are few. UI elements have always been more
  difficult to test.
- 2.4 We will use the provided Android testing tools to the best of our abilities. The code which
+ <br/>2.4 We will use the provided Android testing tools to the best of our abilities. The code which
  we cannot test will be subject to especially careful code review.
- 2.5 We will use code coverage measurement suites to see where this untested UI code is.
- 2.6If our testing plans fail, we will make up for it with extra usability tests.</p>
+ <br/>2.5 We will use code coverage measurement suites to see where this untested UI code is.
+ <br/>2.6 If our testing plans fail, we will make up for it with extra usability tests.</p>
 
 <p><strong>3. Data limits on our backend management accounts</strong>
- 3.1 Likelihood of occurring: low. We have a lot of space for free.
- 3.2 Impact if this occurs: medium. If this occurs our application will lock up, unless we purchase
+ <br/>3.1 Likelihood of occurring: low. We have a lot of space for free.
+ <br/>3.2 Impact if this occurs: medium. If this occurs our application will lock up, unless we purchase
  premium accounts
- 3.3 Parse gives 1 million push notifications a month, and 1 gb of backend storage. Because most of
+ <br/>3.3 Parse gives 1 million push notifications a month, and 1 gb of backend storage. Because most of
  the initial usage will be from testing and development we can delete unnecessary storage and will
  not likely reach 1 million push notifications.
- 3.4 We will make sure that we are on track throughout the month, so we don&#39;t run out of space/uses at
+ <br/>3.4 We will make sure that we are on track throughout the month, so we don&#39;t run out of space/uses at
  critical times. We will also make sure that our testing suite isn&#39;t sending spurious push
  notifications to our backend.
- 3.5 This will be detected if Parse sends us a notification that we&#39;ve run out of requests. We will
+ <br/>3.5 This will be detected if Parse sends us a notification that we&#39;ve run out of requests. We will
  also detect the problem if our projected usage is over the allocated limit.
- 3.6 If we hit the limits at a critical time of development, we will either make a new account or
+ <br/>3.6 If we hit the limits at a critical time of development, we will either make a new account or
  temporarily purchase a premium account.</p>
 
 <p><strong>4. Integration of various libraries</strong>
- 4.1 Likelihood of occurring: medium. None of our team members have built a product from end to end
+ <br/>4.1 Likelihood of occurring: medium. None of our team members have built a product from end to end
  that made use of this many different libraries and services.
- 4.2 Impact if this occurs: high. Clearly our product will suffer if the major pieces don&#39;t interact well.
- 4.3 Based on what we have learned about system architecture and modular design we know just how important
+ <br/>4.2 Impact if this occurs: high. Clearly our product will suffer if the major pieces don&#39;t interact well.
+ <br/>4.3 Based on what we have learned about system architecture and modular design we know just how important
  it is for different parts of the system to fit together nicely.
- 4.4 To avoid this issue we spent a lot of time discussing our system&#39;s architecture. We intend to
+ <br/>4.4 To avoid this issue we spent a lot of time discussing our system&#39;s architecture. We intend to
  modularize our design as much as possible and and follow Test Driven Development (TDD) to reduce
  the life and scope of any bug.
- 4.5 We will write tests before we implement our services so that we can discover bugs as soon as possible.
- 4.6 We will conduct extensive tests on all of our features, but If we have any problems with integration,
+ <br/>4.5 We will write tests before we implement our services so that we can discover bugs as soon as possible.
+ <br/>4.6 We will conduct extensive tests on all of our features, but If we have any problems with integration,
  hopefully they will only affect our stretch features. If this occurs, we will be forced to remove
  the troubled features from our app.</p>
 
 <p><strong>5. Poor documentation</strong>
- 5.1 Likelihood of occurring: medium. Our team is aware of programmers&#39; tendency to slack off on this
+ <br/>5.1 Likelihood of occurring: medium. Our team is aware of programmers&#39; tendency to slack off on this
  important aspect of writing code.
- 5.2 Impact if this occurs: Low. Because we need to ship our product in less than two months and will
+ <br/>5.2 Impact if this occurs: Low. Because we need to ship our product in less than two months and will
  not be spending any time on maintenance, we believe that incurring a little bit of &#39;code debt&#39;
  will not be too detrimental to our product at launch time. However, if we continue developing our
  product we will need to go back and fully document our code right after the initial release so that
  further development and maintenance can happen smoothly.
- 5.3 We have all worked with poorly documented code and are aware of the problems that it causes.
- 5.4 Isaiah will police the team to make sure they are documenting all methods and classes and
+ <br/>5.3 We have all worked with poorly documented code and are aware of the problems that it causes.
+ <br/>5.4 Isaiah will police the team to make sure they are documenting all methods and classes and
  commenting any unclear line of code.
- 5.5 Detecting the lack of documentation is trivial: if it&#39;s not there, we have a problem.
- 5.6 To mitigate poor or nonexistent documentation, team members will remind each other to document
+ <br/>5.5 Detecting the lack of documentation is trivial: if it&#39;s not there, we have a problem.
+ <br/>5.6 To mitigate poor or nonexistent documentation, team members will remind each other to document
  code thoroughly throughout the development process.</p>
 
 <p><strong>6. Malicious use or attacks</strong>
- 6.1 Likelihood of occurring: low.
- 6.2 Impact if this occurs: High. If our system is compromised or goes down, this is a major problem
+ <br/>6.1 Likelihood of occurring: low.
+ <br/>6.2 Impact if this occurs: High. If our system is compromised or goes down, this is a major problem
  for our users.
- 6.3 We do not use or store any sensitive customer data so we do not anticipate an attacker trying
+ <br/>6.3 We do not use or store any sensitive customer data so we do not anticipate an attacker trying
  to steal information. However, there is not much preventing a malicious user from creating spurious
  events to confuse other users, but this also seems unlikely to actually happen.
- 6.4 The Parse platform assures us that if we follow their security guidelines we will be safe from data
+ <br/>6.4 The Parse platform assures us that if we follow their security guidelines we will be safe from data
  breaches and service disruptions, so we intend to follow their guidelines very carefully.
- 6.5 To detect malicious use we will investigate anomalous user behavior and take necessary action to
+ <br/>6.5 To detect malicious use we will investigate anomalous user behavior and take necessary action to
  protect our users and the system.
- 6.6 Should there be a data breach, we will respond quickly and apologize to our users and ask them
+ <br/>6.6 Should there be a data breach, we will respond quickly and apologize to our users and ask them
  to change their passwords if necessary. We do not want to lose our customers&#39; trust so it is
  important that we handle the situation quickly and with integrity. If our service is disrupted
  due to malicious behavior, we will make use of the scalability of the Parse platform by purchasing
