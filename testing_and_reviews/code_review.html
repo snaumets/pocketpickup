@@ -1,0 +1,23 @@
+<h1>Pocket Pickup</h1>
+<h2>Code Review</h2>
+
+<h3>Team Poseidon</h3>
+<p>
+	Sergey Naumets (snaumets@cs)<br/>
+	Victor Farkas (vfarkas@cs)<br/>
+	Jacob Gile (jjgile@cs)<br/>
+	Patrick Larson (palarson@cs)<br/>
+	Kane Swanson (kane@cs, kdswan@uw)<br/>
+	Isaiah Mathieu (imathieu@cs)<br/>
+</p>
+
+<p>For the code review, we had Jacob review the MainActivity.  The main activity is the hub of our application, connecting the major use cases.  MainActivity is a front end, Android module, and Jacob is on the Parse backend team.  The first and most noticeable issues were inconsistencies in documentation.  The format of Javadoc that we use varies across the class, and comments are incomplete or inconsistent.  Additionally, there is a fair amount of dead
+code and commented code.  These inconsistencies have since been ironed out.</p>
+
+<p>There are a few compiler error that should be addressed, most of which is due the the commented out and dead code.  Some of the code that triggers warnings are meant as scaffolding for future extensions, but the warnings should be suppressed at the least, and this has been done after the review.</p>
+
+<p>Jacob noticed a number of magic constants.  These constants should be global and collected together, so that updates can be made quickly and easily.  This includes using Enums for identification codes rather than unreadable integers.  This change might be more difficult, due to the reliance on Android APIs, but we can certainly do more to make the identifications readable.</p>
+
+<p>Aside from these suggestions, Jacob found the rest of the functionality readable.  We made excellent use of whitespace to separate functionality.</p>
+
+<p>Throughout the review we learned that the fundamental design may be well written, but the codebase can get very ugly as more features are tacked on.  Usually as an afterthought in the design process, most of the time augmentation doesn’t perfectly fit.  Thus, this review highlighted the importance of refactoring.  With a small up-front investment, the code would become much more readable and there would be no confusion over what is dead and what is important.  This is especially important with this review, as the class that was examined is our main activity and the center of our application.</p>
