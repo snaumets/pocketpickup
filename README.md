@@ -1,5 +1,5 @@
-pocketpickup
-============
-User Documentation: https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxjc2U0MDN0ZWFtcG9zZWlkb258Z3g6MTZjYTQwMDNhMjU4ZTE4Yw
+At every release, update the .apk file in this directory
 
-Developer Documentation: https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxjc2U0MDN0ZWFtcG9zZWlkb258Z3g6Mjg2ZDg5Mzg3NDUwNTdmZg
+/documentation contains instructions and project requirements 
+
+/testing_and_reviews contains files for the CSE 403 staff
