@@ -1,5 +1,14 @@
 pocketpickup
 ============
-User Documentation: https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxjc2U0MDN0ZWFtcG9zZWlkb258Z3g6MTZjYTQwMDNhMjU4ZTE4Yw
+This is the source code directory for Pocket Pickup, a University of Washington CSE 403 project developed by:
 
-Developer Documentation: https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxjc2U0MDN0ZWFtcG9zZWlkb258Z3g6Mjg2ZDg5Mzg3NDUwNTdmZg
+Sergey Naumets (snaumets@cs)
+Victor Farkas (vfarkas@cs)
+Jacob Gile (jjgile@cs)
+Patrick Larson (palarson@cs)
+Kane Swanson (kane@cs, kdswan@uw)
+Isaiah Mathieu (imathieu@cs)
+
+All documentation and instructions can be found in the gh-pages branch of this repository.
+
+For users and developers new to the project, we recommend starting at our homepage: http://isaiahmathieu.github.io/pocketpickup/
