@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import junit.framework.TestCase;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -70,7 +69,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	
 	/**
 	 * Creates a game with a provided location
-	 * @param loc - game locaiton
+	 * @param loc - game location
 	 * @return game with default parameters except with provided location.
 	 */
 	private Game getGameWithLocation(LatLng loc) {
@@ -79,27 +78,51 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	}
 	
 	@SuppressWarnings("unused")
+	/**
+	 * Creates a game with default parameters except with a provided sport
+	 * @param sport - game type
+	 * @return game with default parameters except with a provided location
+	 */
 	private Game getGameWithSport(String sport) {
 		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
 				SAMPLE_START_TIME, SAMPLE_END_TIME, sport, SAMPLE_IDEAL_SIZE, SAMPLE_DESCRIPTION);
 	}
 	
 	@SuppressWarnings("unused")
+	/**
+	 * Creates a game with default parameters except with a provided ideal size
+	 * @param n - game ideal size
+	 * @return game with default parameters except with a provided ideal size
+	 */
 	private Game getGameWithIdealSize(int n) {
 		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
 				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, n, SAMPLE_DESCRIPTION);
 	}
 	
+	/**
+	 * Creates a game with default parameters except with a provided description
+	 * @param s - game description
+	 * @return game with default parameters except with a provided 
+	 */
 	private Game getGameWithDescription(String s) {
 		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
 				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, s);
 	}
 	
+	/**
+	 * Creates a game with default parameters except for a new random number in place of the description.
+	 * @return game with default parameters except with a new, random description
+	 */
 	private Game getRandomGame() {
 		Random r = new Random();
 		return getGameWithDescription(Long.toString(r.nextLong()));
 	}
 	
+	/**
+	 * Asserts that the fields of each game are equal
+	 * @param g1 - game that must have all fields equal to g2
+	 * @param g2 - game that must have all fields equal to g1
+	 */
 	private void assertGamesAreEqual(Game g1, Game g2) {
 		assertTrue(g2.mCreator.equals(g2.mCreator));
 		assertTrue(g2.mDetails + " == " + g2.mDetails, g1.mDetails.equals(g2.mDetails));
@@ -111,6 +134,9 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	}
 	
 	@Override
+	/**
+	 * {@inherit-doc}
+	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 		createApplication();
@@ -122,6 +148,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		
 		SAMPLE_USER = ParseUser.getCurrentUser().getObjectId();
 	}
+	
 	/**
 	 * Checks to see if there is a network connection 
 	 * @return true if there is wifi connection, false otherwise
@@ -135,6 +162,19 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		} else {
 			return true;
 		}
+	}
+	
+	/**
+	 * Checks that a game with the same description is contained in a list of Games
+	 * @param list - list of games
+	 * @param g - Game to check for being contained in list
+	 * @return true if a game with g's description exists in list, else false
+	 */
+	private boolean contains(List<Game> list, Game g) {
+		for(Game l : list) {
+			if(l.mDetails.equals(g.mDetails)) return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -201,6 +241,10 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		GameHandler.removeGame(closeGame);
 		
 	}	
+	
+	/**
+	 * Tests that a created game is added to the list of games attended by a user
+	 */
 	public void testGetGamesAttending() {
 		Game toCreate = getSampleGame();
 		GameHandler.createGame(toCreate, null);
@@ -208,13 +252,10 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		assertTrue(myGames.size() > 0);
 		assertTrue(contains(myGames, toCreate));
 	}
-	private boolean contains(List<Game> list, Game g) {
-		for(Game l : list) {
-			if(l.mDetails.equals(g.mDetails)) return true;
-		}
-		return false;
-	}
 	
+	/**
+	 * Tests that a created game is added to the list of games created by a user
+	 */
 	public void testGamesCreated() {
 		Game toCreate = getRandomGame();
 		GameHandler.createGame(toCreate, null);
@@ -223,6 +264,9 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		assertTrue(contains(myGames, toCreate));
 	}
 	
+	/**
+	 * Tests that a created game is present in both the lists of games created and attending
+	 */
 	public void testGamesCreatedAreAlsoAttended() {
 		Game toCreate = getRandomGame();
 		GameHandler.createGame(toCreate, null);
@@ -242,12 +286,17 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 		assertTrue(foundInGamesAttending);
 	}
 	
-	public void testGameCreatedInUserTable() {
-		TestCase.assertTrue(true);
-	}
-	
 	@Override
+	/**
+	 * {@inherit-doc}
+	 */
 	protected void tearDown() {
 		terminateApplication();
+		try {
+			super.tearDown();
+		} catch (Exception e) {
+			Log.e(LOG_TAG, "Failed to tear down");
+			e.printStackTrace();
+		}
 	}
 }
