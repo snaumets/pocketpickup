@@ -24,37 +24,57 @@ import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
 
 public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication>{
+	/**Log tag label for logging**/
 	public static final String LOG_TAG = "GameHandlerTest";
 	
+	/**Default starting location**/
 	private LatLng SAMPLE_LOCATION = new LatLng(0, 0);
+	/**Default starting day**/
 	private long SAMPLE_START_DATE = 0L;
+	/**Default ending day**/
 	private long SAMPLE_END_DATE = 0L;
+	/**Default starting time**/
 	private long SAMPLE_START_TIME = 0L;
+	/**Default ending time**/
 	private long SAMPLE_END_TIME = 0L;
+	/**Default ideal size**/
 	private int SAMPLE_IDEAL_SIZE = 2;
+	/**Default description. A random number unique to the test run is appended**/
 	private String SAMPLE_DESCRIPTION = "GameHandlerTest ";
+	/**Default user. Must be set in the constructor as the current user after Parse intitialization**/
 	private String SAMPLE_USER = null;
+	/**Default sport**/
 	private String SAMPLE_SPORT = "Basketball";
 	
+	/**
+	 * Default constructor.
+	 * 
+	 * Appends a random number to the description. This allows games created
+	 * with this description to be uniquely identified. This allows for easily identifying test
+	 * games in the game database.
+	 */
 	public GameHandlerTest() {
 		super(PocketPickupApplication.class);
 		Random r = new Random();
 		this.SAMPLE_DESCRIPTION += r.nextLong();
 	}
 	
+	/**
+	 * Creates a game with default parameters
+	 * @return Game with default parameters
+	 */
 	private Game getSampleGame() {
 		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
 				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, SAMPLE_DESCRIPTION);
 	}
 	
+	/**
+	 * Creates a game with a provided location
+	 * @param loc - game locaiton
+	 * @return game with default parameters except with provided location.
+	 */
 	private Game getGameWithLocation(LatLng loc) {
 		return new Game(SAMPLE_USER, loc, SAMPLE_START_DATE, SAMPLE_END_DATE,
-				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, SAMPLE_DESCRIPTION);
-	}
-	
-	@SuppressWarnings("unused")
-	private Game getGameWithStartEnd(long start, long end) {
-		return new Game(SAMPLE_USER, SAMPLE_LOCATION, SAMPLE_START_DATE, SAMPLE_END_DATE,
 				SAMPLE_START_TIME, SAMPLE_END_TIME, SAMPLE_SPORT, SAMPLE_IDEAL_SIZE, SAMPLE_DESCRIPTION);
 	}
 	
