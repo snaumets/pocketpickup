@@ -1,0 +1,174 @@
+<h1>Pocket Pickup</h1>
+<h2>Use Cases</h2>
+
+<h3>Team Poseidon</h3>
+<p>
+	Sergey Naumets (snaumets@cs)<br/>
+	Victor Farkas (vfarkas@cs)<br/>
+	Jacob Gile (jjgile@cs)<br/>
+	Patrick Larson (palarson@cs)<br/>
+	Kane Swanson (kane@cs, kdswan@uw)<br/>
+	Isaiah Mathieu (imathieu@cs)<br/>
+</p>
+
+<h3>Overview</h3>
+<p>
+	The following seven use cases represent the most common tasks that the users are expected to perform. The first five, which involve creating, finding, leaving, and checking in to a game, are the core features of our application because they are what facilitate pickup sports games. The last two, log in and sign up, are essential for users to begin using the service.
+</p>
+</p>
+	Failure-handling is represented in the alternate flow of these use cases.
+</p>
+</p>
+	<img src="images/uc_overview.png" alt="uc_overview.png">
+</p>
+
+<h3>Find a Game</h3>
+<h4>Brief Description</h4>
+<p>
+	The user selects a game by querying the game scheduler. If no games match the query, the users is prompted to search again.
+</p>
+<h4>Preconditions</h4>
+<p>
+	The user is logged on to the system.
+</p>
+<h4>Basic Flow</h4>
+<p>
+	<ol>
+		<li>Users selects the "Find game" screen</li>
+		<li>User enters a kind of game</li>
+		<li>The system presents a list of games of the desired kind</li>
+		<li>2 and 3 may be repeated<li>
+		<li>The user selects a game</li>
+		<li>The game scheduler registers the user with a game</li>
+	</ol>
+</p>
+<h4>Alternate Flow: Games not found</h4>
+<p>
+	<ol>
+		<li>If at 2 in Find a Game, no games are found</li>
+		<li>The system displays the message "0 games found"</li>
+		<li>The use case starts at 2) in find a game</li>
+	</ol>
+</p>
+<h4>Postcondition</h4>
+<p>
+	The user is registered with a game
+</p>
+<h4>Activity Diagram</h4>
+
+<img src="images/uc_findgame.png" alt="uc_findgame.png">
+
+<h3>Leave a Game</h3>
+<h4>Brief Description</h4>
+<p>
+	The user leaves a game by updating the game schedule
+</p>
+<h4>Preconditions</h4>
+<p>
+	The user is logged on to the system.
+</p>
+<h4>Basic Flow</h4>
+<p>
+	<ol>
+		<li>User selects the game they wish to leave on the main map</li>
+		<li>The system presents game information with an option to leave</li>
+		<li>The User selects the leave game option</li>
+		<li>The game scheduler unregisters the user with the game<li>
+		<li>5) The user selects a game</li>
+		<li>6) The game scheduler registers the user with a game</li>
+	</ol>
+</p>
+<h4>Postcondition</h4>
+<p>
+	The user is no longer registered with a selected game game
+</p>
+<h4>Activity Diagram</h4>
+
+<img src="images/uc_leavegame.png" alt="uc_leavegame.png">
+
+
+<h3>Create a Game</h3>
+<h4>Brief Description</h4>
+<p>
+	The user creates a game by updating the game scheduler. If invalid game information is provided, the users is prompted to enter information again.
+</p>
+<h4>Preconditions</h4>
+<p>
+	The user is logged on to the system.
+</p>
+<h4>Basic Flow</h4>
+<p>
+	<ol>
+		<li>The user selects the "create game" screen</li>
+		<li>User enters game information</li>
+		<li>The user registers the game</li>
+	</ol>
+</p>
+<h4>Alternate Flow: Games not found</h4>
+<p>
+	<ol>
+		<li>If at 2) in create a game, some information is invalid:</li>
+		<li>The system displays an error message</li>
+		<li>The use case restarts at 2) in create a game</li>
+	</ol>
+</p>
+<h4>Postcondition</h4>
+<p>
+	A new game is registered in the game scheduler
+</p>
+<h4>Activity Diagram</h4>
+
+<img src="images/uc_creategame.png" alt="uc_creategame.png">
+
+
+<h3>Signup</h3>
+<h4>Brief Description</h4>
+<p>
+	The user registers a new profile with the profile manager. This occurs during the first use of the app on a new phone via Facebook
+</p>
+<h4>Preconditions</h4>
+<p>
+	The user has not logged on to the system via facebook before..
+</p>
+<h4>Basic Flow</h4>
+<p>
+	<ol>
+		<li>The user selects the log in screen</li>
+		<li>The user input a username and password</li>
+		<li>The user is prompted via facebook to confirm login credentials</li>
+		<li>The system adds a new user profile with the information<li>
+	</ol>
+</p>
+<h4>Postcondition</h4>
+<p>
+	The profile manager is updated with a new profile
+</p>
+<h4>Activity Diagram</h4>
+
+<img src="images/uc_signup.png" alt="uc_signup.png">
+
+<h3>Login</h3>
+<h4>Brief Description</h4>
+<p>
+	The user associates their device with a profile.
+</p>
+<h4>Preconditions</h4>
+<p>
+	The user is not logged on to the system but already has an account linked via Facebook.
+</p>
+<h4>Basic Flow</h4>
+<p>
+	<ol>
+		<li>The user selects the login button</li>
+		<li>The system registers the user as logged with their device</li>
+		<li>The user is prompted via facebook to confirm login credentials</li>
+		<li>The system adds a new user profile with the information<li>
+	</ol>
+</p>
+<h4>Postcondition</h4>
+<p>
+	The user’s device is registered with their profile.
+</p>
+<h4>Activity Diagram</h4>
+
+<img src="images/uc_login.png" alt="uc_login.png">
