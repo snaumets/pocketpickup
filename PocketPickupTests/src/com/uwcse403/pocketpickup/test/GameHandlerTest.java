@@ -246,7 +246,7 @@ public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication
 	 * Tests that a created game is added to the list of games attended by a user
 	 */
 	public void testGetGamesAttending() {
-		Game toCreate = getSampleGame();
+		Game toCreate = getRandomGame();
 		GameHandler.createGame(toCreate, null);
 		ArrayList<Game> myGames = GameHandler.getGamesCurrentUserIsAttending();
 		assertTrue(myGames.size() > 0);

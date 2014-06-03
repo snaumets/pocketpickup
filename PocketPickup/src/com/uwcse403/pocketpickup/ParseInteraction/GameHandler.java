@@ -301,13 +301,36 @@ public final class GameHandler {
 	 * @param g the game to join. Must be the game that the current user just created
 	 */
 	public static void joinGameJustCreatedByCurrentUser(Game g) {
+		joinGameJustCreatedByCurrentUserWithCallback(g, new SaveCallback(){
+			@Override
+			public void done(ParseException e) {
+				if(e != null) {
+					Log.e(LOG_TAG, "Failed to join game after creation");
+				}
+			}});
+	}
+	
+	/**
+	 * 
+	 * @param g the game to join. Must be the game that the current user just created
+	 */
+	public static void joinGameJustCreatedByCurrentUserWithCallback(Game g, SaveCallback cb) {
 		ParseObject game = getGameCreatedByCurrentUser(g);
 		ParseObject attends = new ParseObject("Attends");
 		attends.put(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
 		attends.put(DbColumns.ATTENDS_GAME, game);
 		attends.put(DbColumns.ATTENDS_JOINED_AT, System.currentTimeMillis());
 		attends.put(DbColumns.ATTENDS_IS_VALID, true);
-		attends.saveInBackground();
+		if (cb != null)
+			attends.saveInBackground(cb);
+		else {
+			try {
+				attends.save();
+			} catch (ParseException e) {
+				Log.e(LOG_TAG, "Failed to save game without callback");
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**
