@@ -49,6 +49,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
@@ -108,7 +110,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	
 	private Set<Marker> mMapMarkers;
 	private Set<Circle> mMapCircles;
-	private Map<Marker, Game> mMarkerToGame;
+	private BiMap<Marker, Game> mMarkerToGame;
 
 	
 	/*
@@ -347,7 +349,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			mMapMarkers = new HashSet<Marker>();
 			mMapCircles = new HashSet<Circle>();
 			mDisplayedGames = new ArrayList<Game>();
-			mMarkerToGame = new HashMap<Marker, Game>();
+			mMarkerToGame = HashBiMap.create();
 			TouchableMapFragment tmf = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
 			mGoogleMap = tmf.getMap();
 			
@@ -672,6 +674,31 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		if (mDisplayedGames != null) {
 			mDisplayedGames.clear();
 		}
+		
+		if (mMarkerToGame != null) {
+			mMarkerToGame.clear();
+		}
+	}
+	
+	// This method will remove the given marker from map and internal structures
+	private void removeMarkerFromMap(Marker marker) {
+		// Clear map marker
+		if (marker != null) {
+			if (mMapMarkers != null && mMapMarkers.contains(marker)) {
+				mMapMarkers.remove(marker);
+			}
+			
+			Game game = null;
+			if (mMarkerToGame != null) {
+				game = mMarkerToGame.get(marker);
+			}
+			
+			if (mDisplayedGames != null && mDisplayedGames.contains(marker) && game != null) {
+				mDisplayedGames.remove(game);
+			}
+			// remove the marker from the map
+			marker.remove();
+		}
 	}
 	
 	// This will show the 
@@ -770,6 +797,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				// This string will tell whether the user deleted, left, or joined a game
 				int result = data.getIntExtra(GameActivity.GAME_RESULT, GameActivity.GAME_RESULT_JOIN_FAILED);
 				Game game = data.getParcelableExtra(GameActivity.GAME);
+				Marker marker = null;
 				switch (result) {
 				case GameActivity.GAME_RESULT_JOINED:
 					LoginActivity.user.mAttendingGames.add(game);
@@ -780,18 +808,21 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					break;
 				case GameActivity.GAME_RESULT_LEFT:
 					LoginActivity.user.mAttendingGames.remove(game);
+					marker = mMarkerToGame.inverse().get(game);
+					removeMarkerFromMap(marker);
 					break;
 				case GameActivity.GAME_RESULT_LEFT_FAILED:
 					break;
 				case GameActivity.GAME_RESULT_DELETED:
 					LoginActivity.user.mAttendingGames.remove(game);
 					LoginActivity.user.mCreatedGames.remove(game);
+					marker = mMarkerToGame.inverse().get(game);
+					removeMarkerFromMap(marker);
 					break;
 				default:
 					// Do nothing
 					break;
 				}
-				clearSearchResults(null); // clear previous results if any
 			}
 		default:
 			// Do nothing
