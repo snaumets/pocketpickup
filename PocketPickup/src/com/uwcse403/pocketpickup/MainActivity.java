@@ -149,18 +149,21 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		mNavDrawerItems = new ArrayList<NavDrawerItem>();
 
 		// adding nav drawer items to array
-		// My Joined Games
+		// Joined Games
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[0], mNavMenuIcons
 				.getResourceId(0, -1)));
-		// My Created Games
+		// Created Games
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[1], mNavMenuIcons
 				.getResourceId(1, -1)));
-		// Help
+		// Preferred Sports
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[2], mNavMenuIcons
 				.getResourceId(2, -1)));
-		// Logout
+		// Help
 		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[3], mNavMenuIcons
 				.getResourceId(3, -1)));
+		// Logout
+		mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[4], mNavMenuIcons
+				.getResourceId(4, -1)));
 
 		// Recycle the typed array
 		mNavMenuIcons.recycle();
@@ -190,12 +193,16 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				getActionBar().setTitle(mTitle);
 				// calling onPrepareOptionsMenu() to show action bar icons
 				invalidateOptionsMenu();
+				// Since map was unsettled, we need to make sure the location field is re-updated
+				updateLocationTextField();
 			}
 
 			public void onDrawerOpened(View drawerView) {
 				getActionBar().setTitle(mDrawerTitle);
 				// calling onPrepareOptionsMenu() to hide action bar icons
 				invalidateOptionsMenu();
+				// Since map is unsettled, update the field to 'Updating...'
+				updateLocationTextFieldToUpdating();
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -266,10 +273,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			myCreatedGames();
 			break;
 		case 2:
+			mySportsPreferences();
+			break;
+		case 3:
 			help(null); // View supposed to be passed in, but it is not used,
 						// therefore null is fine
 			break;
-		case 3:
+		case 4:
 			logout(null);
 			break;
 		default:
@@ -598,6 +608,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		if (mMapMarkers.size() > 0) {
 			showClearButton();
 		}
+	}
+	
+	// This method will display the user's created games on the map
+	private void mySportsPreferences() {
+		
 	}
 	
 	// Simply starts a log in activity

@@ -21,6 +21,7 @@
     <string-array name="nav_drawer_items">
         <item>Joined Games</item>
         <item>Created Games</item>
+        <item>Preferred Sports</item>
         <!--<item>Settings</item>-->
         <item>Help</item>
         <item>Logout</item>
@@ -31,6 +32,7 @@
     <array name="nav_drawer_icons">
         <item>@drawable/ic_joined</item>
         <item>@drawable/ic_created</item>
+        <item>@drawable/ic_sports</item>
         <!--<item>@drawable/ic_settings</item>-->
         <item>@drawable/ic_help</item>
         <item>@drawable/ic_logout</item>
@@ -108,14 +110,21 @@
     <!-- Help Strings -->
     <string name="instructions_header">Instructions For Use</string>
     <string name="instructions_create">To create a game, navigate until the pin is on the desired
-        location, press the "Create Game" button, fill in the details, and finish by pressing 
-        "Create Game"</string>
-    <string name="instructions_find">To find games, press the "Find Game" button, fill in the details
-        and press "Find Game." Games fitting the desired parameters will be displayed on the map</string>
-    <string name="instructions_join">To join games, click on the pin, then on the "Join Game" button
-        in the details view</string>
-    <string name="developer_info">Pocket Pickup was developed in 2014 by Serge Naumets, Jacob Gile, Patrick Larson, 
+        location, press the \'Create Game\' button, fill in the details, and finish by pressing 
+        \'Create Game\'.</string>
+    <string name="instructions_find">To find games, press the \'Find Game\' button, fill in the details
+        and press \'Find Game\'. Games fitting the desired parameters will be displayed on the map.</string>
+    <string name="instructions_join">To join a game, click on a marker, then on the \'Join Game\' button.</string>
+	<string name="instructions_leave">To leave a game, click on the marker of a joined game, then on the 
+	    \'Leave Game\' button.</string>
+	<string name="instructions_delete">To delete a game, click on the marker of a joined game when only one 
+	    attendee remains, then on the \'Delete Game\' button.</string>
+    <string name="developer_info">Pocket Pickup was developed in 2014 by Sergey Naumets, Jacob Gile, Patrick Larson, 
         Isaiah Mathieu, Viktor Farkas and Kane Swanson</string>
     <string name="contact_info">We can be reached at cse-403-team-poseidon@googlegroups.com</string>
+    <string name="bug_header">Report Bug</string>
+    <string name="instructions_bug">To report a bug, go to https://github.com/isaiahmathieu/pocketpickup/issues and click 
+        on the \'New Issue\' button. A github account is required for this.</string>
+    <string name="contact_header">Contact Us</string>
 
 </resources>
