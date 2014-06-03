@@ -26,7 +26,6 @@ public final class GameHandler {
 	/** Label for debugging tag label. **/
 	public static final String LOG_TAG = "GameHandler";
 	/** Default callback for saving in background. **/
-
 	private static final SaveCallback DEFAULT_SAVE_CALLBACK = new SaveCallback() {
 		public void done(ParseException e) {
 			if (e == null) {
@@ -65,7 +64,7 @@ public final class GameHandler {
 		} else {
 			try {
 				game.save();
-				joinGameJustCreatedByCurrentUser(g);
+				joinGameJustCreatedByCurrentUserWithCallback(g, null);
 			} catch (ParseException e) {
 				// Failed to save game with waiting
 				Log.e(LOG_TAG, "error saving game with waiting: " + e.getCode() + ": " + e.getMessage());
@@ -90,17 +89,7 @@ public final class GameHandler {
 		// fill in all the setter	
 		game.put(DbColumns.GAME_IDEAL_SIZE, g.mIdealGameSize);
 		
-		game.saveInBackground(new SaveCallback() {
-			public void done(ParseException e) {
-				if (e == null) {
-					// successfully created game
-					Log.v(LOG_TAG, "Successfully saved game");
-				} else {
-					// unable to create the game, alert user
-					Log.e(LOG_TAG, "error saving game: " + e.getCode() + ": " + e.getMessage());
-				}
-			}
-		});
+		game.saveInBackground(DEFAULT_SAVE_CALLBACK);
 	}
 	
 	/**
@@ -147,6 +136,8 @@ public final class GameHandler {
 	}
 	
 	/**
+	 * Queries the Parse databse using the objectId in the provided Game
+	 * 
 	 * @param app Game object 
 	 * @return the Parse Game object that the app Game object passed as a parameter represents. 
 	 */
@@ -154,6 +145,12 @@ public final class GameHandler {
 		return getGameUsingId(g.id);
 	}
 	
+	/**
+	 * Queries the database for the game corresponding to the provided id
+	 * 
+	 * @param id - Game ObjectID
+	 * @return Game ParseObject
+	 */
 	public static ParseObject getGameUsingId(String id) {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery(DbColumns.GAME);
 		ParseObject game = null;
@@ -301,13 +298,7 @@ public final class GameHandler {
 	 * @param g the game to join. Must be the game that the current user just created
 	 */
 	public static void joinGameJustCreatedByCurrentUser(Game g) {
-		joinGameJustCreatedByCurrentUserWithCallback(g, new SaveCallback(){
-			@Override
-			public void done(ParseException e) {
-				if(e != null) {
-					Log.e(LOG_TAG, "Failed to join game after creation");
-				}
-			}});
+		joinGameJustCreatedByCurrentUserWithCallback(g, DEFAULT_SAVE_CALLBACK);
 	}
 	
 	/**
@@ -403,27 +394,6 @@ public final class GameHandler {
 		attendsRelationToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_ATTENDEE, ParseUser.getCurrentUser());
 		ParseObject gameToLeave = Translator.appGameToExistingParseGame(g);
 		attendsRelationToLeaveQuery.whereEqualTo(DbColumns.ATTENDS_GAME, gameToLeave);
-		/*
-		gameToLeaveQuery.findInBackground(new FindCallback<ParseObject>() {
-
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					int numResults = objects.size();
-					if (numResults == 1) {
-						ParseObject game = objects.get(0);
-						game.deleteInBackground();
-					} else {
-						Log.e(LOG_TAG, "expected exactly 1 result but got: " + numResults);
-					}
-				} else {
-					// error
-					e.printStackTrace();
-					Log.e(LOG_TAG, e.getMessage());
-				}
-			}
-		});
-		*/
 		try {
 			List<ParseObject> objects = attendsRelationToLeaveQuery.find();
 			int numResults = objects.size();
@@ -491,7 +461,6 @@ public final class GameHandler {
 			}
 			return games;
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			Log.e(LOG_TAG, "unable to retreive games created by user");
 			e.printStackTrace();
 			return null;
@@ -526,26 +495,5 @@ public final class GameHandler {
 			return null;
 		}
 	}
-	
-	/**
-	 * Helper function to return a list of Game objects instead of Parse Objects.
-	 * @param pgames
-	 * @return list of corresponding Games
-	 */
-	/*
-	public static ArrayList<Game> parseGameListToApp(ArrayList<String> pgames) {
-		ArrayList<Game> games = new ArrayList<Game>();
-		if (pgames == null) return games;
-		for (String pg : pgames) {
-			Log.e(LOG_TAG + "ptog", "Game id: " + pg);
-			ParseObject parseGame = getGameUsingId(pg);
-			if(parseGame != null) {
-				Game g = Translator.parseGameToAppGame(getGameUsingId(pg));
-				games.add(g);
-			}
-		}
-		return games;
-	}
-	*/
 }
 

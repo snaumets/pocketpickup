@@ -22,6 +22,9 @@ import com.uwcse403.pocketpickup.ParseInteraction.Translator;
 import com.uwcse403.pocketpickup.game.FindGameCriteria;
 import com.uwcse403.pocketpickup.game.Game;
 
+/**
+ * Test suite for GameHandler
+ */
 public class GameHandlerTest extends ApplicationTestCase<PocketPickupApplication>{
 	/**Log tag label for logging**/
 	public static final String LOG_TAG = "GameHandlerTest";
