@@ -2,6 +2,7 @@ package com.uwcse403.pocketpickup;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -78,6 +79,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	private static final double EARTH_MEAN_RADIUS = 6371000.0; // in meters
 	private static final int MARKER_PADDING_PIXELS = 200;
 	private static final int CIRCLE_PADDING_PIXELS = 25;
+	private static final long MILLIS_IN_DAY = 60 * 60 * 24 * 1000L;
 	
 	// Unique return codes to be used by activities started by this activity for result.
 	private static final int CREATE_GAME_CODE = 1111;
@@ -583,7 +585,17 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			} else {
 				mDisplayedGames.clear();
 			}
-			mDisplayedGames.addAll(joinedGames);
+			
+			// Only display games that havent expired (by date)
+			Date date = new Date();
+			long nowDate = date.getTime() / MILLIS_IN_DAY * MILLIS_IN_DAY;
+			for (Game game : joinedGames) {
+				long endDateLong = game.mGameEndDate;
+				if (endDateLong >= nowDate) {
+					mDisplayedGames.add(game);
+				}
+			}
+			
 			onGameDisplayUpdate();
 			zoomToShowAllMarkers(mMapMarkers);
 		} else if (joinedGames == null) { // not finished initializing from database
@@ -608,7 +620,15 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			} else {
 				mDisplayedGames.clear();
 			}
-			mDisplayedGames.addAll(createdGames);
+			// Only display games that havent expired (by date)
+			Date date = new Date();
+			long nowDate = date.getTime() / MILLIS_IN_DAY * MILLIS_IN_DAY;
+			for (Game game : createdGames) {
+				long endDateLong = game.mGameEndDate;
+				if (endDateLong >= nowDate) {
+					mDisplayedGames.add(game);
+				}
+			}
 			onGameDisplayUpdate();
 			zoomToShowAllMarkers(mMapMarkers);
 		} else if (createdGames == null) { // not finished initializing from database
