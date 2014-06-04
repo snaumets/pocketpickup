@@ -23,6 +23,8 @@ public class SportPreferencesHandlerTest extends ApplicationTestCase<PocketPicku
 	public static final String SOCCER = "Soccer";
 	/**Identifying name for Basketball**/
 	public static final String BASKETBALL = "Basketball";
+	/**Original sport preferences for this user**/
+	private List<String> originalPrefs;
 	
 	/**
 	 * Default constructor
@@ -36,16 +38,10 @@ public class SportPreferencesHandlerTest extends ApplicationTestCase<PocketPicku
 	protected void setUp() throws Exception {
 		super.setUp();
 		createApplication();
-		
 		//Force sports to load so that the sports bimap guaranteed to be initialized
 		getApplication().forceSportsLoading();
 		Log.v(LOG_TAG, PocketPickupApplication.sportsAndObjs.keySet().toString());
-	}
-	
-	@Override
-	/**{@inherit-doc}**/
-	protected void tearDown() {
-		terminateApplication();
+		originalPrefs = SportPreferencesHandler.getSportPreferences();
 	}
 	
 	/**
@@ -83,4 +79,12 @@ public class SportPreferencesHandlerTest extends ApplicationTestCase<PocketPicku
 	}
 
 	
+	@Override
+	/**{@inherit-doc}**/
+	protected void tearDown() {
+		String[] prefs = new String[originalPrefs.size()];
+		originalPrefs.toArray(prefs);
+		SportPreferencesHandler.setSportPreferences(NO_CALLBACK, prefs);
+		terminateApplication();
+	}
 }
