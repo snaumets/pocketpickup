@@ -124,6 +124,8 @@ public class FindGameActivity extends Activity
 		// arraylist to keep the selected items' indexes
 		selectedSports = new ArrayList<Integer>();
 		
+		boolean preferredSportsSet = LoginActivity.user.isPreferredSportsInitialized();
+		
 		// Make the equivalent CharSequence array of sports that the dialog uses to initialize
 		CharSequence[] sports = new CharSequence[availableSports.size()];
 		boolean[] preferred = new boolean[availableSports.size()];
@@ -132,8 +134,9 @@ public class FindGameActivity extends Activity
 			sportStr = availableSports.get(i);
 			sports[i] = (CharSequence) sportStr;
 			
+			
 			// set initial state of checked options according to user's preferred sports
-			if (LoginActivity.user.mPreferredSports.contains(sportStr)) {
+			if (preferredSportsSet && LoginActivity.user.mPreferredSports.contains(sportStr)) {
 				preferred[i] = true;
 				selectedSports.add(i);
 				preferredSports.add(i);

@@ -90,7 +90,7 @@ public class User {
 	 * @return	true if the set is not null, false otherwise
 	 */
 	public boolean isPreferredSportsInitialized() {
-		return mCreatedGames != null;
+		return mPreferredSports != null;
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class User {
 	 * @return	true if the set is not null, false otherwise
 	 */
 	public boolean isAttendingGamesInitialized() {
-		return mCreatedGames != null;
+		return mAttendingGames != null;
 	}
 	
 	/**
@@ -108,7 +108,4 @@ public class User {
 	public boolean isCreateGamesInitialized() {
 		return mCreatedGames != null;
 	}
-	
-	// TODO: possibly make the two game sets private, add appropriate getters and setters,
-	// and verify that non of the games are expired in the getters and setters.
 }

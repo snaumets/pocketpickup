@@ -157,25 +157,29 @@ public class LoginActivity extends Activity {
 	private class InitUserSetsTask extends AsyncTask<String, Integer, String> {
 		@Override
 		protected String doInBackground(String... arg0) {
-			List<String> sports = SportPreferencesHandler.getSportPreferences();
-	    	if (sports != null) {
-	    		LoginActivity.user.initPreferredSports();
-	    		LoginActivity.user.mPreferredSports.addAll(sports);
-	    	}
-	    	Log.v("LoginActivity", "Preferred sports of user: " + (sports != null ? sports.toString() : "None"));
-			ArrayList<Game> createdGames = GameHandler.getGamesCreatedByCurrentUser();
-			if (createdGames != null) {
-				LoginActivity.user.initCreatedGames();
-				LoginActivity.user.mCreatedGames.addAll(createdGames);
-			}
-	    	Log.v("LoginActivity", "Number games created by user: " + (createdGames != null ? createdGames.size() : 0));
-
-	    	ArrayList<Game> attendingGames = GameHandler.getGamesCurrentUserIsAttending();
+			// Load joined games first
+			ArrayList<Game> attendingGames = GameHandler.getGamesCurrentUserIsAttending();
 	    	if (attendingGames != null) {
 	    		LoginActivity.user.initAttendingGames();
 	    		LoginActivity.user.mAttendingGames.addAll(attendingGames);
 	    	}
 	    	Log.v("LoginActivity", "Number games user attending: " + (attendingGames != null ? attendingGames.size() : 0));
+			
+	    	// Load preferred sports
+	    	List<String> sports = SportPreferencesHandler.getSportPreferences();
+	    	if (sports != null) {
+	    		LoginActivity.user.initPreferredSports();
+	    		LoginActivity.user.mPreferredSports.addAll(sports);
+	    	}
+	    	Log.v("LoginActivity", "Preferred sports of user: " + (sports != null ? sports.toString() : "None"));
+			
+	    	// Load created games
+	    	ArrayList<Game> createdGames = GameHandler.getGamesCreatedByCurrentUser();
+			if (createdGames != null) {
+				LoginActivity.user.initCreatedGames();
+				LoginActivity.user.mCreatedGames.addAll(createdGames);
+			}
+	    	Log.v("LoginActivity", "Number games created by user: " + (createdGames != null ? createdGames.size() : 0));
 	    	
 			return null;
 		}
