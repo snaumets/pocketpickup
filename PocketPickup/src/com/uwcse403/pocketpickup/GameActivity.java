@@ -9,14 +9,15 @@ import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
 import com.uwcse403.pocketpickup.game.Game;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class GameActivity extends Activity {
 
@@ -46,7 +47,6 @@ public class GameActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
-
 		// Initialize location text field from passed in location
 		Bundle args = getIntent().getExtras();
 		game = (Game) args.get(GAME);
@@ -107,9 +107,6 @@ public class GameActivity extends Activity {
 		} else {
 			// Sanity check, but should not show button in this case
 		}
-
-		// Show the leave button if the user has already joined this game
-
 	}
 
 	@Override
@@ -141,62 +138,143 @@ public class GameActivity extends Activity {
 	 * This method will update the backend that the user has joined this game.
 	 */
 	public void joinGameSubmit(View v) {
-		// add current user to the game passing false to signify that the game
-		// the
-		// user is joining was not created by him or herself. Still works if the
-		// user
-		// is the creator.
-		JoinGameResult result = GameHandler.joinGame(game, false);
-		Intent returnIntent = new Intent();
-		returnIntent.putExtra(GAME, game);
-		if (result == JoinGameResult.SUCCESS) {
-			Toast.makeText(this, "Successfully Added To Game!",
-					Toast.LENGTH_LONG).show();
-			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_JOINED);
-		} else if (result == JoinGameResult.ERROR_JOINING) {
-			Toast.makeText(getApplicationContext(), "Joining Game Failed",
-					Toast.LENGTH_LONG).show();
-			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_JOIN_FAILED);
-		} else {
-			Toast.makeText(getApplicationContext(),
-					"You Are Already An Attendee", Toast.LENGTH_LONG).show();
-			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_ALREADY_JOINED);
-		}
-		setResult(Activity.RESULT_OK, returnIntent);
-		finish();
+		new JoinDialogTask().execute("");
 	}
 
 	/**
 	 * This method will update the backend that the user has deleted this game.
 	 */
 	public void deleteGameSubmit(View v) {
-		GameHandler.removeGame(game);
-		Toast.makeText(this, "Successfully Deleted Game", Toast.LENGTH_LONG)
-				.show();
-		Intent returnIntent = new Intent();
-		returnIntent.putExtra(GAME, game);
-		returnIntent.putExtra(GAME_RESULT, GAME_RESULT_DELETED);
-		setResult(Activity.RESULT_OK, returnIntent);
-		finish();
+		new DeleteDialogTask().execute("");
 	}
 
 	/**
 	 * This method will update the backend that the user has left this game.
 	 */
 	public void leaveGameSubmit(View v) {
-		boolean result = GameHandler.leaveGame(game);
-		Intent returnIntent = new Intent();
-		returnIntent.putExtra(GAME, game);
-		if (result) { // successfully left
-			Toast.makeText(this, "Successfully Left Game", Toast.LENGTH_LONG)
-					.show();
-			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_LEFT);
-		} else {
-			Toast.makeText(this, "Failed To Leave Game", Toast.LENGTH_LONG)
-					.show();
-			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_LEFT_FAILED);
+		new LeaveDialogTask().execute("");
+	}
+	
+	/**
+	 * This task will take show a progress dialog while the game is joined.
+	 * After it is complete, it will dismiss the dialog and go back to the 
+	 * MainActivity.
+	 */
+	private class JoinDialogTask extends AsyncTask<String, Integer, String> {
+		private ProgressDialog mProgressDialog;
+		
+		@Override
+		protected void onPreExecute() {
+			mProgressDialog = ProgressDialog.show(GameActivity.this, "", "Loading...", true);
 		}
-		setResult(Activity.RESULT_OK, returnIntent);
-		finish();
+		
+		@Override
+		protected String doInBackground(String... arg0) {
+			// add current user to the game passing false to signify that the game
+			// the
+			// user is joining was not created by him or herself. Still works if the
+			// user
+			// is the creator.
+			JoinGameResult result = GameHandler.joinGame(game, false);
+			Intent returnIntent = new Intent();
+			returnIntent.putExtra(GAME, game);
+			if (result == JoinGameResult.SUCCESS) {
+				returnIntent.putExtra(GAME_RESULT, GAME_RESULT_JOINED);
+			} else if (result == JoinGameResult.ERROR_JOINING) {
+				returnIntent.putExtra(GAME_RESULT, GAME_RESULT_JOIN_FAILED);
+			} else {
+				returnIntent.putExtra(GAME_RESULT, GAME_RESULT_ALREADY_JOINED);
+			}
+			setResult(Activity.RESULT_OK, returnIntent);
+			finish();
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			mProgressDialog.dismiss();
+			super.onPostExecute(result);
+		}
+	}
+	
+	/**
+	 * This task will take show a progress dialog while the game is left.
+	 * After it is complete, it will dismiss the dialog and go back to the 
+	 * MainActivity.
+	 */
+	private class LeaveDialogTask extends AsyncTask<String, Integer, String> {
+		private ProgressDialog mProgressDialog;
+		
+		@Override
+		protected void onPreExecute() {
+			mProgressDialog = ProgressDialog.show(GameActivity.this, "", "Loading...", true);
+		}
+		
+		@Override
+		protected String doInBackground(String... arg0) {
+			boolean result = GameHandler.leaveGame(game);
+			Intent returnIntent = new Intent();
+			returnIntent.putExtra(GAME, game);
+			if (result) { // successfully left
+				returnIntent.putExtra(GAME_RESULT, GAME_RESULT_LEFT);
+			} else {
+				returnIntent.putExtra(GAME_RESULT, GAME_RESULT_LEFT_FAILED);
+			}
+			setResult(Activity.RESULT_OK, returnIntent);
+			finish();
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			mProgressDialog.dismiss();
+			super.onPostExecute(result);
+		}
+	}
+	
+	/**
+	 * This task will take show a progress dialog while the game is deleted.
+	 * After it is complete, it will dismiss the dialog and go back to the 
+	 * MainActivity.
+	 */
+	private class DeleteDialogTask extends AsyncTask<String, Integer, String> {
+		private ProgressDialog mProgressDialog;
+		
+		@Override
+		protected void onPreExecute() {
+			mProgressDialog = ProgressDialog.show(GameActivity.this, "", "Loading...", true);
+		}
+		
+		@Override
+		protected String doInBackground(String... arg0) {
+			GameHandler.removeGame(game);
+			Intent returnIntent = new Intent();
+			returnIntent.putExtra(GAME, game);
+			returnIntent.putExtra(GAME_RESULT, GAME_RESULT_DELETED);
+			setResult(Activity.RESULT_OK, returnIntent);
+			finish();
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			mProgressDialog.dismiss();
+			super.onPostExecute(result);
+		}
 	}
 }

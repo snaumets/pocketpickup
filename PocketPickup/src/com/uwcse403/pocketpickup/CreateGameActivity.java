@@ -7,14 +7,15 @@ import java.util.Date;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -235,7 +236,7 @@ public class CreateGameActivity extends Activity implements
 	}
 
 	public void setLocation(View v) {
-		Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
+		// Do nothing
 	}
 
 	public void submitCreate(View v) {
@@ -250,54 +251,7 @@ public class CreateGameActivity extends Activity implements
 					Toast.LENGTH_LONG).show();
 			return;
 		}
-		long startDateAndTime = mDate.getTimeInMillis();
-
-		// the time of day in milliseconds from midnight
-		long startTime = (startDateAndTime + PocketPickupApplication.GMT_OFFSET
-				* HOUR)
-				% MILLIS_IN_DAY;
-		// chop off anything after minutes
-		startTime = (startTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
-
-		// in case the game goes into the next day, mod by the number of
-		// milliseconds
-		// in one day
-		long endTime = (startTime + mDuration * HOUR) % MILLIS_IN_DAY;
-		// chop off anything after minutes
-		endTime = (endTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
-
-		// the date represented as unix time milliseconds from 1970 to 12:00AM
-		// on the selected start date
-		long startDate = startDateAndTime - startTime;
-		// chop off any time information of finer granularity than minutes
-		startDate = (startDate / MIN_IN_MILLIS) * MIN_IN_MILLIS;
-		long endDate;
-		// if the game spans two days, set the end date to the next day.
-		// The only time this happens is if the previous calculations show that
-		// the endTime is less than the startTime.
-		if (endTime < startTime) {
-			endDate = startDate + MILLIS_IN_DAY;
-		} else {
-			endDate = startDate;
-		}
-		EditText details = (EditText) findViewById(R.id.cg_details);
-		String detailsText = details.getText().toString();
-		details.setImeOptions(EditorInfo.IME_ACTION_DONE);
-		details.setSingleLine();
-		final Game createGame = new Game(ParseUser.getCurrentUser()
-				.getObjectId(), mLatLng, startDate, endDate, startTime,
-				endTime, mSport, 2, detailsText);
-		final ArrayList<Game> games = new ArrayList<Game>(); // will store only
-																// created game
-		games.add(createGame);
-
-		Intent returnIntent = new Intent();
-		returnIntent.putExtra(CREATEGAME_LATITUDE, mLatLng.latitude);
-		returnIntent.putExtra(CREATEGAME_LONGITUDE, mLatLng.longitude);
-		returnIntent.putParcelableArrayListExtra(CREATEGAME_GAMELIST, games);
-		setResult(Activity.RESULT_OK, returnIntent);
-		finish();
-		GameHandler.createGame(createGame, null);
+		new DialogTask().execute("");
 	}
 
 	public void resetCreate(View v) {
@@ -310,5 +264,82 @@ public class CreateGameActivity extends Activity implements
 
 		EditText details = (EditText) findViewById(R.id.cg_details);
 		details.setText("");
+	}
+	
+	/**
+	 * This task will take show a progress dialog while the creation of the
+	 * game is done. After it is complete, it will dismiss the dialog and 
+	 * go back to the MainActivity.
+	 */
+	private class DialogTask extends AsyncTask<String, Integer, String> {
+		private ProgressDialog mProgressDialog;
+		
+		@Override
+		protected void onPreExecute() {
+			mProgressDialog = ProgressDialog.show(CreateGameActivity.this, "", "Loading...", true);
+		}
+		
+		@Override
+		protected String doInBackground(String... arg0) {
+			long startDateAndTime = mDate.getTimeInMillis();
+
+			// the time of day in milliseconds from midnight
+			long startTime = (startDateAndTime + PocketPickupApplication.GMT_OFFSET
+					* HOUR)
+					% MILLIS_IN_DAY;
+			// chop off anything after minutes
+			startTime = (startTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
+
+			// in case the game goes into the next day, mod by the number of
+			// milliseconds
+			// in one day
+			long endTime = (startTime + mDuration * HOUR) % MILLIS_IN_DAY;
+			// chop off anything after minutes
+			endTime = (endTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
+
+			// the date represented as unix time milliseconds from 1970 to 12:00AM
+			// on the selected start date
+			long startDate = startDateAndTime - startTime;
+			// chop off any time information of finer granularity than minutes
+			startDate = (startDate / MIN_IN_MILLIS) * MIN_IN_MILLIS;
+			long endDate;
+			// if the game spans two days, set the end date to the next day.
+			// The only time this happens is if the previous calculations show that
+			// the endTime is less than the startTime.
+			if (endTime < startTime) {
+				endDate = startDate + MILLIS_IN_DAY;
+			} else {
+				endDate = startDate;
+			}
+			EditText details = (EditText) findViewById(R.id.cg_details);
+			String detailsText = details.getText().toString();
+			final Game createGame = new Game(ParseUser.getCurrentUser()
+					.getObjectId(), mLatLng, startDate, endDate, startTime,
+					endTime, mSport, 2, detailsText);
+			final ArrayList<Game> games = new ArrayList<Game>(); // will store only
+																	// created game
+			games.add(createGame);
+
+			Intent returnIntent = new Intent();
+			returnIntent.putExtra(CREATEGAME_LATITUDE, mLatLng.latitude);
+			returnIntent.putExtra(CREATEGAME_LONGITUDE, mLatLng.longitude);
+			returnIntent.putParcelableArrayListExtra(CREATEGAME_GAMELIST, games);
+			
+			GameHandler.createGame(createGame, null);
+			setResult(Activity.RESULT_OK, returnIntent);
+			finish();
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			mProgressDialog.dismiss();
+			super.onPostExecute(result);
+		}
 	}
 }

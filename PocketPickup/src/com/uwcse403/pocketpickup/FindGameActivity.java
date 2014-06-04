@@ -9,9 +9,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -26,7 +28,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
@@ -347,48 +348,7 @@ public class FindGameActivity extends Activity
 	 * @param v
 	 */
 	public void submitSearch(View v) {
-		// Create FindGameCriteria object and send
-		// create a long representing the date or time only by doing some simple arithmetic
-		long startDateAndTime = mStartTime.getTimeInMillis();
-		long startTime = (startDateAndTime + PocketPickupApplication.GMT_OFFSET*HOUR)% MS_IN_DAY; 
-		// chop off anything after minutes
-		startTime = (startTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
-		long endTime = startTime + (mEndTime.getTimeInMillis() - startDateAndTime);
-		// chop off anything after minutes
-		endTime = (endTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
-		long startDate = ((mStartDate.getTimeInMillis() / MS_IN_DAY) )* MS_IN_DAY;
-		startDate -= PocketPickupApplication.GMT_OFFSET*HOUR;
-		long endDate = -1;
-		if (mEndDate != null) {
-			endDate = ((mEndDate.getTimeInMillis() / MS_IN_DAY) )* MS_IN_DAY;
-			endDate -= PocketPickupApplication.GMT_OFFSET*HOUR;	
-		}
-		ArrayList<String> gameTypes = new ArrayList<String>();
-		// Add all of the sports that the user selected to search for.
-		// If the set is empty, then the user didnt use the dialog so
-		// add all available sports so they can be search for.
-		Set<String> mSports = new HashSet<String>();
-		if (selectedSports.isEmpty()) {
-			// No sports were selected in the dialog, add all available ones
-			mSports.addAll(availableSports);
-		} else {
-			// At least one sport was selected, add only those
-			for (int i = 0; i < selectedSports.size(); i++) {
-				int selectedIndex = selectedSports.get(i);
-				mSports.add(availableSports.get(selectedIndex));
-			}
-		}
-		gameTypes.addAll(mSports);
-		FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, gameTypes);
-		final ArrayList<Game> searchResults = new ArrayList<Game>();
-		searchResults.addAll(GameHandler.findGame(criteria));
-		Intent returnIntent = new Intent();
-		returnIntent.putExtra(FINDGAME_RADIUS, mRadius);
-		returnIntent.putExtra(FINDGAME_LATITUDE, mLatLng.latitude);
-		returnIntent.putExtra(FINDGAME_LONGITUDE, mLatLng.longitude);
-		returnIntent.putParcelableArrayListExtra(FINDGAME_RESULTS, searchResults);
-		setResult(Activity.RESULT_OK, returnIntent);
-		finish();
+		new DialogTask().execute("");
 	}
 	
 	public void showSportsPreferencesDialog(View v) {
@@ -450,5 +410,77 @@ public class FindGameActivity extends Activity
 	
 	private String getTimeButtonString(final Calendar date) {
 		return DateFormat.getTimeFormat(this).format(date.getTime());
+	}
+	
+	/**
+	 * This task will take show a progress dialog while the games are found.
+	 * After it is complete, it will dismiss the dialog and go back to the 
+	 * MainActivity.
+	 */
+	private class DialogTask extends AsyncTask<String, Integer, String> {
+		private ProgressDialog mProgressDialog;
+		
+		@Override
+		protected void onPreExecute() {
+			mProgressDialog = ProgressDialog.show(FindGameActivity.this, "", "Loading...", true);
+		}
+		
+		@Override
+		protected String doInBackground(String... arg0) {
+			// Create FindGameCriteria object and send
+			// create a long representing the date or time only by doing some simple arithmetic
+			long startDateAndTime = mStartTime.getTimeInMillis();
+			long startTime = (startDateAndTime + PocketPickupApplication.GMT_OFFSET*HOUR)% MS_IN_DAY; 
+			// chop off anything after minutes
+			startTime = (startTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
+			long endTime = startTime + (mEndTime.getTimeInMillis() - startDateAndTime);
+			// chop off anything after minutes
+			endTime = (endTime / MIN_IN_MILLIS) * MIN_IN_MILLIS;
+			long startDate = ((mStartDate.getTimeInMillis() / MS_IN_DAY) )* MS_IN_DAY;
+			startDate -= PocketPickupApplication.GMT_OFFSET*HOUR;
+			long endDate = -1;
+			if (mEndDate != null) {
+				endDate = ((mEndDate.getTimeInMillis() / MS_IN_DAY) )* MS_IN_DAY;
+				endDate -= PocketPickupApplication.GMT_OFFSET*HOUR;	
+			}
+			ArrayList<String> gameTypes = new ArrayList<String>();
+			// Add all of the sports that the user selected to search for.
+			// If the set is empty, then the user didnt use the dialog so
+			// add all available sports so they can be search for.
+			Set<String> mSports = new HashSet<String>();
+			if (selectedSports.isEmpty()) {
+				// No sports were selected in the dialog, add all available ones
+				mSports.addAll(availableSports);
+			} else {
+				// At least one sport was selected, add only those
+				for (int i = 0; i < selectedSports.size(); i++) {
+					int selectedIndex = selectedSports.get(i);
+					mSports.add(availableSports.get(selectedIndex));
+				}
+			}
+			gameTypes.addAll(mSports);
+			FindGameCriteria criteria = new FindGameCriteria(mRadius, mLatLng, startDate, endDate, startTime, endTime, gameTypes);
+			final ArrayList<Game> searchResults = new ArrayList<Game>();
+			searchResults.addAll(GameHandler.findGame(criteria));
+			Intent returnIntent = new Intent();
+			returnIntent.putExtra(FINDGAME_RADIUS, mRadius);
+			returnIntent.putExtra(FINDGAME_LATITUDE, mLatLng.latitude);
+			returnIntent.putExtra(FINDGAME_LONGITUDE, mLatLng.longitude);
+			returnIntent.putParcelableArrayListExtra(FINDGAME_RESULTS, searchResults);
+			setResult(Activity.RESULT_OK, returnIntent);
+			finish();
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			mProgressDialog.dismiss();
+			super.onPostExecute(result);
+		}
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -416,9 +417,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				mGoogleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 					@Override
 					public boolean onMarkerClick(Marker marker) {
-						Game game = null;
+						// Start a progress dialog that will be closed once the details screen opens
 						if (mMarkerToGame.containsKey(marker)) {
-							game = mMarkerToGame.get(marker);
+							DialogTask task = new DialogTask(marker);
+							task.execute("");
+							/*game = mMarkerToGame.get(marker);
 							Intent intent = new Intent(MainActivity.this, GameActivity.class);
 							
 							// Attach the details
@@ -426,7 +429,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 							args.putParcelable(GameActivity.GAME, game);
 							intent.putExtras(args);
 							
-							startActivityForResult(intent, GAME_DETAILS_CODE);
+							startActivityForResult(intent, GAME_DETAILS_CODE);*/
 						} else {
 							Toast.makeText(getApplicationContext(), "Sorry, no details for this game.", Toast.LENGTH_LONG).show();
 							return false;
@@ -812,20 +815,32 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				Marker marker = null;
 				switch (result) {
 				case GameActivity.GAME_RESULT_JOINED:
+					Toast.makeText(getApplicationContext(), "Successfully Added To Game!",
+							Toast.LENGTH_LONG).show();
 					LoginActivity.user.mAttendingGames.add(game);
 					break;
 				case GameActivity.GAME_RESULT_ALREADY_JOINED:
+					Toast.makeText(getApplicationContext(),
+						"You Are Already An Attendee", Toast.LENGTH_LONG).show();
 					break;
 				case GameActivity.GAME_RESULT_JOIN_FAILED:
+					Toast.makeText(getApplicationContext(), "Joining Game Failed",
+						Toast.LENGTH_LONG).show();
 					break;
 				case GameActivity.GAME_RESULT_LEFT:
+					Toast.makeText(this, "Successfully Left Game", Toast.LENGTH_LONG)
+						.show();
 					LoginActivity.user.mAttendingGames.remove(game);
 					marker = mMarkerToGame.inverse().get(game);
 					removeMarkerFromMap(marker);
 					break;
 				case GameActivity.GAME_RESULT_LEFT_FAILED:
+					Toast.makeText(this, "Failed To Leave Game", Toast.LENGTH_LONG)
+						.show();
 					break;
 				case GameActivity.GAME_RESULT_DELETED:
+					Toast.makeText(this, "Successfully Deleted Game", Toast.LENGTH_LONG)
+						.show();
 					LoginActivity.user.mAttendingGames.remove(game);
 					LoginActivity.user.mCreatedGames.remove(game);
 					marker = mMarkerToGame.inverse().get(game);
@@ -1136,6 +1151,50 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		protected void onPostExecute(String result) {
 			// Once the LoginActivity.user has been initialized, create the dialog
 			buildSportsPreferencesDialog();
+			super.onPostExecute(result);
+		}
+	}
+	
+	/**
+	 * This task will take show a progress dialog while the games are found.
+	 * After it is complete, it will dismiss the dialog and go back to the 
+	 * MainActivity.
+	 */
+	private class DialogTask extends AsyncTask<String, Integer, String> {
+		private ProgressDialog mProgressDialog;
+		private Marker marker;
+		
+		public DialogTask(Marker marker) {
+			this.marker = marker;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			mProgressDialog = ProgressDialog.show(MainActivity.this, "", "Loading...", true);
+		}
+		
+		@Override
+		protected String doInBackground(String... arg0) {
+			Game game = mMarkerToGame.get(marker);
+			Intent intent = new Intent(MainActivity.this, GameActivity.class);
+			
+			// Attach the details
+			Bundle args = new Bundle();
+			args.putParcelable(GameActivity.GAME, game);
+			intent.putExtras(args);
+			
+			startActivityForResult(intent, GAME_DETAILS_CODE);
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			mProgressDialog.dismiss();
 			super.onPostExecute(result);
 		}
 	}
