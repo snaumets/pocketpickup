@@ -126,6 +126,15 @@ public class FindGameActivity extends Activity
 		
 		boolean preferredSportsSet = LoginActivity.user.isPreferredSportsInitialized();
 		
+		// Set the text correctly on the sports filtering button
+		if (preferredSportsSet) { // Set sports button to 'Preferred Sports'
+			Button button = (Button) findViewById(R.id.search_pref_button);
+			button.setText(R.string.preferred_sports);
+		} else { // Not yet initialized, set button to 'All Sports'
+			Button button = (Button) findViewById(R.id.search_pref_button);
+			button.setText(R.string.all_sports);
+		}
+		
 		// Make the equivalent CharSequence array of sports that the dialog uses to initialize
 		CharSequence[] sports = new CharSequence[availableSports.size()];
 		boolean[] preferred = new boolean[availableSports.size()];
@@ -384,7 +393,6 @@ public class FindGameActivity extends Activity
 	
 	public void showSportsPreferencesDialog(View v) {
 		sportsDialog.show();
-		//Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_LONG).show();
 	}
 
 	public void setLocation(View v) {
