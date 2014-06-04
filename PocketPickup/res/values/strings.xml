@@ -83,6 +83,28 @@
         <item>11</item>
         <item>12</item>
     </string-array>
+    <string-array name="min_num_players_choices">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+    </string-array>
 
     <!-- Create Game Activity Strings -->
     <string name="create_select_time">Select Time</string>
@@ -90,6 +112,7 @@
     <string name="cg_on">When:</string>
     <string name="cg_sport">Sport:</string>
     <string name="cg_duration">Duration:</string>
+    <string name="cg_min_players">Minimum Number of Players:</string>
     <string name="cg_duration_hours">Hour(s)</string>
     <string name="cg_details_hint">Any additional info?</string>
     <string name="cg_details">Details:</string>

@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
@@ -71,6 +72,8 @@ public class FindGameActivity extends Activity
 	private ArrayList<Integer> selectedSports;
 	// arraylist to save initial preferred sports of the user
 	private ArrayList<Integer> preferredSports;
+	// boolean array to keep track of selections
+	private boolean[] preferred;
 	
 	private AlertDialog sportsDialog;
 		
@@ -127,18 +130,9 @@ public class FindGameActivity extends Activity
 		
 		boolean preferredSportsSet = LoginActivity.user.isPreferredSportsInitialized();
 		
-		// Set the text correctly on the sports filtering button
-		if (preferredSportsSet) { // Set sports button to 'Preferred Sports'
-			Button button = (Button) findViewById(R.id.search_pref_button);
-			button.setText(R.string.preferred_sports);
-		} else { // Not yet initialized, set button to 'All Sports'
-			Button button = (Button) findViewById(R.id.search_pref_button);
-			button.setText(R.string.all_sports);
-		}
-		
 		// Make the equivalent CharSequence array of sports that the dialog uses to initialize
 		CharSequence[] sports = new CharSequence[availableSports.size()];
-		boolean[] preferred = new boolean[availableSports.size()];
+		preferred = new boolean[availableSports.size()];
 		String sportStr = null;
 		for (int i = 0; i < sports.length; i++) {
 			sportStr = availableSports.get(i);
@@ -235,6 +229,17 @@ public class FindGameActivity extends Activity
 		((Button) findViewById(R.id.end_time_button)).setText(getTimeButtonString(mEndTime));
 		((Button) findViewById(R.id.start_date_button)).setText(getDateButtonString(mStartDate));
 		((Button) findViewById(R.id.end_date_button)).setText(getDateButtonString(mEndDate));
+		
+		boolean preferredSportsSet = LoginActivity.user.isPreferredSportsInitialized();
+		
+		// Set the text correctly on the sports filtering button
+		if (preferredSportsSet) { // Set sports button to 'Preferred Sports'
+			Button button = (Button) findViewById(R.id.search_pref_button);
+			button.setText(R.string.preferred_sports);
+		} else { // Not yet initialized, set button to 'All Sports'
+			Button button = (Button) findViewById(R.id.search_pref_button);
+			button.setText(R.string.all_sports);
+		}
 	}
 	
 	private void setStartState() {
@@ -335,10 +340,17 @@ public class FindGameActivity extends Activity
 		
 		ListView choices = sportsDialog.getListView();
 		for (int i = 0; i < choices.getCount(); ++i) {
-			choices.setItemChecked(i, false);
+			if (preferredSports.contains(i)) { // was user's preferred sport
+				choices.setItemChecked(i, true);
+				preferred[i] = true;
+			} else { // user didnt prefer this sport
+				choices.setItemChecked(i, false);
+				preferred[i] = false;
+			}
 		}
-
 		selectedSports.clear();
+		selectedSports.addAll(preferredSports);
+		
 		setButtonLabels();
 	}
 	
