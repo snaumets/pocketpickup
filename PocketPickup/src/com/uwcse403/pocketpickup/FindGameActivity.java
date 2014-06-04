@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
@@ -67,6 +68,8 @@ public class FindGameActivity extends Activity
 	private ArrayList<String> availableSports;
 	// arraylist to save the selected sports' indexes
 	private ArrayList<Integer> selectedSports;
+	// arraylist to save initial preferred sports of the user
+	private ArrayList<Integer> preferredSports;
 	
 	private AlertDialog sportsDialog;
 		
@@ -115,18 +118,33 @@ public class FindGameActivity extends Activity
 		// A list of the sports to display as options to check
 		availableSports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
 		
-		// Make the equivalent CharSequence array of sports that the dialog uses to initialize
-		CharSequence[] sports = new CharSequence[availableSports.size()];
-		for (int i = 0; i < sports.length; i++) {
-			sports[i] = (CharSequence) availableSports.get(i);
-		}
+		// arraylist of initial preferred sports
+		preferredSports = new ArrayList<Integer>();
 		
 		// arraylist to keep the selected items' indexes
 		selectedSports = new ArrayList<Integer>();
+		
+		// Make the equivalent CharSequence array of sports that the dialog uses to initialize
+		CharSequence[] sports = new CharSequence[availableSports.size()];
+		boolean[] preferred = new boolean[availableSports.size()];
+		String sportStr = null;
+		for (int i = 0; i < sports.length; i++) {
+			sportStr = availableSports.get(i);
+			sports[i] = (CharSequence) sportStr;
+			
+			// set initial state of checked options according to user's preferred sports
+			if (LoginActivity.user.mPreferredSports.contains(sportStr)) {
+				preferred[i] = true;
+				selectedSports.add(i);
+				preferredSports.add(i);
+			} else {
+				preferred[i] = false;
+			}
+		}
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Sports To Search For");
-        builder.setMultiChoiceItems(sports, null,
+        builder.setMultiChoiceItems(sports, preferred,
         		new DialogInterface.OnMultiChoiceClickListener() {
         	@Override
         	public void onClick(DialogInterface dialog, int indexSelected,
@@ -134,7 +152,9 @@ public class FindGameActivity extends Activity
         		
 				if (isChecked) {
 					// If the user checked the item, add it to the set of selected items
-					selectedSports.add(indexSelected);
+					if (!selectedSports.contains(indexSelected)) {
+						selectedSports.add(indexSelected);
+					}
 				} else if (selectedSports.contains(indexSelected)) {
 					// Else, if the item is already in the set, remove it
 					selectedSports.remove(Integer.valueOf(indexSelected));
@@ -145,12 +165,15 @@ public class FindGameActivity extends Activity
 		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				// Your code when user clicked on Ok
+				// When user clicked on Ok
 				if (selectedSports.isEmpty()) {
 					// user submitted without any checkboxes selected
 					// All sports will still be searched for.
 					Button button = (Button) findViewById(R.id.search_pref_button);
 					button.setText(R.string.all_sports);
+				} else if (selectedSports.equals(preferredSports)) { 
+					Button button = (Button) findViewById(R.id.search_pref_button);
+					button.setText(R.string.preferred_sports);
 				} else {
 					Button button = (Button) findViewById(R.id.search_pref_button);
 					button.setText(R.string.selected_sports);

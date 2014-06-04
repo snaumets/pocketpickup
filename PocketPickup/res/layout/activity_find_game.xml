@@ -149,7 +149,7 @@
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
 		        android:onClick="showSportsPreferencesDialog"
-		        android:text="@string/all_sports"
+		        android:text="@string/preferred_sports"
 		        android:background="@drawable/button_form"
 		        android:layout_weight=".65"/>
 	

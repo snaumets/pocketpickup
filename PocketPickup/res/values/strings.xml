@@ -55,6 +55,7 @@
     <string name="change_pref">Change Sport Preferences</string>
     <string name="all_sports">All Sports</string>
     <string name="selected_sports">Selected Sports</string>
+    <string name="preferred_sports">Preferred Sports</string>
     <string name="select_sports">Sports:</string>
     <string name="reset">Reset All</string>
     <string name="between_times">Starting Between These Times:</string>

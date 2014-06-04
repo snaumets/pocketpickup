@@ -26,6 +26,7 @@ import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.uwcse403.pocketpickup.ParseInteraction.GameHandler;
+import com.uwcse403.pocketpickup.ParseInteraction.SportPreferencesHandler;
 import com.uwcse403.pocketpickup.game.Game;
 import com.uwcse403.pocketpickup.user.User;
 
@@ -156,6 +157,12 @@ public class LoginActivity extends Activity {
 	private class InitUserSetsTask extends AsyncTask<String, Integer, String> {
 		@Override
 		protected String doInBackground(String... arg0) {
+			List<String> sports = SportPreferencesHandler.getSportPreferences();
+	    	if (sports != null) {
+	    		LoginActivity.user.initPreferredSports();
+	    		LoginActivity.user.mPreferredSports.addAll(sports);
+	    	}
+	    	Log.v("LoginActivity", "Preferred sports of user: " + (sports != null ? sports.toString() : "None"));
 			ArrayList<Game> createdGames = GameHandler.getGamesCreatedByCurrentUser();
 			if (createdGames != null) {
 				LoginActivity.user.initCreatedGames();
@@ -169,6 +176,7 @@ public class LoginActivity extends Activity {
 	    		LoginActivity.user.mAttendingGames.addAll(attendingGames);
 	    	}
 	    	Log.v("LoginActivity", "Number games user attending: " + (attendingGames != null ? attendingGames.size() : 0));
+	    	
 			return null;
 		}
 		
