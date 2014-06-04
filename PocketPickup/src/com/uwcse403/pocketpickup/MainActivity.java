@@ -2,10 +2,8 @@ package com.uwcse403.pocketpickup;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import android.app.Activity;
@@ -21,6 +19,7 @@ import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -85,13 +84,14 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	private static final int GAME_DETAILS_CODE = 3333;
 	
 	public static final String LOG_TAG = "MainActivity";
+	
+	private AlertDialog mSportsDialog;
+	private ArrayList<Integer> mSelectedSports;
 
 	// State Fields
 	private boolean         mFirstLaunch;    // true only on first launch
 	private LatLng          mLatLngLocation;
 	private ArrayList<Game> mDisplayedGames;
-	private AlertDialog 	mSportsDialog;
-	private ArrayList<Integer> mSelectedSports;
 	
 	// Layout Fields
 	private GoogleMap             mGoogleMap;
@@ -138,9 +138,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		if (!mFirstLaunch) {
 			restoreMap();
 		} else {
-			mSportsDialog = null;
-			mSelectedSports = null;
-			buildSportsPreferencesDialog();
+			new InitSportsDialogTask().execute(""); // "" because we dont need any args
 		}
 	}
 	
@@ -627,81 +625,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			mSportsDialog.show();
 		} else { // Hasnt yet been initialized
 			Toast.makeText(this, "Loading, Try Again Shortly", Toast.LENGTH_LONG).show();
-			buildSportsPreferencesDialog();
-		}
-	}
-	
-	// Build the sports dialog that a user will use to edit Preferred Sports
-	private void buildSportsPreferencesDialog() {
-		if (LoginActivity.user != null) { // user has finished being initialized
-			// A list of the sports to display as options to check
-			final ArrayList<String> availableSports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
-			
-			// arraylist to keep the selected items' indexes
-			mSelectedSports = new ArrayList<Integer>();
-			
-			boolean preferredSportsSet = LoginActivity.user.isPreferredSportsInitialized();
-			
-			// Make the equivalent CharSequence array of sports that the dialog uses to initialize
-			CharSequence[] sports = new CharSequence[availableSports.size()];
-			boolean[] preferred = new boolean[availableSports.size()];
-			String sportStr = null;
-			for (int i = 0; i < sports.length; i++) {
-				sportStr = availableSports.get(i);
-				sports[i] = (CharSequence) sportStr;
-				
-				
-				// set initial state of checked options according to user's preferred sports
-				if (preferredSportsSet && LoginActivity.user.mPreferredSports.contains(sportStr)) {
-					preferred[i] = true;
-					mSelectedSports.add(i);
-				} else {
-					preferred[i] = false;
-				}
-			}
-			
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	        builder.setTitle("Select Preferred Sports");
-	        builder.setMultiChoiceItems(sports, preferred,
-	        		new DialogInterface.OnMultiChoiceClickListener() {
-	        	@Override
-	        	public void onClick(DialogInterface dialog, int indexSelected,
-				         boolean isChecked) {
-	        		
-					if (isChecked) {
-						// If the user checked the item, add it to the set of selected items
-						if (!mSelectedSports.contains(indexSelected)) {
-							mSelectedSports.add(indexSelected);
-						}
-					} else if (mSelectedSports.contains(indexSelected)) {
-						// Else, if the item is already in the set, remove it
-						mSelectedSports.remove(Integer.valueOf(indexSelected));
-					}
-	        	}
-	        })
-			// Set the action buttons
-			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					// When user clicked on Ok, update the settings in the database
-					int size = mSelectedSports.size();
-					String[] newPreferredSports = new String[size];
-					LoginActivity.user.mPreferredSports.clear();
-					String sport = null;
-					for (int i = 0; i < mSelectedSports.size(); i++) {
-						int selectedIndex = mSelectedSports.get(i);
-						sport = availableSports.get(selectedIndex);
-						LoginActivity.user.mPreferredSports.add(sport);
-						newPreferredSports[i] = sport;
-					}
-					
-					// save in database
-					SportPreferencesHandler.setSportPreferences(newPreferredSports);
-					Toast.makeText(getApplicationContext(), "Preferences Successfully Updated!", Toast.LENGTH_LONG).show();
-				}
-			});
-	        
-	        mSportsDialog = builder.create(); //AlertDialog dialog; create like this outside onClick
+			new InitSportsDialogTask().execute(""); // "" because we dont need any args
 		}
 	}
 	
@@ -1108,6 +1032,111 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			editor.putFloat("map_lat", (float) latitude);
 			editor.putFloat("map_zoom", zoom);
 			editor.commit();
+		}
+	}
+	
+	// Build the sports dialog that a user will use to edit Preferred Sports
+	private void buildSportsPreferencesDialog() {
+		if (LoginActivity.user != null) { // user has finished being initialized
+			// A list of the sports to display as options to check
+			final ArrayList<String> availableSports = new ArrayList<String>(PocketPickupApplication.sportsAndObjs.keySet());
+			
+			// arraylist to keep the selected items' indexes
+			mSelectedSports = new ArrayList<Integer>();
+			
+			boolean preferredSportsSet = LoginActivity.user.isPreferredSportsInitialized();
+			
+			// Make the equivalent CharSequence array of sports that the dialog uses to initialize
+			CharSequence[] sports = new CharSequence[availableSports.size()];
+			boolean[] preferred = new boolean[availableSports.size()];
+			String sportStr = null;
+			for (int i = 0; i < sports.length; i++) {
+				sportStr = availableSports.get(i);
+				sports[i] = (CharSequence) sportStr;
+				
+				
+				// set initial state of checked options according to user's preferred sports
+				if (preferredSportsSet && LoginActivity.user.mPreferredSports.contains(sportStr)) {
+					preferred[i] = true;
+					mSelectedSports.add(i);
+				} else {
+					preferred[i] = false;
+				}
+			}
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+	        builder.setTitle("Select Preferred Sports");
+	        builder.setMultiChoiceItems(sports, preferred,
+	        		new DialogInterface.OnMultiChoiceClickListener() {
+	        	@Override
+	        	public void onClick(DialogInterface dialog, int indexSelected,
+				         boolean isChecked) {
+	        		
+					if (isChecked) {
+						// If the user checked the item, add it to the set of selected items
+						if (!mSelectedSports.contains(indexSelected)) {
+							mSelectedSports.add(indexSelected);
+						}
+					} else if (mSelectedSports.contains(indexSelected)) {
+						// Else, if the item is already in the set, remove it
+						mSelectedSports.remove(Integer.valueOf(indexSelected));
+					}
+	        	}
+	        })
+			// Set the action buttons
+			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int id) {
+					// When user clicked on Ok, update the settings in the database
+					int size = mSelectedSports.size();
+					String[] newPreferredSports = new String[size];
+					LoginActivity.user.mPreferredSports.clear();
+					String sport = null;
+					for (int i = 0; i < size; i++) {
+						int selectedIndex = mSelectedSports.get(i);
+						sport = availableSports.get(selectedIndex);
+						LoginActivity.user.mPreferredSports.add(sport);
+						newPreferredSports[i] = sport;
+					}
+					
+					// save in database
+					SportPreferencesHandler.setSportPreferences(newPreferredSports);
+					Toast.makeText(getApplicationContext(), "Preferences Successfully Updated!", Toast.LENGTH_LONG).show();
+				}
+			});
+	        
+	        mSportsDialog = builder.create(); //AlertDialog dialog; create like this outside onClick
+		}
+	}
+	
+	/**
+	 * This task will initialize the user's attending games set
+	 */
+	private class InitSportsDialogTask extends AsyncTask<String, Integer, String> {
+		@Override
+		protected String doInBackground(String... arg0) {
+			// Sleep until the LoginActivity.user is initialized
+			while (LoginActivity.user == null) {
+				try {
+					Thread.sleep(250); // sleep for a quarter of a second and try again
+				} catch (InterruptedException e) {
+					// Do nothing, just exit loop
+					break;
+				}
+			}	
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			// Once the LoginActivity.user has been initialized, create the dialog
+			buildSportsPreferencesDialog();
+			super.onPostExecute(result);
 		}
 	}
 }

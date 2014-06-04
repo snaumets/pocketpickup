@@ -6,11 +6,14 @@ import java.util.HashSet;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -140,7 +143,9 @@ public class LoginActivity extends Activity {
 			    	// Initialize the user's created games and attending games sets so they can be
 			    	// used and maintained on the device, so we dont have to reach out to database
 			    	// every time we need to know about user's games state
-			    	new InitUserSetsTask().execute(); // "" because we dont need any args
+			    	new InitUserPreferredSportsTask().execute(""); // "" because we dont need any args
+			    	new InitUserAttendingGamesTask().execute(""); // "" because we dont need any args
+			    	new InitUserCreatedGamesTask().execute(""); // "" because we dont need any args
 			    	Log.d("LoginActivity", "facebookName: " + user.getName());
 			    	Toast.makeText(getApplicationContext(), "Welcome, " + firstName + "!", Toast.LENGTH_LONG).show();
 			    }
@@ -148,13 +153,18 @@ public class LoginActivity extends Activity {
 		});
 	}
 
+	/**
+	 * This method will simply start the main activity
+	 */
 	private void showMainActivity() {
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
 	}
 	
-	// This task will initialize the user's create and attending games sets
-	private class InitUserSetsTask extends AsyncTask<String, Integer, String> {
+	/**
+	 * This task will initialize the user's attending games set
+	 */
+	private class InitUserAttendingGamesTask extends AsyncTask<String, Integer, String> {
 		@Override
 		protected String doInBackground(String... arg0) {
 			// Load joined games first
@@ -164,15 +174,26 @@ public class LoginActivity extends Activity {
 	    		LoginActivity.user.mAttendingGames.addAll(attendingGames);
 	    	}
 	    	Log.v("LoginActivity", "Number games user attending: " + (attendingGames != null ? attendingGames.size() : 0));
-			
-	    	// Load preferred sports
-	    	List<String> sports = SportPreferencesHandler.getSportPreferences();
-	    	if (sports != null) {
-	    		LoginActivity.user.initPreferredSports();
-	    		LoginActivity.user.mPreferredSports.addAll(sports);
-	    	}
-	    	Log.v("LoginActivity", "Preferred sports of user: " + (sports != null ? sports.toString() : "None"));
-			
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+		}
+	}
+	
+	/**
+	 * This task will initialize the user's create games set
+	 */
+	private class InitUserCreatedGamesTask extends AsyncTask<String, Integer, String> {
+		@Override
+		protected String doInBackground(String... arg0) {
 	    	// Load created games
 	    	ArrayList<Game> createdGames = GameHandler.getGamesCreatedByCurrentUser();
 			if (createdGames != null) {
@@ -181,6 +202,33 @@ public class LoginActivity extends Activity {
 			}
 	    	Log.v("LoginActivity", "Number games created by user: " + (createdGames != null ? createdGames.size() : 0));
 	    	
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+		   super.onProgressUpdate(values);
+		}
+ 
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+		}
+	}
+	
+	/**
+	 * This task will initialize the user's preferred sports set
+	 */
+	private class InitUserPreferredSportsTask extends AsyncTask<String, Integer, String> {
+		@Override
+		protected String doInBackground(String... arg0) {
+	    	// Load preferred sports
+	    	List<String> sports = SportPreferencesHandler.getSportPreferences();
+	    	if (sports != null) {
+	    		LoginActivity.user.initPreferredSports();
+	    		LoginActivity.user.mPreferredSports.addAll(sports);
+	    	}
+	    	Log.v("LoginActivity", "Preferred sports of user: " + (sports != null ? sports.toString() : "None"));
 			return null;
 		}
 		
