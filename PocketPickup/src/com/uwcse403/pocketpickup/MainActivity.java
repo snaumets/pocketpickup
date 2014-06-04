@@ -597,7 +597,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			}
 			
 			onGameDisplayUpdate();
-			zoomToShowAllMarkers(mMapMarkers);
+			if (mMapMarkers.size() > 0) {
+				zoomToShowAllMarkers(mMapMarkers);
+			} else {
+				Toast.makeText(this, "No Active Joined Games", Toast.LENGTH_LONG).show();	
+			}
 		} else if (joinedGames == null) { // not finished initializing from database
 			Toast.makeText(this, "Loading, Try Again Shortly", Toast.LENGTH_LONG).show();
 		} else { // no games to show
@@ -630,7 +634,11 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				}
 			}
 			onGameDisplayUpdate();
-			zoomToShowAllMarkers(mMapMarkers);
+			if (mMapMarkers.size() > 0) {
+				zoomToShowAllMarkers(mMapMarkers);
+			} else {
+				Toast.makeText(this, "No Active Created Games", Toast.LENGTH_LONG).show();	
+			}
 		} else if (createdGames == null) { // not finished initializing from database
 			Toast.makeText(this, "Loading, Try Again Shortly", Toast.LENGTH_LONG).show();
 		} else { // no games to show
@@ -939,14 +947,16 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	 * @param mapMarkers	The set which contains all markers which need to be shown
 	 */
 	private void zoomToShowAllMarkers(Set<Marker> mapMarkers) {
-		LatLngBounds.Builder builder = new LatLngBounds.Builder();
-		for (Marker marker : mapMarkers) {
-			LatLng point = marker.getPosition();
-			builder.include(point);
+		if (mapMarkers.size() > 0) {
+			LatLngBounds.Builder builder = new LatLngBounds.Builder();
+			for (Marker marker : mapMarkers) {
+				LatLng point = marker.getPosition();
+				builder.include(point);
+			}
+			
+			LatLngBounds bounds = builder.build();
+		    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MARKER_PADDING_PIXELS));
 		}
-		
-		LatLngBounds bounds = builder.build();
-	    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MARKER_PADDING_PIXELS));
 	}
 	
 	/**
