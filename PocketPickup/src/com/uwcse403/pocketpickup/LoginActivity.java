@@ -169,8 +169,8 @@ public class LoginActivity extends Activity {
 		protected String doInBackground(String... arg0) {
 			// Load joined games first
 			ArrayList<Game> attendingGames = GameHandler.getGamesCurrentUserIsAttending();
+			LoginActivity.user.initAttendingGames();
 	    	if (attendingGames != null) {
-	    		LoginActivity.user.initAttendingGames();
 	    		LoginActivity.user.mAttendingGames.addAll(attendingGames);
 	    	}
 	    	Log.v("LoginActivity", "Number games user attending: " + (attendingGames != null ? attendingGames.size() : 0));
@@ -196,8 +196,8 @@ public class LoginActivity extends Activity {
 		protected String doInBackground(String... arg0) {
 	    	// Load created games
 	    	ArrayList<Game> createdGames = GameHandler.getGamesCreatedByCurrentUser();
+	    	LoginActivity.user.initCreatedGames();
 			if (createdGames != null) {
-				LoginActivity.user.initCreatedGames();
 				LoginActivity.user.mCreatedGames.addAll(createdGames);
 			}
 	    	Log.v("LoginActivity", "Number games created by user: " + (createdGames != null ? createdGames.size() : 0));

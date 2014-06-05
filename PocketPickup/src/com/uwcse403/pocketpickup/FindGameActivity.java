@@ -229,11 +229,9 @@ public class FindGameActivity extends Activity
 		((Button) findViewById(R.id.end_time_button)).setText(getTimeButtonString(mEndTime));
 		((Button) findViewById(R.id.start_date_button)).setText(getDateButtonString(mStartDate));
 		((Button) findViewById(R.id.end_date_button)).setText(getDateButtonString(mEndDate));
-		
-		boolean preferredSportsSet = LoginActivity.user.isPreferredSportsInitialized();
-		
+				
 		// Set the text correctly on the sports filtering button
-		if (preferredSportsSet) { // Set sports button to 'Preferred Sports'
+		if (!LoginActivity.user.mPreferredSports.isEmpty()) { // Set sports button to 'Preferred Sports'
 			Button button = (Button) findViewById(R.id.search_pref_button);
 			button.setText(R.string.preferred_sports);
 		} else { // Not yet initialized, set button to 'All Sports'
