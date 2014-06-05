@@ -10,6 +10,7 @@ import java.util.Set;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +22,8 @@ import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -576,82 +579,98 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	// This method will display the user's joined games on the map
 	private void myJoinedGames() {
-		clearSearchResults(null); // clear previous results if any
-		Set<Game> joinedGames = LoginActivity.user.mAttendingGames;
 		
-		if (joinedGames != null && joinedGames.size() > 0) {
-			if (mDisplayedGames == null) {
-				mDisplayedGames = new ArrayList<Game>();
-			} else {
-				mDisplayedGames.clear();
-			}
+		boolean networkAvailable = checkNetwork();
+		
+		if (networkAvailable) {
+			clearSearchResults(null); // clear previous results if any
+			Set<Game> joinedGames = LoginActivity.user.mAttendingGames;
 			
-			// Only display games that havent expired (by date)
-			Date date = new Date();
-			long nowDate = date.getTime() / MILLIS_IN_DAY * MILLIS_IN_DAY;
-			for (Game game : joinedGames) {
-				long endDateLong = game.mGameEndDate;
-				if (endDateLong >= nowDate) {
-					mDisplayedGames.add(game);
+			if (joinedGames != null && joinedGames.size() > 0) {
+				if (mDisplayedGames == null) {
+					mDisplayedGames = new ArrayList<Game>();
+				} else {
+					mDisplayedGames.clear();
 				}
+				
+				// Only display games that havent expired (by date)
+				Date date = new Date();
+				long nowDate = date.getTime() / MILLIS_IN_DAY * MILLIS_IN_DAY;
+				for (Game game : joinedGames) {
+					long endDateLong = game.mGameEndDate;
+					if (endDateLong >= nowDate) {
+						mDisplayedGames.add(game);
+					}
+				}
+				
+				onGameDisplayUpdate();
+				if (mMapMarkers.size() > 0) {
+					zoomToShowAllMarkers(mMapMarkers);
+				} else {
+					Toast.makeText(this, "No Active Joined Games", Toast.LENGTH_LONG).show();	
+				}
+			} else if (joinedGames == null) { // not finished initializing from database
+				Toast.makeText(this, "Loading, Try Again Shortly", Toast.LENGTH_LONG).show();
+			} else { // no games to show
+				Toast.makeText(this, "No Joined Games", Toast.LENGTH_LONG).show();
 			}
 			
-			onGameDisplayUpdate();
 			if (mMapMarkers.size() > 0) {
-				zoomToShowAllMarkers(mMapMarkers);
-			} else {
-				Toast.makeText(this, "No Active Joined Games", Toast.LENGTH_LONG).show();	
+				showClearButton();
 			}
-		} else if (joinedGames == null) { // not finished initializing from database
-			Toast.makeText(this, "Loading, Try Again Shortly", Toast.LENGTH_LONG).show();
-		} else { // no games to show
-			Toast.makeText(this, "No Joined Games", Toast.LENGTH_LONG).show();
-		}
-		
-		if (mMapMarkers.size() > 0) {
-			showClearButton();
+		} else {
+			Toast.makeText(getApplicationContext(), "Network Disabled\nconnect to network to complete operation", Toast.LENGTH_LONG).show();
 		}
 	}
 	
 	// This method will display the user's created games on the map
 	private void myCreatedGames() {
-		clearSearchResults(null); // clear previous results if any
-		Set<Game> createdGames = LoginActivity.user.mCreatedGames;
 		
-		if (createdGames != null && createdGames.size() > 0) {
-			if (mDisplayedGames == null) {
-				mDisplayedGames = new ArrayList<Game>();
-			} else {
-				mDisplayedGames.clear();
-			}
-			// Only display games that havent expired (by date)
-			Date date = new Date();
-			long nowDate = date.getTime() / MILLIS_IN_DAY * MILLIS_IN_DAY;
-			for (Game game : createdGames) {
-				long endDateLong = game.mGameEndDate;
-				if (endDateLong >= nowDate) {
-					mDisplayedGames.add(game);
+		boolean networkAvailable = checkNetwork();
+		
+		if (networkAvailable) {
+			clearSearchResults(null); // clear previous results if any
+			Set<Game> createdGames = LoginActivity.user.mCreatedGames;
+			
+			if (createdGames != null && createdGames.size() > 0) {
+				if (mDisplayedGames == null) {
+					mDisplayedGames = new ArrayList<Game>();
+				} else {
+					mDisplayedGames.clear();
 				}
+				// Only display games that havent expired (by date)
+				Date date = new Date();
+				long nowDate = date.getTime() / MILLIS_IN_DAY * MILLIS_IN_DAY;
+				for (Game game : createdGames) {
+					long endDateLong = game.mGameEndDate;
+					if (endDateLong >= nowDate) {
+						mDisplayedGames.add(game);
+					}
+				}
+				onGameDisplayUpdate();
+				if (mMapMarkers.size() > 0) {
+					zoomToShowAllMarkers(mMapMarkers);
+				} else {
+					Toast.makeText(this, "No Active Created Games", Toast.LENGTH_LONG).show();	
+				}
+			} else if (createdGames == null) { // not finished initializing from database
+				Toast.makeText(this, "Loading, Try Again Shortly", Toast.LENGTH_LONG).show();
+			} else { // no games to show
+				Toast.makeText(this, "No Created Games", Toast.LENGTH_LONG).show();	
 			}
-			onGameDisplayUpdate();
+			
 			if (mMapMarkers.size() > 0) {
-				zoomToShowAllMarkers(mMapMarkers);
-			} else {
-				Toast.makeText(this, "No Active Created Games", Toast.LENGTH_LONG).show();	
+				showClearButton();
 			}
-		} else if (createdGames == null) { // not finished initializing from database
-			Toast.makeText(this, "Loading, Try Again Shortly", Toast.LENGTH_LONG).show();
-		} else { // no games to show
-			Toast.makeText(this, "No Created Games", Toast.LENGTH_LONG).show();	
-		}
 		
-		if (mMapMarkers.size() > 0) {
-			showClearButton();
+		} else {
+			Toast.makeText(getApplicationContext(), "Network Disabled\nconnect to network to complete operation", Toast.LENGTH_LONG).show();
 		}
 	}
 	
 	// This method will display the user's created games on the map
 	private void mySportsPreferences() {
+		
 		if (mSportsDialog != null) {
 			mSportsDialog.show();
 		} else { // Hasnt yet been initialized
@@ -752,31 +771,47 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 
 	// Simply starts a sign up activity
 	public void createGame(View view) {
-		Intent intent = new Intent(this, CreateGameActivity.class);
-		Bundle args = new Bundle();
-		args.putCharSequence(CreateGameActivity.CREATEGAME_LOCATION,
-				((EditText) findViewById(R.id.locationText)).getText());
-		args.putDouble(CreateGameActivity.CREATEGAME_LATITUDE,
-				mLatLngLocation.latitude);
-		args.putDouble(CreateGameActivity.CREATEGAME_LONGITUDE,
-				mLatLngLocation.longitude);
-		intent.putExtras(args);
-		startActivityForResult(intent, CREATE_GAME_CODE);
+		
+		boolean networkAvailable = checkNetwork();
+		
+		if (networkAvailable) {
+		
+			Intent intent = new Intent(this, CreateGameActivity.class);
+			Bundle args = new Bundle();
+			args.putCharSequence(CreateGameActivity.CREATEGAME_LOCATION,
+					((EditText) findViewById(R.id.locationText)).getText());
+			args.putDouble(CreateGameActivity.CREATEGAME_LATITUDE,
+					mLatLngLocation.latitude);
+			args.putDouble(CreateGameActivity.CREATEGAME_LONGITUDE,
+					mLatLngLocation.longitude);
+			intent.putExtras(args);
+			startActivityForResult(intent, CREATE_GAME_CODE);
+		} else {
+			Toast.makeText(getApplicationContext(), "Network Disabled\nconnect to network to complete operation", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	// Simply starts a log in activity
 	public void findGame(View view) {
-		clearSearchResults(null); // clear previous results if any
-		Intent intent = new Intent(this, FindGameActivity.class);
-		Bundle args = new Bundle();
-		args.putCharSequence(FindGameActivity.FINDGAME_LOCATION,
-				((EditText) findViewById(R.id.locationText)).getText());
-		args.putDouble(FindGameActivity.FINDGAME_LATITUDE,
-				mLatLngLocation.latitude);
-		args.putDouble(FindGameActivity.FINDGAME_LONGITUDE,
-				mLatLngLocation.longitude);
-		intent.putExtras(args);
-		startActivityForResult(intent, FIND_GAME_CODE);
+		
+		boolean networkAvailable = checkNetwork();
+		
+		if (networkAvailable) {
+		
+			clearSearchResults(null); // clear previous results if any
+			Intent intent = new Intent(this, FindGameActivity.class);
+			Bundle args = new Bundle();
+			args.putCharSequence(FindGameActivity.FINDGAME_LOCATION,
+					((EditText) findViewById(R.id.locationText)).getText());
+			args.putDouble(FindGameActivity.FINDGAME_LATITUDE,
+					mLatLngLocation.latitude);
+			args.putDouble(FindGameActivity.FINDGAME_LONGITUDE,
+					mLatLngLocation.longitude);
+			intent.putExtras(args);
+			startActivityForResult(intent, FIND_GAME_CODE);
+		} else {
+			Toast.makeText(getApplicationContext(), "Network Disabled\nconnect to network to complete operation", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	/**
@@ -804,6 +839,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				}
 				if (LoginActivity.user.mAttendingGames == null) { // safety check
 					LoginActivity.user.initAttendingGames();
+				}
+				if (LoginActivity.user.mPreferredSports == null) {
+					LoginActivity.user.initPreferredSports();
 				}
 				
 				LoginActivity.user.mCreatedGames.add(mDisplayedGames.get(0)); // there will be only one game
@@ -1154,6 +1192,16 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		}
 	}
 	
+	public boolean checkNetwork() {
+	    ConnectivityManager cm =
+	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	    	return true;
+	    }
+	    return false;
+	}
+	
 	/**
 	 * This task will initialize the user's attending games set
 	 */
@@ -1228,4 +1276,6 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			super.onPostExecute(result);
 		}
 	}
+	
+	
 }
