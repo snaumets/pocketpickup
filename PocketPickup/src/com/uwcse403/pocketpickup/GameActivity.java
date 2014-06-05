@@ -10,7 +10,10 @@ import com.uwcse403.pocketpickup.game.Game;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class GameActivity extends Activity {
 
@@ -138,21 +142,56 @@ public class GameActivity extends Activity {
 	 * This method will update the backend that the user has joined this game.
 	 */
 	public void joinGameSubmit(View v) {
-		new JoinDialogTask().execute("");
+		boolean networkAvailable = checkNetwork();
+		if (networkAvailable) {
+			new JoinDialogTask().execute("");
+		} else {
+			displayNetworkErrorMessage();
+		}
 	}
 
 	/**
 	 * This method will update the backend that the user has deleted this game.
 	 */
 	public void deleteGameSubmit(View v) {
-		new DeleteDialogTask().execute("");
+		boolean networkAvailable = checkNetwork();
+		if (networkAvailable) {
+			new DeleteDialogTask().execute("");
+		} else {
+			displayNetworkErrorMessage();
+		}
 	}
 
 	/**
 	 * This method will update the backend that the user has left this game.
 	 */
 	public void leaveGameSubmit(View v) {
-		new LeaveDialogTask().execute("");
+		boolean networkAvailable = checkNetwork();
+		if (networkAvailable) {
+			new LeaveDialogTask().execute("");
+		} else {
+			displayNetworkErrorMessage();
+		}
+	}
+	
+	/**
+	 * Returns whether or not the network can be accessed
+	 */
+	public boolean checkNetwork() {
+	    ConnectivityManager cm =
+	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	    	return true;
+	    }
+	    return false;
+	}
+	
+	/**
+	 * displays a toast notifying the user that the network can't be accessed
+	 */
+	public void displayNetworkErrorMessage() {
+		Toast.makeText(getApplicationContext(), "Network Disabled\nConnect To Network To Complete Operation", Toast.LENGTH_LONG).show();
 	}
 	
 	/**

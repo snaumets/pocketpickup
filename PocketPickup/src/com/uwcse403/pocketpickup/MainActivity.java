@@ -619,7 +619,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 				showClearButton();
 			}
 		} else {
-			Toast.makeText(getApplicationContext(), "Network Disabled\nconnect to network to complete operation", Toast.LENGTH_LONG).show();
+			displayNetworkErrorMessage();
 		}
 	}
 	
@@ -664,7 +664,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			}
 		
 		} else {
-			Toast.makeText(getApplicationContext(), "Network Disabled\nconnect to network to complete operation", Toast.LENGTH_LONG).show();
+			displayNetworkErrorMessage();
 		}
 	}
 	
@@ -787,7 +787,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			intent.putExtras(args);
 			startActivityForResult(intent, CREATE_GAME_CODE);
 		} else {
-			Toast.makeText(getApplicationContext(), "Network Disabled\nconnect to network to complete operation", Toast.LENGTH_LONG).show();
+			displayNetworkErrorMessage();
 		}
 	}
 
@@ -810,7 +810,7 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 			intent.putExtras(args);
 			startActivityForResult(intent, FIND_GAME_CODE);
 		} else {
-			Toast.makeText(getApplicationContext(), "Network Disabled\nconnect to network to complete operation", Toast.LENGTH_LONG).show();
+			displayNetworkErrorMessage();
 		}
 	}
 
@@ -1183,7 +1183,12 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 					}
 					
 					// save in database
-					SportPreferencesHandler.setSportPreferences(newPreferredSports);
+					boolean networkAvailable = checkNetwork();
+					if (networkAvailable) { 
+						SportPreferencesHandler.setSportPreferences(newPreferredSports);
+					} else {
+						displayNetworkErrorMessage();
+					}
 					Toast.makeText(getApplicationContext(), "Preferences Successfully Updated!", Toast.LENGTH_LONG).show();
 				}
 			});
@@ -1192,6 +1197,9 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 		}
 	}
 	
+	/**
+	 * Returns whether or not the network can be accessed
+	 */
 	public boolean checkNetwork() {
 	    ConnectivityManager cm =
 	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -1200,6 +1208,13 @@ public class MainActivity extends Activity implements ConnectionCallbacks,
 	    	return true;
 	    }
 	    return false;
+	}
+	
+	/**
+	 * displays a toast notifying the user that the network can't be accessed
+	 */
+	public void displayNetworkErrorMessage() {
+		Toast.makeText(getApplicationContext(), "Network Disabled\nConnect To Network To Complete Operation", Toast.LENGTH_LONG).show();
 	}
 	
 	/**

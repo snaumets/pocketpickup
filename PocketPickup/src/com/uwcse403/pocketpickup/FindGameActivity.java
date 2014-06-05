@@ -11,8 +11,11 @@ import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -360,7 +363,12 @@ public class FindGameActivity extends Activity
 	 * @param v
 	 */
 	public void submitSearch(View v) {
-		new DialogTask().execute("");
+		boolean networkAvailable = checkNetwork();
+		if (networkAvailable) {
+			new DialogTask().execute("");
+		} else {
+			displayNetworkErrorMessage();
+		}
 	}
 	
 	public void showSportsPreferencesDialog(View v) {
@@ -494,5 +502,25 @@ public class FindGameActivity extends Activity
 			mProgressDialog.dismiss();
 			super.onPostExecute(result);
 		}
+	}
+	
+	/**
+	 * Returns whether or not the network can be accessed
+	 */
+	public boolean checkNetwork() {
+	    ConnectivityManager cm =
+	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	    	return true;
+	    }
+	    return false;
+	}
+	
+	/**
+	 * displays a toast notifying the user that the network can't be accessed
+	 */
+	public void displayNetworkErrorMessage() {
+		Toast.makeText(getApplicationContext(), "Network Disabled\nConnect To Network To Complete Operation", Toast.LENGTH_LONG).show();
 	}
 }
