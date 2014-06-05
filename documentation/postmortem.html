@@ -1,0 +1,75 @@
+<h1>Team Poseidon</h1>
+<h2>Pocket Pickup</h2>
+
+<p>Serge Naumets snaumets@cs &amp; @uw<br/>
+Jacob Gile jjgile@cs &amp; @uw<br/>
+Isaiah Mathieu imathieu@cs &amp; @uw<br/>
+Patrick Larson palarson@cs &amp; @uw<br/>
+Viktor Farkas vfarkas@cs &amp; @uw<br/>
+Kane Swanson kane@cs &amp; kdswan@uw<br/></p>
+
+<h2>Postmortem</h2>
+
+<h3>Features</h3>
+
+<p>
+	The 1.0 release of Pocket Pickup contatins the following features.
+	<ul>
+		<li>Login through Facebook</li>
+		<li>Create games (basketball, football, ultimate, softball, soccer, baseball)</li>
+		<li>Find games, based on time, location, distance radius and sport </li>
+		<li>Join games</li>
+		<li>Leave games</li>
+		<li>Delete games (if you're the only attendee</li>
+		<li>Set preferred sports, which will be used when finding games</li>
+
+	</ul>
+</p>
+
+<h3>Cuts</h3>
+
+<p>
+	The main victims of our condensed schedule were: 
+	<ul>
+		<li>Any sort of group functionality - this would have been a huge effort in the last week, so we decided to focus on testing and cleaning up other features instead</li>
+		<li>List view of games - we eliminated this since it duplicated functionality we already had. It'd still be a good idea in a final version of this app</li>
+		<li>Extended Facebook integration - cut due to time</li>
+		<li>Autoloading of pins - another time constraint cut</li>
+	</ul>
+
+	We saved at least 10 developer days by cutting out these features.
+</p>
+
+<h3>Roles</h3>
+
+<p>
+	<strong>Serge:</strong> <em>Project manager and lead developer.</em><br/> Serge was our most productive developer. He was responsible for most of the Android-side UI elements and use cases.
+</p>
+	
+<p>
+	<strong>Jacob:</strong> <em>Secondary parse developer, documenter.</em><br/> Jacob worked with a lot of the Parse backend code, and was responsible for a lot of the early documentation and subsequent edits. He also set up the Jenkins automatic build system.
+</p>
+
+<p>
+	<strong>Isaiah:</strong> <em>Parse master.</em><br/> Isaiah set up most of the functions to convert Android-facing objects into Parse data, and to retrieve that data in a format that the Android activities could use. 
+</p>
+
+<p>
+	<strong>Patrick:</strong> <em>Testing guru, front-end android developer.</em><br/> Patrick started out working mainly with Android, but as the need for UI work tapered off, he took over unit/integration testing, and also set up our code coverage tests.
+</p>
+
+<p>
+	<strong>Viktor:</strong> <em>Usability and stress tester, bug researcher.</em><br/> Viktor spent most of his time testing our use cases in both normal and unusal ways. He would then help the appropriate developer figure out how to fix that bug.
+</p>
+
+<p>
+	<strong>Kane:</strong> <em>Facebook integration developer, bug fixer and organizer.</em><br/> I started out developing the facebook login feature, but once that turned out to be a short-term job, I ended up fixing UI bugs and cleaning up/refactoring our doumentation strategies.
+</p>
+
+<h3>Recap</h3>
+
+<p>
+	Our roles stayed more or less as expected. One major change was shifting from each developer testing his own code to using Patrick as a dedicated tester. This was primarily due to the up-front time cost of learning the testing frameworks. It made more sense for one developer to sink that time and keep testing, rather than to get all of us on the same testing-strategy page. Our time management worked out well. Rather than adding features as fast as we could, we spent time polishing each feature we added. While this resulted in the cuts described above, we ended up with all features in a complete and bug-free state. We're comfortable with this tradeoff.
+</p>
+<br/>
+<br/>
