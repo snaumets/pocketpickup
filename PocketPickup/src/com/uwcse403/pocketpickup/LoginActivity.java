@@ -224,8 +224,8 @@ public class LoginActivity extends Activity {
 		protected String doInBackground(String... arg0) {
 	    	// Load preferred sports
 	    	List<String> sports = SportPreferencesHandler.getSportPreferences();
+	    	LoginActivity.user.initPreferredSports();
 	    	if (sports != null) {
-	    		LoginActivity.user.initPreferredSports();
 	    		LoginActivity.user.mPreferredSports.addAll(sports);
 	    	}
 	    	Log.v("LoginActivity", "Preferred sports of user: " + (sports != null ? sports.toString() : "None"));
